@@ -1989,11 +1989,11 @@
     </script>
 
 <script type="module">
-  // استيراد المكتبات
+  // 1. استيراد المكتبات
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // إعدادات مشروعك (KSA)
+  // 2. إعدادات مشروعك
   const firebaseConfig = {
     apiKey: "AIzaSyBB8kMXBgwoPKnsLylktWSWLeM4mX23sJo",
     authDomain: "blanche-ksa.firebaseapp.com",
@@ -2005,21 +2005,22 @@
     measurementId: "G-M9T5VSCH0P"
   };
 
-  // 1. تغيير اسم المتغير هنا لمنع المشاكل
+  // 3. تهيئة التطبيق (باسم مختلف لتجنب تعطل الموقع)
   const appFirebase = initializeApp(firebaseConfig);
-  const db = getDatabase(appFirebase);
+  const db = getDatabase(appFirebase); 
 
-  // 2. ربط الدوال بالكود القديم
+  // 4. ربط الدوال بالكود
   window.dbRef = ref;
   window.dbSet = set;
   window.dbOnValue = onValue;
   window.realtimeDb = db;
 
-  console.log("تم الاتصال بقاعدة البيانات بنجاح...");
+  console.log("Firebase Connected...");
   
-  // 3. تشغيل المزامنة
+  // 5. بدء المزامنة
   if(window.startAppSync) window.startAppSync();
 </script>
+
 
 </body>
 </html>
