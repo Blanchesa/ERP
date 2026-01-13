@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlanChe Ops</title>
+    <title>Blanche Operations System</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,10 +35,11 @@
             overflow: hidden; 
         }
 
-        /* --- LOGIN SCREEN STYLES --- */
+        /* --- LOGIN SCREEN STYLES (تم تعديل الخلفية هنا) --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #a29bfe, #74b9ff);
+            /* تم تغيير الخلفية إلى تدرج أزرق غامق احترافي */
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             z-index: 99999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
@@ -51,7 +52,7 @@
         
         .login-title {
             color: white; font-size: 2.5rem; font-weight: 800; margin-bottom: 40px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .roles-grid {
@@ -68,7 +69,7 @@
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             display: flex; flex-direction: column; align-items: center; gap: 15px;
             border: 3px solid transparent;
         }
@@ -76,7 +77,7 @@
         .role-card:hover {
             transform: translateY(-10px) scale(1.05);
             background: #fff;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
         .role-card i { font-size: 3rem; color: var(--primary); margin-bottom: 10px; transition: 0.3s; }
@@ -319,7 +320,7 @@
 
     <div id="login-overlay">
         <div class="login-container">
-            <div class="login-title"><i class="fas fa-cubes"></i>BlanChe Ops</div>
+            <div class="login-title"><i class="fas fa-cubes"></i>Blanche Operations System</div>
             <p style="color:white; margin-bottom:30px; font-size:1.1rem; opacity:0.9;">أهلاً بك، الرجاء اختيار القسم للدخول</p>
             
             <div class="roles-grid">
@@ -358,7 +359,7 @@
     </div>
 
     <aside class="sidebar" style="display:none">
-        <div class="logo"><i class="fas fa-cubes"></i>BlanChe Ops</div>
+        <div class="logo"><i class="fas fa-cubes"></i>Blanche Operations System</div>
         <div class="nav-item active" id="nav-dash" onclick="app.nav('dashboard', this)"><i class="fas fa-chart-pie"></i> الرئيسية</div>
         <div class="nav-item" id="nav-msg" onclick="app.nav('secure-msg', this)"><i class="fas fa-envelope-open-text"></i> إرسال رسالة</div>
         
@@ -810,40 +811,12 @@
             },
 
             init: function() {
-                // تعريف دالة المزامنة لاستدعائها من كود فايربيس
-                window.startAppSync = () => {
-                    const db = window.realtimeDb;
-                    if (!db) return; // التأكد من تحميل فايربيس
-                    
-                    const dataRef = window.dbRef(db, 'cozy_erp_v9');
-
-                    // الاستماع لأي تغيير في البيانات (Realtime)
-                    window.dbOnValue(dataRef, (snapshot) => {
-                        const val = snapshot.val();
-                        if (val) {
-                            app.data = val; // تحديث البيانات المحلية بالبيانات السحابية
-                        } else {
-                            // تهيئة البيانات لأول مرة إذا كانت قاعدة البيانات فارغة
-                            app.data = {
-                                clients: [], prods: [], pos: [], sos: [], 
-                                tasks: [], logs: [], secureMsgs: []
-                            };
-                        }
-                        
-                        // ضمان وجود المصفوفات لتجنب الأخطاء
-                        if(!app.data.logs) app.data.logs = [];
-                        if(!app.data.secureMsgs) app.data.secureMsgs = [];
-                        
-                        // تحديث الشاشة فوراً
-                        if(app.currentRole) {
-                           app.renderAll();
-                        }
-                        console.log("تمت موازنة البيانات مع السيرفر!");
-                    });
-                };
-
-                // محاولة البدء إذا كان فايربيس قد تم تحميله بالفعل
-                if(window.realtimeDb) window.startAppSync();
+                // سيتم استبدال التحميل المحلي بـ Firebase في السكريبت السفلي
+                // لكن نترك هذا كاحتياط
+                const saved = localStorage.getItem('cozy_erp_v9');
+                if(saved) this.data = JSON.parse(saved);
+                if(!this.data.logs) this.data.logs = [];
+                if(!this.data.secureMsgs) this.data.secureMsgs = [];
                 
                 document.getElementById('floating-inbox').classList.remove('open');
             },
@@ -906,26 +879,12 @@
             },
 
             save: function() {
+                // سيتم تجاوز هذه الدالة بواسطة Firebase بالأسفل
                 try {
-                    // الحفظ في السحابة (Firebase)
-                    if(window.realtimeDb && window.dbSet && window.dbRef) {
-                        const db = window.realtimeDb;
-                        window.dbSet(window.dbRef(db, 'cozy_erp_v9'), this.data)
-                        .then(() => {
-                            console.log("تم الحفظ في السيرفر بنجاح");
-                        })
-                        .catch((error) => {
-                            console.error("فشل الحفظ:", error);
-                            alert("انتبه: لم يتم حفظ البيانات بسبب مشكلة في الاتصال!");
-                        });
-                    } else {
-                        console.warn("Firebase not loaded yet");
-                    }
-
-                    // تحديث الإحصائيات للإدارة
+                    localStorage.setItem('cozy_erp_v9', JSON.stringify(this.data));
                     if(this.currentRole === 'admin') this.updateDashboard();
                 } catch(e) {
-                    console.error(e);
+                    alert("خطأ في الحفظ: مساحة التخزين ممتلئة.");
                 }
             },
 
@@ -956,6 +915,8 @@
                 if(pass === "20002000") {
                     if(confirm("تحذير نهائي: سيتم حذف كل البيانات!")) {
                         localStorage.removeItem('cozy_erp_v9');
+                        this.data = { clients: [], prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [] };
+                        this.save();
                         location.reload();
                     }
                 } else { alert("كلمة المرور خاطئة!"); }
@@ -1988,39 +1949,59 @@
         window.onload = function() { app.init(); };
     </script>
 
-<script type="module">
-  // 1. استيراد المكتبات
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <script type="module">
+        // استدعاء المكتبات (استخدمنا إصدار 10.7.1 لضمان التوافقية المباشرة مع المتصفح)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // 2. إعدادات مشروعك
-  const firebaseConfig = {
-    apiKey: "AIzaSyBB8kMXBgwoPKnsLylktWSWLeM4mX23sJo",
-    authDomain: "blanche-ksa.firebaseapp.com",
-    databaseURL: "https://blanche-ksa-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "blanche-ksa",
-    storageBucket: "blanche-ksa.firebasestorage.app",
-    messagingSenderId: "914541537325",
-    appId: "1:914541537325:web:0cfed5799623b14033b0a4",
-    measurementId: "G-M9T5VSCH0P"
-  };
+        const firebaseConfig = {
+            apiKey: "AIzaSyBB8kMXBgwoPKnsLylktWSWLeM4mX23sJo",
+            authDomain: "blanche-ksa.firebaseapp.com",
+            databaseURL: "https://blanche-ksa-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "blanche-ksa",
+            storageBucket: "blanche-ksa.firebasestorage.app",
+            messagingSenderId: "914541537325",
+            appId: "1:914541537325:web:0cfed5799623b14033b0a4",
+            measurementId: "G-M9T5VSCH0P"
+        };
 
-  // 3. تهيئة التطبيق (باسم مختلف لتجنب تعطل الموقع)
-  const appFirebase = initializeApp(firebaseConfig);
-  const db = getDatabase(appFirebase); 
+        // Initialize Firebase
+        const fApp = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(fApp);
+        const db = getDatabase(fApp);
 
-  // 4. ربط الدوال بالكود
-  window.dbRef = ref;
-  window.dbSet = set;
-  window.dbOnValue = onValue;
-  window.realtimeDb = db;
+        // --- ربط نظام ERP بـ Firebase ---
 
-  console.log("Firebase Connected...");
-  
-  // 5. بدء المزامنة
-  if(window.startAppSync) window.startAppSync();
-</script>
+        function loadFromFirebase() {
+            const dataRef = ref(db, 'erp_data_v2'); // اسم الجدول في قاعدة البيانات
+            onValue(dataRef, (snapshot) => {
+                const cloudData = snapshot.val();
+                if (cloudData) {
+                    app.data = cloudData;
+                    // ضمان وجود المصفوفات الأساسية لتجنب الأخطاء
+                    if(!app.data.logs) app.data.logs = [];
+                    if(!app.data.secureMsgs) app.data.secureMsgs = [];
+                    
+                    if(app.currentRole) app.renderAll(); 
+                    console.log("تم تحديث البيانات من السحابة بنجاح");
+                }
+            });
+        }
 
+        // استبدال دالة الحفظ المحلية بالحفظ السحابي
+        app.save = function() {
+            try {
+                set(ref(db, 'erp_data_v2'), this.data);
+                console.log("تم إرسال البيانات للسحابة...");
+            } catch(e) {
+                console.error("Firebase Error:", e);
+                alert("تحذير: حدث خطأ أثناء الاتصال بقاعدة البيانات");
+            }
+        };
 
+        // بدء التحميل
+        loadFromFirebase();
+    </script>
 </body>
 </html>
