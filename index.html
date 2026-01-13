@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blanche Operations System</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- CSS: تصميم Cozy Modern --- */
+        :root {
+            --bg-body: #f4f7f6;
+            --sidebar-bg: #ffffff;
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --secondary: #00cec9;
+            --accent: #fd79a8;
+            --text-dark: #2d3436;
+            --text-gray: #636e72;
+            --border: #dfe6e9;
+            --shadow: 0 8px 24px rgba(0,0,0,0.05);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; outline: none; }
+        
+        body { 
+            margin: 0; padding: 0; 
+            background-color: var(--bg-body); 
+            color: var(--text-dark); 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* --- LOGIN SCREEN STYLES --- */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #a29bfe, #74b9ff);
+            z-index: 99999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        .login-container {
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .login-title {
+            color: white; font-size: 2.5rem; font-weight: 800; margin-bottom: 40px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        .role-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            border: 3px solid transparent;
+        }
+
+        .role-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            background: #fff;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .role-card i { font-size: 3rem; color: var(--primary); margin-bottom: 10px; transition: 0.3s; }
+        .role-card h3 { margin: 0; color: var(--text-dark); font-size: 1.2rem; }
+        .role-card p { margin: 0; color: var(--text-gray); font-size: 0.85rem; }
+
+        /* Role specific colors on hover */
+        .role-card.admin:hover { border-color: #2d3436; } .role-card.admin:hover i { color: #2d3436; }
+        .role-card.sales:hover { border-color: #00cec9; } .role-card.sales:hover i { color: #00cec9; }
+        .role-card.purch:hover { border-color: #fdcb6e; } .role-card.purch:hover i { color: #fdcb6e; }
+        .role-card.wh:hover { border-color: #6c5ce7; } .role-card.wh:hover i { color: #6c5ce7; }
+        .role-card.acc:hover { border-color: #ff7675; } .role-card.acc:hover i { color: #ff7675; }
+        .role-card.logis:hover { border-color: #0984e3; } .role-card.logis:hover i { color: #0984e3; }
+
+        @media (max-width: 768px) {
+            .roles-grid { grid-template-columns: 1fr; gap: 15px; }
+            .login-title { font-size: 1.8rem; }
+        }
+
+        /* Sidebar */
+        .sidebar { 
+            width: 270px; 
+            background-color: var(--sidebar-bg); 
+            padding: 20px 15px; 
+            display: flex; flex-direction: column; gap: 6px;
+            border-left: 1px solid var(--border);
+            flex-shrink: 0;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .logo { 
+            font-size: 1.5rem; font-weight: 800; color: var(--primary); 
+            text-align: center; margin-bottom: 25px; letter-spacing: -1px;
+        }
+        
+        .nav-item { 
+            padding: 10px 15px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            color: var(--text-gray); 
+            font-weight: 600; 
+            display: flex; align-items: center; gap: 10px;
+            transition: all 0.2s ease; font-size: 0.9rem;
+        }
+        .nav-item:hover { background: #f8f9fa; color: var(--primary); transform: translateX(-3px); }
+        .nav-item.active { background: var(--primary); color: white !important; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
+        .nav-item.active i { color: white !important; }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
+
+        /* Sections */
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* UI Elements */
+        h1 { margin-top: 0; margin-bottom: 25px; font-size: 1.8rem; color: var(--text-dark); font-weight: 800; letter-spacing: -0.5px; }
+        
+        .card { 
+            background: #fff; padding: 25px; border-radius: var(--radius); 
+            box-shadow: var(--shadow); margin-bottom: 25px; border: 1px solid white; 
+            position: relative; 
+        }
+        
+        .form-row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end; }
+        .form-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-gray); margin-bottom: 6px; font-weight: bold; }
+        
+        input:not([type="file"]), select, textarea { 
+            width: 100%; max-width: 320px; padding: 10px 14px; 
+            border: 1px solid #b2bec3; border-radius: 8px;        
+            background: #ffffff; font-size: 0.95rem; color: #2d3436;
+            transition: 0.2s; box-shadow: none;          
+        }
+        
+        .form-group.full-width input, .form-group input[id*="note"], .form-group input[id*="desc"] { max-width: 100%; }
+        .wh-input-area input, .prod-box input { max-width: 100%; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1); }
+        
+        button { 
+            padding: 10px 24px; border: none; border-radius: 10px; 
+            cursor: pointer; font-weight: 700; color: white; 
+            display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+            transition: 0.2s; font-size: 0.95rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        button:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+        .btn-secondary { background: linear-gradient(135deg, var(--secondary), #0984e3); }
+        .btn-danger { background: #ff7675; }
+        .btn-warning { background: #fdcb6e; color: #444; }
+        .btn-ghost { background: #fff; color: var(--text-gray); border: 1px solid var(--border); box-shadow: none; }
+        .btn-ghost:hover { background: #f1f2f6; }
+        .btn-ghost.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .small-btn { padding: 5px 12px; font-size: 0.8rem; margin-left: 5px; }
+
+        /* Tables & Lists */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: 10px; }
+        th { text-align: right; color: var(--text-gray); padding: 12px 15px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 15px; background: #fff; border-top: 1px solid #f8f9fa; border-bottom: 1px solid #f8f9fa; vertical-align: middle; box-shadow: 0 2px 5px rgba(0,0,0,0.01); }
+        td:first-child { border-radius: 0 10px 10px 0; border-right: 4px solid var(--primary); }
+        td:last-child { border-radius: 10px 0 0 10px; border-left: 1px solid #f8f9fa; }
+
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; color: white; background: #b2bec3; font-weight: bold; display: inline-block;}
+        .bg-green { background: #00b894; } .bg-orange { background: #fdcb6e; color: #444; } .bg-blue { background: var(--secondary); } .bg-red { background: #ff7675; }
+        .special-tag { display: inline-block; background: #fff0f6; border: 1px solid #ffadd2; color: #c41d7f; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 5px; margin-bottom: 2px; }
+
+        /* Product Grid */
+        .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 15px; max-height: 400px; overflow-y: auto; padding: 5px; }
+        .prod-box { border: 1px solid #eee; padding: 20px; border-radius: 16px; cursor: pointer; background: #fff; transition: 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .prod-box:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .prod-box.selected { border-color: var(--primary); background: #f0f3ff; box-shadow: 0 0 0 2px var(--primary); }
+        .prod-box input { margin-top: 10px; width: 100%; display: none; }
+        .prod-box.selected input { display: block; }
+        .prod-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; background: #f8f9fa; }
+        
+        .list-thumb { 
+            width: 45px; height: 45px; object-fit: cover; border-radius: 8px; 
+            border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            vertical-align: middle; margin-left: 10px; 
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: zoom-in; position: relative; z-index: 1;
+        }
+        .list-thumb:hover { transform: scale(3.5); z-index: 9999; box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--primary); }
+
+        /* Dashboard & Stats */
+        .dash-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .d-card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid #f0f0f0; position: relative; overflow: hidden; }
+        .d-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        .d-card-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
+        .d-card-title { font-size: 0.9rem; color: #636e72; font-weight: bold; margin-bottom: 5px; }
+        .d-card-val { font-size: 1.8rem; font-weight: 800; color: #2d3436; margin-bottom: 5px; }
+        .d-card-sub { font-size: 0.8rem; color: #b2bec3; display: flex; gap: 10px; }
+        .dc-purple .d-card-icon { background: #e0dcfc; color: #6c5ce7; }
+        .dc-blue .d-card-icon { background: #dff9fb; color: #00cec9; }
+        .dc-green .d-card-icon { background: #dafbe3; color: #00b894; }
+        .dc-orange .d-card-icon { background: #ffeaa7; color: #fdcb6e; }
+        .dc-red .d-card-icon { background: #ffcccc; color: #ff7675; }
+
+        /* Ranking Lists */
+        .rank-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+        @media (max-width: 768px) { .rank-container { grid-template-columns: 1fr; } }
+        .rank-list { margin-top: 15px; }
+        .rank-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f5f6fa; transition: 0.2s; }
+        .rank-item:last-child { border-bottom: none; }
+        .rank-item:hover { background: #fcfcfc; padding-right: 5px; }
+        .rank-info { display: flex; align-items: center; gap: 10px; }
+        .rank-img { width: 35px; height: 35px; border-radius: 8px; object-fit: cover; background: #eee; }
+        .rank-score { font-weight: bold; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; }
+        .rs-high { background: #e3fcef; color: #00b894; }
+        .rs-low { background: #fff0f0; color: #d63031; }
+        .pending-alert { position: absolute; top: 15px; left: 15px; background: #ff7675; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* Logistics UI (Read Only & Organized) */
+        .log-split-view { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .log-col { background: transparent; }
+        .log-col h3 { margin-top: 0; font-size: 1.1rem; margin-bottom: 15px; display:flex; align-items:center; gap:8px;}
+        
+        .log-card { 
+            background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 15px; 
+            border: 1px solid #eef2f3; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.2s; 
+            position: relative; overflow: hidden;
+        }
+        .log-card:hover { box-shadow: 0 10px 25px rgba(0,0,0,0.06); transform: translateY(-2px); }
+        .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
+        .log-id { font-weight: 800; font-size: 1rem; color: var(--text-dark); }
+        .log-sub { color: #888; font-size: 0.85rem; }
+        
+        /* Stepper */
+        .log-progress { display: flex; justify-content: space-between; position: relative; margin: 20px 0 10px 0; }
+        .log-progress::before { content: ''; position: absolute; top: 7px; left: 0; right: 0; height: 3px; background: #f0f0f0; z-index: 0; border-radius: 3px; }
+        .prog-step { position: relative; z-index: 1; width: 15px; height: 15px; border-radius: 50%; background: #f0f0f0; border: 2px solid #fff; transition: 0.3s; }
+        .prog-step.active { background: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2); }
+        .prog-step.completed { background: var(--secondary); }
+        
+        .step-labels { display: flex; justify-content: space-between; margin-top: 5px; }
+        .step-txt { font-size: 0.65rem; color: #b2bec3; text-align: center; width: 60px; font-weight: bold; }
+        .step-txt.active { color: var(--text-dark); }
+        
+        .discrepancy-box { background: #fff0f0; border: 1px solid #ff7675; color: #d63031; padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-top: 15px; display: flex; align-items: center; gap: 10px; }
+        .attach-section { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .attach-badge { font-size: 0.75rem; background: #f1f2f6; padding: 5px 10px; border-radius: 6px; color: var(--text-gray); text-decoration: none; border: 1px solid #dfe6e9; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .attach-badge:hover { border-color: var(--primary); color: var(--primary); background: #fff; }
+
+        /* Secure Messages */
+        .msg-box { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 12px; background: #fff; border-right: 4px solid var(--border); transition: 0.3s; }
+        .msg-box:hover { border-right-color: var(--primary); background: #fafafa; }
+        .msg-admin-reply { border-right: 3px solid var(--secondary); padding: 10px; margin-top: 10px; background: #e0f7fa; font-size: 0.9em; border-radius: 6px; }
+
+        /* Inbox */
+        .inbox-wrapper { position: fixed; bottom: 30px; left: 30px; z-index: 9999; display: none; flex-direction: column; align-items: flex-start; }
+        .inbox-toggle-btn { width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; box-shadow: 0 10px 25px rgba(108, 92, 231, 0.4); cursor: pointer; transition: 0.3s; border: 2px solid white; }
+        .inbox-toggle-btn:hover { transform: scale(1.1); box-shadow: 0 15px 35px rgba(108, 92, 231, 0.5); }
+        .floating-inbox { width: 340px; background: #fff; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); border: 1px solid rgba(0,0,0,0.05); overflow: hidden; display: none; flex-direction: column; animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-bottom: 15px; }
+        .floating-inbox.open { display: flex; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .inbox-header { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 15px 20px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .inbox-body { max-height: 350px; overflow-y: auto; padding: 15px; background: #fdfdfd; }
+
+        /* Modal & WH UI */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+        .modal-content { background-color: #fff; margin: 5% auto; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 700px; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .close-modal { position: absolute; left: 25px; top: 25px; font-size: 1.5rem; cursor: pointer; color: #aaa; }
+        .log-item { border-bottom: 1px solid #f1f1f1; padding: 15px 0; font-size: 0.95rem; }
+        .log-date { color: var(--primary); font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display:block;}
+        .wh-item-row { display: flex; align-items: center; gap: 20px; padding: 15px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 12px; background: #fff; }
+        .wh-img { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+        .wh-info { flex: 1; }
+        .wh-input-area { width: 130px; text-align: center; }
+        .wh-input-area input { font-weight: bold; text-align: center; font-size: 1.1rem; border: 2px solid #eee; }
+        .wh-status { font-size: 0.8rem; margin-top: 5px; font-weight: bold; }
+        .wh-item-row.single-line { flex-direction: row; flex-wrap: nowrap; align-items: center; padding: 10px 20px; gap: 20px; }
+        .wh-item-row.single-line .wh-info-compact { display: flex; align-items: center; gap: 20px; flex: 2; }
+        .wh-item-row.single-line .wh-input-compact { width: 110px; }
+        .wh-item-row.single-line .wh-note-compact { flex: 2; }
+        .note-highlight { background-color: #fff9c4; color: #d35400; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; border-right: 4px solid #f1c40f; display: flex; align-items: center; gap: 8px; }
+        .note-chain { font-size: 0.85rem; background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 5px; border: 1px solid #eee; }
+        .note-chain div { margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px dashed #eee; }
+        .note-chain div:last-child { border: none; margin: 0; padding: 0; }
+        .nc-label { font-weight: bold; color: var(--primary); }
+        .date-badge { background: #dfe6e9; color: #636e72; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; display: inline-block; margin-right: 5px; font-weight: bold; }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; height: auto; overflow: auto; }
+            .sidebar { width: 100%; overflow-x: auto; flex-direction: row; padding: 10px; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+            .nav-item { white-space: nowrap; margin: 0; padding: 8px 12px; }
+            .main-content { padding: 20px; }
+            .form-row { flex-direction: column; gap: 15px; }
+            .wh-item-row { flex-direction: column; text-align: center; }
+            .wh-item-row.single-line { flex-wrap: wrap; }
+            .inbox-wrapper { width: auto; left: 20px; bottom: 20px; }
+            .floating-inbox { width: 300px; }
+            .log-split-view { grid-template-columns: 1fr; }
+            input, select, textarea { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-container">
+            <div class="login-title"><i class="fas fa-cubes"></i>Blanche Operations System</div>
+            <p style="color:white; margin-bottom:30px; font-size:1.1rem; opacity:0.9;">أهلاً بك، الرجاء اختيار القسم للدخول</p>
+            
+            <div class="roles-grid">
+                <div class="role-card sales" onclick="app.login('sales')">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>المبيعات</h3>
+                    <p>أوامر البيع والعملاء</p>
+                </div>
+                <div class="role-card purch" onclick="app.login('purchases')">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h3>المشتريات</h3>
+                    <p>طلبات الشراء والموردين</p>
+                </div>
+                <div class="role-card admin" onclick="app.login('admin')">
+                    <i class="fas fa-user-tie"></i>
+                    <h3>الإدارة العامة</h3>
+                    <p>صلاحيات كاملة</p>
+                </div>
+                <div class="role-card acc" onclick="app.login('accounting')">
+                    <i class="fas fa-calculator"></i>
+                    <h3>المحاسبة</h3>
+                    <p>الفواتير والقيود</p>
+                </div>
+                <div class="role-card logis" onclick="app.login('logistics')">
+                    <i class="fas fa-truck-fast"></i>
+                    <h3>اللوجستيات</h3>
+                    <p>الشحن والتتبع</p>
+                </div>
+                <div class="role-card wh" onclick="app.login('warehouse')">
+                    <i class="fas fa-warehouse"></i>
+                    <h3>المخازن</h3>
+                    <p>الاستلام والصرف</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <aside class="sidebar" style="display:none">
+        <div class="logo"><i class="fas fa-cubes"></i>Blanche Operations System</div>
+        <div class="nav-item active" id="nav-dash" onclick="app.nav('dashboard', this)"><i class="fas fa-chart-pie"></i> الرئيسية</div>
+        <div class="nav-item" id="nav-msg" onclick="app.nav('secure-msg', this)"><i class="fas fa-envelope-open-text"></i> إرسال رسالة</div>
+        
+        <div class="nav-item" id="nav-prod-m" onclick="app.nav('products-create', this)"><i class="fas fa-plus-circle"></i> إدارة المنتجات</div>
+        <div class="nav-item" id="nav-prod-v" onclick="app.nav('products-view', this)"><i class="fas fa-box-open"></i> عرض المنتجات</div>
+        
+        <div class="nav-item" id="nav-clients" onclick="app.nav('clients', this)"><i class="fas fa-users"></i> العملاء</div>
+        <div class="nav-item" id="nav-purch" onclick="app.nav('purchases', this)"><i class="fas fa-file-invoice-dollar"></i> أوامر الشراء</div>
+        <div class="nav-item" id="nav-logis" onclick="app.nav('logistics', this)"><i class="fas fa-truck-fast"></i> اللوجستيات</div>
+        <div class="nav-item" id="nav-wh" onclick="app.nav('warehouse', this)"><i class="fas fa-warehouse"></i> المخازن</div>
+        <div class="nav-item" id="nav-sales" onclick="app.nav('sales', this)"><i class="fas fa-shopping-cart"></i> المبيعات</div>
+        <div class="nav-item" id="nav-acc" onclick="app.nav('accounting', this)"><i class="fas fa-calculator"></i> المحاسبة</div>
+        <div class="nav-item" id="nav-arch" onclick="app.nav('invoices-archive', this)"><i class="fas fa-archive"></i> أرشيف الفواتير</div>
+        <div class="nav-item" id="nav-tasks" onclick="app.nav('tasks', this)"><i class="fas fa-tasks"></i> إدارة المهام</div>
+        
+        <div style="margin-top:auto;">
+            <button onclick="location.reload()" class="btn-ghost" style="width:100%; margin-bottom:10px;"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
+            <button onclick="app.reset()" class="btn-danger" style="width:100%; font-size:0.8rem; border-radius: 8px;"><i class="fas fa-lock"></i> تصفير النظام (محمي)</button>
+        </div>
+    </aside>
+
+    <main class="main-content" style="display:none">
+
+        <section id="dashboard" class="section active">
+            <h1>لوحة المعلومات والملخص العام</h1>
+
+            <div class="dash-stats-grid">
+                <div class="d-card dc-purple" onclick="app.nav('products-view', document.getElementById('nav-prod-v'))" style="cursor:pointer">
+                    <div class="d-card-icon"><i class="fas fa-boxes"></i></div>
+                    <div class="d-card-title">إجمالي المنتجات</div>
+                    <div class="d-card-val" id="d-prod-count">0</div>
+                    <div class="d-card-sub">مسجلة في النظام</div>
+                </div>
+
+                <div class="d-card dc-blue" onclick="app.nav('clients', document.getElementById('nav-clients'))" style="cursor:pointer">
+                    <div class="d-card-icon"><i class="fas fa-users"></i></div>
+                    <div class="d-card-title">قاعدة العملاء</div>
+                    <div class="d-card-val" id="d-client-count">0</div>
+                    <div class="d-card-sub">عميل نشط</div>
+                </div>
+
+                <div class="d-card dc-green">
+                    <div class="d-card-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="d-card-title">المبيعات (القيمة)</div>
+                    <div class="d-card-val" id="d-sales-val">0 SAR</div>
+                    <div class="d-card-sub">
+                        <span style="color:green"><i class="fas fa-check"></i> <span id="d-sales-done">0</span> مكتملة</span>
+                        <span style="color:orange; margin-right:10px;"><i class="fas fa-clock"></i> <span id="d-sales-pend">0</span> معلقة</span>
+                    </div>
+                </div>
+
+                <div class="d-card dc-orange">
+                    <div class="d-card-icon"><i class="fas fa-shopping-bag"></i></div>
+                    <div class="d-card-title">المشتريات (التكلفة)</div>
+                    <div class="d-card-val" id="d-pur-val">0 SAR</div>
+                    <div class="d-card-sub">
+                        <span><i class="fas fa-check-double"></i> <span id="d-pur-count">0</span> عملية شراء ناجحة</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="color:var(--text-gray); margin-bottom:15px;">🚧 المهام المعلقة والتنبيهات</h3>
+            <div class="dash-stats-grid">
+                <div class="d-card dc-red" onclick="app.nav('warehouse', document.getElementById('nav-wh'))" style="cursor:pointer">
+                    <div class="d-card-icon" style="background:#fff0f0; color:#d63031"><i class="fas fa-warehouse"></i></div>
+                    <div class="d-card-title">معلق في المخازن</div>
+                    <div class="d-card-val" id="d-pend-wh">0</div>
+                    <div class="d-card-sub">شحنات واردة + طلبات صرف</div>
+                    <div id="badge-wh" class="pending-alert" style="display:none">انتباه</div>
+                </div>
+
+                <div class="d-card dc-red" onclick="app.nav('accounting', document.getElementById('nav-acc'))" style="cursor:pointer">
+                    <div class="d-card-icon" style="background:#fff0f0; color:#d63031"><i class="fas fa-calculator"></i></div>
+                    <div class="d-card-title">معلق في المحاسبة</div>
+                    <div class="d-card-val" id="d-pend-acc">0</div>
+                    <div class="d-card-sub">فواتير مبيعات + تسجيل شراء</div>
+                    <div id="badge-acc" class="pending-alert" style="display:none">انتباه</div>
+                </div>
+
+                <div class="d-card" style="border-color:#74b9ff" onclick="app.nav('secure-msg', document.getElementById('nav-msg'))">
+                    <div class="d-card-icon" style="background:#e0f7fa; color:#0984e3"><i class="fas fa-envelope"></i></div>
+                    <div class="d-card-title">الرسائل الواردة</div>
+                    <div class="d-card-val" id="d-msgs-all">0</div>
+                    <div class="d-card-sub">رسائل مشفرة للإدارة</div>
+                </div>
+            </div>
+
+            <div class="rank-container">
+                <div class="card">
+                    <h3 style="color:#00b894; margin-top:0"><i class="fas fa-trophy"></i> أعلى 10 منتجات مبيعاً</h3>
+                    <div class="rank-list" id="top-10-list">
+                        <p style="text-align:center; color:#ccc">لا توجد مبيعات كافية</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="color:#ff7675; margin-top:0"><i class="fas fa-arrow-down"></i> أقل 10 منتجات مبيعاً</h3>
+                    <div class="rank-list" id="bot-10-list">
+                        <p style="text-align:center; color:#ccc">لا توجد بيانات كافية</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="secure-msg" class="section">
+            <h1>إرسال رسالة مشفرة للإدارة</h1>
+            <div class="card">
+                <p style="color: var(--text-gray); font-size: 0.9rem;">
+                    <i class="fas fa-lock"></i> الرسالة ستكون محمية برقم سري (PIN).
+                </p>
+                <div class="form-row">
+                    <div class="form-group"><label>الاسم</label><input id="sec-name"></div>
+                    <div class="form-group"><label>القسم</label>
+                        <select id="sec-dept"><option>المبيعات</option><option>المشتريات</option><option>المخازن</option><option>المحاسبة</option><option>أخرى</option></select>
+                    </div>
+                    <div class="form-group"><label style="color:red">رقم سري (PIN)</label><input id="sec-pin" type="password" placeholder="****"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full-width" style="flex:3"><label>الرسالة</label><input id="sec-text" placeholder="اكتب رسالتك السرية هنا..."></div>
+                    <button onclick="app.sendSecureMsg()" class="btn-primary">تشفير وإرسال</button>
+                </div>
+            </div>
+            
+            <div class="card" style="background: #f8f9fa;">
+                <h3><i class="fas fa-key"></i> التحقق من الردود</h3>
+                <div class="form-row" style="align-items: center;">
+                    <label>أدخل الـ PIN الخاص بك لعرض رسائلك:</label>
+                    <input id="check-pin" type="password" placeholder="****" style="width: 150px;">
+                    <button onclick="app.checkMyMsgs()" class="btn-secondary">عرض رسائلي</button>
+                </div>
+                <div id="my-msgs-status" style="margin-top:15px;"></div>
+            </div>
+        </section>
+
+        <section id="products-create" class="section">
+            <h1>إنشاء وإدارة المنتجات</h1>
+            
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <h3 id="form-title" style="margin:0">1. إضافة منتج جديد</h3>
+                    <div style="display:flex; gap:10px;">
+                         <input type="file" id="import-csv" style="display:none" accept=".csv" onchange="app.importCSV(this)">
+                        <button onclick="document.getElementById('import-csv').click()" class="btn-ghost active" title="يجب أن يكون الملف CSV (كود,اسم,سعر,رابط الصورة)"><i class="fas fa-file-csv"></i> استيراد منتجات (CSV)</button>
+                        
+                        <input type="file" id="import-prices" style="display:none" accept=".csv" onchange="app.importSpecialPricesCSV(this)">
+                        <button onclick="document.getElementById('import-prices').click()" class="btn-ghost" style="color:var(--accent); border-color:var(--accent)" title="يجب أن يكون الملف CSV (كود المنتج, اسم العميل, السعر)"><i class="fas fa-tags"></i> استيراد أسعار خاصة</button>
+                    </div>
+                </div>
+                <p style="font-size:0.8rem; color:#888;">* ملف المنتجات: <strong>[الكود]، [الاسم]، [السعر]، [رابط الصورة]</strong> | ملف الأسعار الخاصة: <strong>[كود المنتج]، [اسم العميل]، [السعر]</strong></p>
+                <hr style="margin:15px 0; border-top:1px solid #eee;">
+                
+                <div class="form-row">
+                    <div class="form-group"><label>الكود</label><input id="p-code"></div>
+                    <div class="form-group"><label>الاسم</label><input id="p-name"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>سعر التجزئة (SAR)</label><input id="p-price" type="number"></div>
+                    <div class="form-group full-width"><label>رابط الصورة (URL)</label><input id="p-img" placeholder="https://example.com/image.jpg"></div>
+                </div>
+                <div class="form-row">
+                    <button onclick="app.saveProduct()" id="btn-save-prod" class="btn-primary">حفظ المنتج</button>
+                    <button onclick="app.cancelEdit()" id="btn-cancel-edit" class="btn-danger" style="display:none;">إلغاء التعديل</button>
+                </div>
+            </div>
+            
+            <div id="special-price-box" class="card" style="border-right: 4px solid var(--accent);">
+                <h3>2. تخصيص سعر لعميل (يدوي)</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>المنتج</label><select id="price-prod-select"><option>اختر...</option></select></div>
+                    <div class="form-group"><label>العميل</label><select id="price-client-select"><option>اختر...</option></select></div>
+                    <div class="form-group"><label>السعر الخاص (SAR)</label><input id="price-special" type="number"></div>
+                </div>
+                <button onclick="app.assignSpecialPrice()" class="btn-secondary">حفظ التخصيص</button>
+            </div>
+        </section>
+
+        <section id="products-view" class="section">
+            <h1>عرض المنتجات (Catalog)</h1>
+            <div class="card">
+                <table>
+                    <thead><tr><th>صورة</th><th>كود</th><th>اسم</th><th>سعر أساسي</th><th>أسعار خاصة</th><th>إجراء</th></tr></thead>
+                    <tbody id="tbl-products"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="clients" class="section">
+            <h1>إدارة العملاء</h1>
+            <div class="card">
+                <div class="form-row">
+                    <div class="form-group"><label>اسم العميل الجديد</label><input id="client-name"></div>
+                    <button onclick="app.addClient()" class="btn-primary" style="margin-bottom:0">إضافة</button>
+                </div>
+                <div id="clients-list" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+            </div>
+        </section>
+
+        <section id="purchases" class="section">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h1>أوامر الشراء</h1>
+                <button onclick="app.showDeptHistory('purchases')" class="btn-ghost small"><i class="fas fa-history"></i> سجل المشتريات</button>
+            </div>
+            <div class="form-row">
+                <button onclick="app.switchTab('pur-main', this)" class="btn-ghost active">📝 طلب جديد</button>
+                <button onclick="app.switchTab('pur-tasks', this)" class="btn-ghost">🔔 مهام المشتريات</button>
+                <button onclick="app.switchTab('pur-list', this)" class="btn-ghost">📋 قائمة الطلبات</button>
+            </div>
+
+            <div id="pur-main" class="sub-tab">
+                <div class="card">
+                    <div class="form-row">
+                        <div class="form-group"><label>رقم PO</label><input id="po-ref"></div>
+                        <div class="form-group"><label>المورد</label><input id="po-vnd"></div>
+                        <div class="form-group"><label>الدولة</label><input id="po-country"></div>
+                    </div>
+                    <div class="form-row" style="background:#f9f9f9; padding:15px; border-radius:10px;">
+                        <div class="form-group"><label>التكلفة (قبل الضريبة)</label><input id="po-cost-before" type="number" oninput="app.calcVat(this.value)"></div>
+                        <div class="form-group"><label>التكلفة (بعد الضريبة 15%)</label><div id="po-cost-after-display" style="padding:10px; font-weight:bold; color:var(--primary);">0.00</div></div>
+                        <div class="form-group full-width" style="flex:2"><label>ملاحظات (ستظهر للمخازن واللوجستيات والمحاسبة)</label><input id="po-notes"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label><i class="fas fa-paperclip"></i> إرفاق ملفات (فواتير / عروض أسعار) - للمحاسب</label>
+                            <input type="file" id="po-file" style="max-width:100%">
+                        </div>
+                    </div>
+
+                    <h4 style="margin:15px 0 5px;">اختر الأصناف:</h4>
+                    <div id="grid-po-prods" class="prod-grid"></div>
+                    <br>
+                    <button onclick="app.createPO()" class="btn-primary">إنشاء الطلب</button>
+                </div>
+            </div>
+            <div id="pur-tasks" class="sub-tab" style="display:none"><div id="list-pur-tasks"></div></div>
+            
+            <div id="pur-list" class="sub-tab" style="display:none">
+                <div class="card">
+                     <h3>متابعة أوامر الشراء</h3>
+                     <div id="po-list-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="logistics" class="section">
+            <h1>اللوجستيات والشحن (حالات وروابط)</h1>
+            <div class="form-row">
+                <button onclick="app.switchTab('log-dashboard', this)" class="btn-ghost active">📊 تتبع الحالات (للقراءة فقط)</button>
+                <button onclick="app.switchTab('log-tasks', this)" class="btn-ghost">🔔 مهام اللوجستيات</button>
+            </div>
+
+            <div id="log-dashboard" class="sub-tab">
+                <div class="log-split-view">
+                    <div class="log-col">
+                        <h3 style="color:var(--secondary)"><i class="fas fa-arrow-down"></i> الوارد (مشتريات)</h3>
+                        <div id="log-inbound-readonly"></div>
+                    </div>
+                    
+                    <div class="log-col">
+                        <h3 style="color:var(--accent)"><i class="fas fa-arrow-up"></i> الصادر (مبيعات)</h3>
+                        <div id="log-outbound-readonly"></div>
+                    </div>
+                </div>
+            </div>
+
+             <div id="log-tasks" class="sub-tab" style="display:none"><div id="list-log-tasks"></div></div>
+        </section>
+
+        <section id="warehouse" class="section">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h1>المخازن</h1>
+                <button onclick="app.showDeptHistory('warehouse')" class="btn-ghost small"><i class="fas fa-history"></i> سجل المخازن</button>
+            </div>
+            <div class="form-row">
+                <button onclick="app.switchTab('wh-in', this)" class="btn-ghost active">📥 استلام</button>
+                <button onclick="app.switchTab('wh-out', this)" class="btn-ghost">📦 صرف (مبيعات)</button>
+                <button onclick="app.switchTab('wh-delivery', this)" class="btn-ghost" style="color:#d63031;border-color:#d63031"><i class="fas fa-truck"></i> توثيق التسليم</button>
+                <button onclick="app.switchTab('wh-tasks', this)" class="btn-ghost">🔔 مهام المخزن</button>
+            </div>
+            <div id="wh-in" class="sub-tab"><div id="list-wh-in"></div></div>
+            <div id="wh-out" class="sub-tab" style="display:none"><div id="list-wh-out"></div></div>
+            <div id="wh-delivery" class="sub-tab" style="display:none">
+                <div class="card" style="background:#fff5f5; border:1px solid #ffcccc">
+                    <h3><i class="fas fa-file-signature"></i> توثيق استلام العميل (الفواتير المختومة)</h3>
+                    <p style="color:#666; font-size:0.9rem;">هنا تظهر الطلبات التي أصدر المحاسب فواتيرها. يرجى توصيل الطلب للعميل، والحصول على ختم الاستلام على الفاتورة، ثم رفع الصورة هنا للإغلاق.</p>
+                </div>
+                <div id="list-wh-delivery"></div>
+            </div>
+            <div id="wh-tasks" class="sub-tab" style="display:none"><div id="list-wh-tasks"></div></div>
+        </section>
+
+        <section id="sales" class="section">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h1>المبيعات</h1>
+                <button onclick="app.showDeptHistory('sales')" class="btn-ghost small"><i class="fas fa-history"></i> سجل المبيعات</button>
+            </div>
+            <div class="form-row">
+                <button onclick="app.switchTab('sales-main', this)" class="btn-ghost active">🛒 أمر بيع جديد</button>
+                <button onclick="app.switchTab('sales-tasks', this)" class="btn-ghost">🔔 مهام المبيعات</button>
+                <button onclick="app.switchTab('sales-list', this)" class="btn-ghost">📋 قائمة المبيعات</button>
+            </div>
+            
+            <div id="sales-main" class="sub-tab">
+                <div class="card">
+                    <div class="form-row">
+                        <div class="form-group"><label>العميل</label><select id="so-client-select" onchange="app.renderSOGrid()"><option value="">اختر...</option></select></div>
+                        <div class="form-group"><label>رقم مرجع (Ref)</label><input id="so-ref"></div>
+                        <div class="form-group full-width" style="flex:2"><label>ملاحظات (ستظهر للمخازن)</label><input id="so-notes"></div>
+                    </div>
+                    <h4 style="margin:15px 0 5px;">المنتجات:</h4>
+                    <div id="grid-so-prods" class="prod-grid"></div>
+                    <br>
+                    <button onclick="app.createSO()" class="btn-secondary">إرسال للمخازن</button>
+                </div>
+            </div>
+            <div id="sales-tasks" class="sub-tab" style="display:none"><div id="list-sales-tasks"></div></div>
+            <div id="sales-list" class="sub-tab" style="display:none">
+                <div class="card">
+                     <h3>متابعة المبيعات</h3>
+                     <div id="so-list-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="accounting" class="section">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h1>المحاسبة</h1>
+                <button onclick="app.showDeptHistory('accounting')" class="btn-ghost small"><i class="fas fa-history"></i> سجل المحاسبة</button>
+            </div>
+            <div class="form-row">
+                <button onclick="app.switchTab('acc-reg', this)" class="btn-ghost active">تسجيل PO</button>
+                <button onclick="app.switchTab('acc-inv', this)" class="btn-ghost">الفواتير</button>
+                <button onclick="app.switchTab('acc-tasks', this)" class="btn-ghost">🔔 مهام الحسابات</button>
+            </div>
+            <div id="acc-reg" class="sub-tab"><div id="list-acc-reg"></div></div>
+            <div id="acc-inv" class="sub-tab" style="display:none"><div id="list-acc-inv"></div></div>
+            <div id="acc-tasks" class="sub-tab" style="display:none"><div id="list-acc-tasks"></div></div>
+        </section>
+
+        <section id="invoices-archive" class="section">
+            <h1>أرشيف الفواتير المكتملة</h1>
+            <div class="form-row">
+                <button onclick="app.switchTab('arch-sales-tab', this)" class="btn-ghost active">فواتير المبيعات</button>
+                <button onclick="app.switchTab('arch-purch-tab', this)" class="btn-ghost">سندات المشتريات</button>
+            </div>
+            <div id="arch-sales-tab" class="sub-tab">
+                <div class="card">
+                    <div id="archive-list-sales"></div>
+                </div>
+            </div>
+            <div id="arch-purch-tab" class="sub-tab" style="display:none">
+                <div class="card">
+                    <div id="archive-list-purch"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tasks" class="section">
+            <h1>إدارة المهام (عام)</h1>
+            <div class="card">
+                <h3>إرسال مهمة جديدة</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>من قسم (المرسل)</label>
+                        <select id="task-from">
+                            <option value="General">الإدارة العامة</option>
+                            <option value="Sales">المبيعات</option>
+                            <option value="Purchases">المشتريات</option>
+                            <option value="Warehouse">المخازن</option>
+                            <option value="Accounting">المحاسبة</option>
+                            <option value="Logistics">اللوجستيات</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>إلى قسم (المستلم)</label>
+                        <select id="task-dept">
+                            <option value="General">عام</option>
+                            <option value="Sales">المبيعات</option>
+                            <option value="Purchases">المشتريات</option>
+                            <option value="Warehouse">المخازن</option>
+                            <option value="Accounting">المحاسبة</option>
+                            <option value="Logistics">اللوجستيات</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group full-width"><label>عنوان المهمة</label><input id="task-title"></div>
+                
+                <div class="form-row">
+                    <div class="form-group full-width" style="flex:2"><label>التفاصيل</label><input id="task-desc"></div>
+                    <div class="form-group">
+                        <label>إرفاق ملف (من الجهاز)</label>
+                        <input type="file" id="task-file">
+                    </div>
+                </div>
+                <button onclick="app.addTask()" class="btn-primary">إرسال المهمة</button>
+            </div>
+            <h3>كل المهام المرسلة</h3>
+            <div id="list-tasks-all"></div>
+        </section>
+
+    </main>
+
+    <div class="inbox-wrapper">
+        <div id="floating-inbox" class="floating-inbox">
+            <div class="inbox-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-inbox"></i> البريد السري
+                    <small>الإدارة</small>
+                </div>
+                <i class="fas fa-times" style="cursor: pointer;" onclick="app.toggleInbox()"></i>
+            </div>
+            <div id="floating-inbox-body" class="inbox-body">
+                <p style="color:#aaa; text-align:center;">لا توجد رسائل جديدة</p>
+            </div>
+        </div>
+        <div class="inbox-toggle-btn" onclick="app.toggleInbox()" title="الرسائل">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+    </div>
+
+    <div id="history-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="document.getElementById('history-modal').style.display='none'">&times;</span>
+            <h2 id="modal-title">سجل القسم</h2>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            data: {
+                clients: [],
+                prods: [],
+                pos: [], 
+                sos: [], 
+                tasks: [],
+                logs: [],
+                secureMsgs: []
+            },
+            editingProdId: null,
+            currentRole: null,
+            
+            permissions: {
+                'admin': 'all',
+                'sales': ['nav-sales', 'nav-prod-v', 'nav-msg', 'nav-tasks'], 
+                'purchases': ['nav-purch', 'nav-msg', 'nav-tasks'],
+                'warehouse': ['nav-wh', 'nav-msg', 'nav-tasks'],
+                'logistics': ['nav-logis', 'nav-msg', 'nav-tasks'],
+                'accounting': ['nav-acc', 'nav-arch', 'nav-msg', 'nav-tasks', 'nav-clients', 'nav-prod-m', 'nav-prod-v']
+            },
+
+            init: function() {
+                // تعريف دالة المزامنة لاستدعائها من كود فايربيس
+                window.startAppSync = () => {
+                    const db = window.realtimeDb;
+                    if (!db) return; // التأكد من تحميل فايربيس
+                    
+                    const dataRef = window.dbRef(db, 'cozy_erp_v9');
+
+                    // الاستماع لأي تغيير في البيانات (Realtime)
+                    window.dbOnValue(dataRef, (snapshot) => {
+                        const val = snapshot.val();
+                        if (val) {
+                            app.data = val; // تحديث البيانات المحلية بالبيانات السحابية
+                        } else {
+                            // تهيئة البيانات لأول مرة إذا كانت قاعدة البيانات فارغة
+                            app.data = {
+                                clients: [], prods: [], pos: [], sos: [], 
+                                tasks: [], logs: [], secureMsgs: []
+                            };
+                        }
+                        
+                        // ضمان وجود المصفوفات لتجنب الأخطاء
+                        if(!app.data.logs) app.data.logs = [];
+                        if(!app.data.secureMsgs) app.data.secureMsgs = [];
+                        
+                        // تحديث الشاشة فوراً
+                        if(app.currentRole) {
+                           app.renderAll();
+                        }
+                        console.log("تمت موازنة البيانات مع السيرفر!");
+                    });
+                };
+
+                // محاولة البدء إذا كان فايربيس قد تم تحميله بالفعل
+                if(window.realtimeDb) window.startAppSync();
+                
+                document.getElementById('floating-inbox').classList.remove('open');
+            },
+
+            login: function(role) {
+                this.currentRole = role;
+                
+                const overlay = document.getElementById('login-overlay');
+                overlay.style.opacity = '0';
+                overlay.style.transform = 'translateY(-100vh)';
+                setTimeout(() => { overlay.style.display = 'none'; }, 600);
+
+                document.querySelector('.sidebar').style.display = 'flex';
+                document.querySelector('.main-content').style.display = 'block';
+
+                const allNavs = document.querySelectorAll('.nav-item');
+                if (this.permissions[role] !== 'all') {
+                    allNavs.forEach(nav => {
+                        if (nav.id && !this.permissions[role].includes(nav.id)) {
+                            nav.style.display = 'none';
+                        }
+                    });
+                }
+
+                if (role === 'admin') {
+                    document.querySelector('.inbox-wrapper').style.display = 'flex';
+                } else {
+                    document.querySelector('.inbox-wrapper').style.display = 'none';
+                }
+
+                if (role !== 'admin') {
+                    document.getElementById('nav-dash').style.display = 'none'; 
+                    document.getElementById('dashboard').classList.remove('active');
+                    
+                    let firstNav = '';
+                    if(role === 'sales') firstNav = 'sales';
+                    else if(role === 'purchases') firstNav = 'purchases';
+                    else if(role === 'warehouse') firstNav = 'warehouse';
+                    else if(role === 'logistics') firstNav = 'logistics';
+                    else if(role === 'accounting') firstNav = 'accounting';
+
+                    if(firstNav) {
+                        this.nav(firstNav, document.getElementById('nav-' + (firstNav==='sales'?'sales':(firstNav==='purchases'?'purch':(firstNav==='warehouse'?'wh':(firstNav==='logistics'?'logis':'acc'))))));
+                    }
+                } else {
+                    this.renderAll();
+                }
+            },
+            
+            toggleInbox: function() {
+                const inbox = document.getElementById('floating-inbox');
+                inbox.classList.toggle('open');
+            },
+
+            formatDate: function(timestamp) {
+                if(!timestamp) return new Date().toLocaleDateString('en-GB');
+                const num = Number(timestamp);
+                if (num < 946684800000) { return new Date().toLocaleDateString('en-GB'); }
+                return new Date(num).toLocaleDateString('en-GB'); 
+            },
+
+            save: function() {
+                try {
+                    // الحفظ في السحابة (Firebase)
+                    if(window.realtimeDb && window.dbSet && window.dbRef) {
+                        const db = window.realtimeDb;
+                        window.dbSet(window.dbRef(db, 'cozy_erp_v9'), this.data)
+                        .then(() => {
+                            console.log("تم الحفظ في السيرفر بنجاح");
+                        })
+                        .catch((error) => {
+                            console.error("فشل الحفظ:", error);
+                            alert("انتبه: لم يتم حفظ البيانات بسبب مشكلة في الاتصال!");
+                        });
+                    } else {
+                        console.warn("Firebase not loaded yet");
+                    }
+
+                    // تحديث الإحصائيات للإدارة
+                    if(this.currentRole === 'admin') this.updateDashboard();
+                } catch(e) {
+                    console.error(e);
+                }
+            },
+
+            addLog: function(dept, action, details) {
+                const date = new Date().toLocaleString('en-GB'); 
+                this.data.logs.unshift({ date, action, details, dept });
+                if(this.data.logs.length > 200) this.data.logs.pop();
+                this.save();
+            },
+
+            showDeptHistory: function(dept) {
+                const logs = this.data.logs.filter(l => l.dept === dept);
+                const titleMap = { 'sales': 'سجل المبيعات', 'purchases': 'سجل المشتريات', 'warehouse': 'سجل المخازن', 'accounting': 'سجل المحاسبة' };
+                document.getElementById('modal-title').innerText = titleMap[dept] || 'السجل';
+                const html = logs.length > 0 ? logs.map(l => `
+                    <div class="log-item">
+                        <div class="log-date">${l.date}</div>
+                        <strong>${l.action}</strong>
+                        <div style="margin-top:5px;">${l.details}</div>
+                    </div>
+                `).join('') : '<p style="text-align:center; color:#999">لا توجد سجلات بعد.</p>';
+                document.getElementById('modal-body').innerHTML = html;
+                document.getElementById('history-modal').style.display = 'block';
+            },
+
+            reset: function() {
+                const pass = prompt("أدخل كلمة المرور لتصفير النظام:");
+                if(pass === "20002000") {
+                    if(confirm("تحذير نهائي: سيتم حذف كل البيانات!")) {
+                        localStorage.removeItem('cozy_erp_v9');
+                        location.reload();
+                    }
+                } else { alert("كلمة المرور خاطئة!"); }
+            },
+
+            nav: function(id, btn) {
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+                if(btn) btn.classList.add('active');
+                this.renderAll();
+            },
+
+            switchTab: function(id, btn) {
+                const parent = btn.parentElement.parentElement;
+                parent.querySelectorAll('.sub-tab').forEach(d => d.style.display = 'none');
+                parent.querySelectorAll('.btn-ghost').forEach(b => b.classList.remove('active'));
+                document.getElementById(id).style.display = 'block';
+                btn.classList.add('active');
+            },
+
+            sendSecureMsg: function() {
+                const name = document.getElementById('sec-name').value || 'مجهول';
+                const dept = document.getElementById('sec-dept').value;
+                const text = document.getElementById('sec-text').value;
+                const pin = document.getElementById('sec-pin').value;
+                if(!text || !pin) return alert("الرسالة والـ PIN مطلوبين!");
+                this.data.secureMsgs.unshift({
+                    id: Date.now(), name, dept, text, pin, reply: '', date: new Date().toLocaleString('en-GB')
+                });
+                this.save();
+                document.getElementById('sec-text').value = '';
+                document.getElementById('sec-pin').value = '';
+                alert("تم إرسال الرسالة بنجاح. احتفظ بالـ PIN لمراجعة الرد.");
+                this.renderSecureMsgs();
+            },
+
+            checkMyMsgs: function() {
+                const pin = document.getElementById('check-pin').value;
+                if(!pin) return alert("أدخل الـ PIN");
+                const myMsgs = this.data.secureMsgs.filter(m => m.pin === pin);
+                if(myMsgs.length === 0) {
+                    document.getElementById('my-msgs-status').innerHTML = '<p style="color:red">لا توجد رسائل بهذا الرقم السري.</p>';
+                    return;
+                }
+                const html = myMsgs.map(m => `
+                    <div class="msg-box" style="border-right:3px solid var(--primary)">
+                        <small>${m.date} | ${m.dept}</small>
+                        <p><strong>رسالتك:</strong> ${m.text}</p>
+                        ${m.reply ? `<div class="msg-admin-reply"><strong>رد الإدارة:</strong> ${m.reply}</div>` : '<small style="color:orange">بانتظار الرد...</small>'}
+                    </div>
+                `).join('');
+                document.getElementById('my-msgs-status').innerHTML = html;
+            },
+
+            replySecureMsg: function(id) {
+                const reply = prompt("اكتب الرد:");
+                if(reply) {
+                    const msg = this.data.secureMsgs.find(m => m.id === id);
+                    msg.reply = reply;
+                    this.save();
+                    this.renderSecureMsgs();
+                }
+            },
+
+            renderSecureMsgs: function() {
+                if(this.currentRole === 'admin') {
+                    const adminHtml = this.data.secureMsgs.sort((a,b)=>b.id-a.id).map(m => `
+                        <div class="msg-box">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                <strong><i class="fas fa-user-secret"></i> ${m.name}</strong>
+                                <small style="font-size:0.7rem">${m.dept}</small>
+                            </div>
+                            <p style="margin:0; font-size:0.9rem;">${m.text}</p>
+                            ${m.reply ? `<div class="msg-admin-reply"><strong>ردك:</strong> ${m.reply}</div>` : 
+                            `<button onclick="app.replySecureMsg(${m.id})" class="small-btn btn-ghost" style="margin-top:5px;">رد</button>`}
+                        </div>
+                    `).join('') || '<p style="text-align:center; color:#ccc; font-size:0.9rem;">لا توجد رسائل</p>';
+                    document.getElementById('floating-inbox-body').innerHTML = adminHtml;
+                }
+            },
+
+            addClient: function() {
+                const name = document.getElementById('client-name').value;
+                if(name && !this.data.clients.includes(name)) {
+                    this.data.clients.push(name);
+                    this.addLog('general', "إضافة عميل", name);
+                    this.save();
+                    document.getElementById('client-name').value = '';
+                    this.renderClientsAndProds();
+                }
+            },
+
+            importCSV: function(input) {
+                const file = input.files[0];
+                if(!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    const rows = text.split('\n');
+                    let count = 0;
+                    rows.forEach((row) => {
+                        const cols = row.split(',');
+                        if(cols.length >= 3) {
+                            const code = cols[0].trim();
+                            const name = cols[1].trim();
+                            const price = parseFloat(cols[2]) || 0;
+                            const img = cols[3] ? cols[3].trim() : '';
+                            const qty = 0; 
+                            if(code && name && code !== 'Code' && code !== 'الكود') {
+                                app.data.prods.push({ id: Date.now() + Math.floor(Math.random() * 1000), code, name, price, qty, img, specials: {} });
+                                count++;
+                            }
+                        }
+                    });
+                    if(count > 0) {
+                        app.addLog('general', "استيراد منتجات", `تم استيراد ${count} منتج`);
+                        app.save();
+                        app.renderClientsAndProds();
+                        alert(`تم استيراد ${count} منتج بنجاح`);
+                    } else { alert("لم يتم العثور على بيانات صالحة."); }
+                    input.value = ''; 
+                };
+                reader.readAsText(file);
+            },
+            
+            importSpecialPricesCSV: function(input) {
+                const file = input.files[0];
+                if(!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    const rows = text.split('\n');
+                    let count = 0;
+                    rows.forEach((row) => {
+                        const cols = row.split(',');
+                        if(cols.length >= 3) {
+                            const code = cols[0].trim();
+                            const clientName = cols[1].trim();
+                            const price = parseFloat(cols[2]) || 0;
+                            const prod = app.data.prods.find(p => p.code === code);
+                            if(prod && clientName && price > 0) {
+                                if(!prod.specials) prod.specials = {};
+                                prod.specials[clientName] = price;
+                                count++;
+                            }
+                        }
+                    });
+                    if(count > 0) {
+                        app.addLog('general', "استيراد أسعار خاصة", `تم تحديث ${count} سعر`);
+                        app.save();
+                        app.renderClientsAndProds();
+                        alert(`تم تحديث ${count} سعر خاص بنجاح`);
+                    } else { alert("لم يتم العثور على بيانات مطابقة."); }
+                    input.value = ''; 
+                };
+                reader.readAsText(file);
+            },
+
+            saveProduct: function() {
+                const code = document.getElementById('p-code').value;
+                const name = document.getElementById('p-name').value;
+                const price = document.getElementById('p-price').value;
+                const img = document.getElementById('p-img').value;
+
+                if(!code || !name || !price) return alert("أكمل البيانات الأساسية");
+
+                if(this.editingProdId) {
+                    const p = this.data.prods.find(x => x.id === this.editingProdId);
+                    if(p) {
+                        p.code = code; p.name = name; p.price = parseFloat(price); p.img = img;
+                        this.addLog('general', "تعديل منتج", `${name} (${code})`);
+                        alert("تم التعديل بنجاح");
+                    }
+                } else {
+                    this.data.prods.push({ id: Date.now(), code, name, price: parseFloat(price), qty: 0, img, specials: {} });
+                    this.addLog('general', "إضافة منتج", `${name} (${code})`);
+                    alert("تمت الإضافة");
+                }
+                this.save(); this.cancelEdit(); this.renderClientsAndProds();
+            },
+
+            editProduct: function(id) {
+                const p = this.data.prods.find(x => x.id === id);
+                if(!p) return;
+                this.editingProdId = id;
+                document.getElementById('p-code').value = p.code;
+                document.getElementById('p-name').value = p.name;
+                document.getElementById('p-price').value = p.price;
+                document.getElementById('p-img').value = p.img || '';
+                document.getElementById('form-title').innerText = "تعديل منتج: " + p.name;
+                document.getElementById('btn-save-prod').innerText = "حفظ التعديلات";
+                document.getElementById('btn-cancel-edit').style.display = 'inline-block';
+                this.nav('products-create');
+            },
+
+            deleteProduct: function(id) {
+                if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+                    this.data.prods = this.data.prods.filter(p => p.id !== id);
+                    this.save(); this.renderClientsAndProds();
+                }
+            },
+
+            navToSpecialPrice: function(id) {
+                this.nav('products-create');
+                setTimeout(() => {
+                    const p = this.data.prods.find(x => x.id === id);
+                    if(p) {
+                         document.getElementById('price-prod-select').value = id;
+                         document.getElementById('special-price-box').scrollIntoView({behavior: "smooth"});
+                         document.getElementById('special-price-box').style.borderColor = "var(--primary)";
+                    }
+                }, 100);
+            },
+
+            cancelEdit: function() {
+                this.editingProdId = null;
+                document.getElementById('p-code').value = '';
+                document.getElementById('p-name').value = '';
+                document.getElementById('p-price').value = '';
+                document.getElementById('p-img').value = '';
+                document.getElementById('form-title').innerText = "1. إضافة منتج جديد";
+                document.getElementById('btn-save-prod').innerText = "حفظ المنتج";
+                document.getElementById('btn-cancel-edit').style.display = 'none';
+            },
+
+            assignSpecialPrice: function() {
+                const prodId = document.getElementById('price-prod-select').value;
+                const client = document.getElementById('price-client-select').value;
+                const price = document.getElementById('price-special').value;
+                if(!prodId || !client || !price) return;
+                const prod = this.data.prods.find(p=>p.id==prodId);
+                prod.specials[client] = parseFloat(price);
+                this.addLog('general', "تخصيص سعر", `منتج: ${prod.name} | عميل: ${client} | سعر: ${price}`);
+                this.save(); this.renderClientsAndProds(); alert("تم الحفظ");
+            },
+
+            renderClientsAndProds: function() {
+                const clientOpts = `<option value="">اختر...</option>` + this.data.clients.map(c => `<option value="${c}">${c}</option>`).join('');
+                document.getElementById('clients-list').innerHTML = this.data.clients.map(c => `<span class="badge" style="background:var(--primary); padding:8px;">${c}</span>`).join('');
+                document.getElementById('price-client-select').innerHTML = clientOpts;
+                document.getElementById('so-client-select').innerHTML = clientOpts;
+
+                document.getElementById('tbl-products').innerHTML = this.data.prods.map(p => {
+                    let specialsHtml = Object.keys(p.specials || {}).length > 0 ? Object.entries(p.specials).map(([c, pr]) => `<span class="special-tag">${c}: ${pr}</span>`).join(' ') : "-";
+                    const imgSrc = p.img ? p.img : 'https://placehold.co/40x40?text=IMG';
+                    return `
+                    <tr>
+                        <td style="position:relative"><img src="${imgSrc}" class="list-thumb"></td>
+                        <td><b>${p.code}</b></td>
+                        <td>${p.name}</td>
+                        <td>${p.price} SAR</td>
+                        <td>${specialsHtml}</td>
+                        <td>
+                            <button onclick="app.editProduct(${p.id})" class="btn-ghost small" title="تعديل"><i class="fas fa-edit"></i></button>
+                            <button onclick="app.navToSpecialPrice(${p.id})" class="btn-ghost small" title="سعر خاص" style="color:var(--accent)"><i class="fas fa-tag"></i></button>
+                            <button onclick="app.deleteProduct(${p.id})" class="btn-ghost small" title="حذف" style="color:red"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+                document.getElementById('price-prod-select').innerHTML = `<option value="">اختر...</option>` + this.data.prods.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            },
+
+            renderPOGrid: function() {
+                document.getElementById('grid-po-prods').innerHTML = this.data.prods.map(p => {
+                    const imgSrc = p.img ? p.img : 'https://placehold.co/100x100?text=No+Img';
+                    return `
+                    <div class="prod-box" onclick="this.classList.toggle('selected')">
+                        <img src="${imgSrc}" class="prod-thumb">
+                        <b>${p.name}</b> <small>(${p.code})</small>
+                        <input type="number" class="po-qty" data-id="${p.id}" placeholder="الكمية" onclick="event.stopPropagation()">
+                    </div>
+                `}).join('');
+            },
+
+            calcVat: function(val) {
+                const v = parseFloat(val) || 0;
+                const withVat = v * 1.15;
+                document.getElementById('po-cost-after-display').innerText = withVat.toFixed(2) + " SAR";
+            },
+
+            createPO: function() {
+                const ref = document.getElementById('po-ref').value;
+                const vnd = document.getElementById('po-vnd').value;
+                const country = document.getElementById('po-country').value;
+                const costB = parseFloat(document.getElementById('po-cost-before').value) || 0;
+                const costA = costB * 1.15;
+                const notes = document.getElementById('po-notes').value;
+                const fileInput = document.getElementById('po-file');
+
+                let items = [];
+                document.querySelectorAll('.po-qty').forEach(inp => {
+                    if(inp.value > 0) items.push({ ...this.data.prods.find(p=>p.id==inp.dataset.id), req: parseInt(inp.value), got: 0, note: '' });
+                });
+
+                if(items.length===0 || !ref) return alert("البيانات ناقصة");
+
+                const processPO = (fileData) => {
+                    this.data.pos.push({
+                        id: ref, vendor: vnd, country, items, logisticsStatus: 'تم الطلب',
+                        costs: { before: costB, after: costA }, notes, smacc: '', smaccNotes: '',
+                        file: fileData, createdAt: Date.now()
+                    });
+
+                    let logDetails = `<strong>المورد: ${vnd} | Ref: ${ref}</strong><br>
+                                      <table style="width:100%; font-size:0.8rem; margin-top:5px; border-collapse: collapse;">
+                                        <tr style="background:#eee;"><th>المنتج</th><th>الكمية</th></tr>`;
+                    items.forEach(i => {
+                         logDetails += `<tr><td style="padding:4px; border-bottom:1px solid #eee">${i.name}</td><td style="padding:4px; border-bottom:1px solid #eee">${i.req}</td></tr>`;
+                    });
+                    logDetails += `</table><br><strong>الإجمالي: ${costA.toFixed(2)} SAR</strong>`;
+                    this.addLog('purchases', "أمر شراء جديد", logDetails);
+                    this.save(); this.nav('purchases'); alert("تم");
+                };
+
+                if (fileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) { processPO(e.target.result); };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else { processPO(''); }
+            },
+
+            downloadPOExcel: function(poId) {
+                const po = this.data.pos.find(p=>p.id===poId);
+                let csv = "\uFEFFCode,Name,Retail Price,Qty Requested\n";
+                po.items.forEach(i => csv += `${i.code},${i.name},${i.price},${i.req}\n`);
+                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+                const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`PO_${po.id}.csv`; a.click();
+            },
+            
+            accRegisterPO: function(id) {
+                const smaccRef = document.getElementById(`smacc-${id}`).value;
+                const fileInput = document.getElementById(`acc-file-${id}`);
+                const accNotes = document.getElementById(`acc-n-${id}`).value;
+                if(!smaccRef) return alert("أدخل رقم القيد");
+                
+                const processAcc = (fileData) => {
+                    const po = this.data.pos.find(p=>p.id===id);
+                    po.smacc = smaccRef;
+                    po.smaccNotes = accNotes;
+                    if(fileData) po.accFile = fileData;
+                    this.addLog('accounting', "تسجيل محاسبي (PO)", `للمرجع ${id} برقم القيد ${smaccRef}`); 
+                    this.save(); this.renderAll();
+                };
+
+                if (fileInput && fileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) { processAcc(e.target.result); };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else { processAcc(null); }
+            },
+
+            checkWhShortage: function(id, idx, type) {
+                const input = document.getElementById(`${type==='in'?'rec':'conf'}-${id}-${idx}`);
+                const val = parseInt(input.value) || 0;
+                let req = 0;
+                if (type === 'in') {
+                    const po = this.data.pos.find(p=>p.id===id);
+                    req = po.items[idx].req;
+                } else {
+                    const so = this.data.sos.find(s=>s.id===id);
+                    req = so.items[idx].req;
+                }
+                const diff = req - val;
+                
+                if (type === 'out') {
+                     if(diff > 0) {
+                        input.style.borderColor = "red";
+                        input.style.background = "#fff0f0";
+                    } else {
+                        input.style.borderColor = "#dfe6e9";
+                        input.style.background = "#fff";
+                    }
+                    return;
+                }
+                const statusDiv = document.getElementById(`${type==='in'?'stat-rec':'stat-conf'}-${id}-${idx}`);
+                if(diff > 0) {
+                    statusDiv.innerHTML = `<span style="color:red">عجز: ${diff}</span>`;
+                    input.style.borderColor = "red";
+                    input.style.background = "#fff0f0";
+                } else if (diff < 0) {
+                    statusDiv.innerHTML = `<span style="color:orange">زيادة: ${Math.abs(diff)}</span>`;
+                } else {
+                    statusDiv.innerHTML = `<span style="color:green"><i class="fas fa-check"></i> مطابق</span>`;
+                    input.style.borderColor = "#dfe6e9";
+                    input.style.background = "#fff";
+                }
+            },
+
+            whConfirmPO: function(id) {
+                const po = this.data.pos.find(p=>p.id===id);
+                const whNote = document.getElementById(`wh-po-note-${id}`).value;
+                let logDetails = `<strong>استلام شحنة PO: ${id}</strong><br><table style="width:100%; font-size:0.8rem; border-collapse:collapse;"><tr><th>الصنف</th><th>طلب</th><th>وصل</th></tr>`;
+                po.items.forEach((item, idx) => {
+                    item.got = parseInt(document.getElementById(`rec-${id}-${idx}`).value)||0;
+                    item.note = document.getElementById(`note-${id}-${idx}`).value;
+                    let prod = this.data.prods.find(p=>p.id==item.id);
+                    if(prod) prod.qty += item.got;
+                    const color = item.got < item.req ? 'red' : 'green';
+                    logDetails += `<tr><td>${item.name}</td><td>${item.req}</td><td style="color:${color}">${item.got}</td></tr>`;
+                });
+                logDetails += `</table>`;
+                if(whNote) {
+                    po.whRecNotes = whNote; 
+                    logDetails += `<br>ملاحظات الاستلام: ${whNote}`;
+                }
+                po.logisticsStatus = 'تم الاستلام'; 
+                this.addLog('warehouse', "استلام مخزني", logDetails); 
+                this.save(); this.renderAll();
+            },
+
+            whConfirmSO: function(id) {
+                let so = this.data.sos.find(s=>s.id===id);
+                const note = document.getElementById(`wh-so-note-${id}`).value;
+                let logDetails = `<strong>صرف طلبية SO: ${so.ref}</strong><br><table style="width:100%; font-size:0.8rem; border-collapse:collapse;"><tr><th>الصنف</th><th>مطلوب</th><th>تم صرف</th><th>ملاحظة</th></tr>`;
+                so.items.forEach((item, idx) => {
+                    item.conf = parseInt(document.getElementById(`conf-${id}-${idx}`).value)||0;
+                    const itemNote = document.getElementById(`out-note-${id}-${idx}`).value;
+                    const color = item.conf < item.req ? 'red' : 'green';
+                    logDetails += `<tr><td>${item.name}</td><td>${item.req}</td><td style="color:${color}">${item.conf}</td><td>${itemNote}</td></tr>`;
+                });
+                so.items.forEach(item => this.data.prods.find(p=>p.id==item.id).qty -= item.conf);
+                so.status = 'Acc'; so.whNotes = note;
+                logDetails += `</table>`;
+                this.addLog('warehouse', "صرف مخزني", logDetails); 
+                this.save(); this.renderAll();
+            },
+            
+            whFinalizeDelivery: function(id) {
+                const fileInput = document.getElementById(`wh-del-file-${id}`);
+                
+                const processDelivery = (fileData) => {
+                    if(!fileData) return alert("يجب إرفاق صورة الفاتورة المختومة من العميل!");
+                    
+                    const so = this.data.sos.find(s=>s.id===id);
+                    so.status = 'Done'; 
+                    so.stampedInvoice = fileData;
+                    so.logisticsStatus = 'تم التسليم';
+
+                    this.addLog('warehouse', "توثيق تسليم", `تم رفع الفاتورة المختومة للطلب: ${so.ref}`);
+                    this.save(); this.renderAll();
+                };
+
+                if (fileInput && fileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) { processDelivery(e.target.result); };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else { 
+                    alert("الرجاء اختيار ملف الفاتورة المختومة.");
+                }
+            },
+
+            renderSOGrid: function() {
+                const client = document.getElementById('so-client-select').value;
+                document.getElementById('grid-so-prods').innerHTML = this.data.prods.map(p => {
+                    const price = (client && p.specials && p.specials[client]) ? p.specials[client] : p.price;
+                    const imgSrc = p.img ? p.img : 'https://placehold.co/100x100?text=No+Img';
+                    return `
+                    <div class="prod-box" onclick="this.classList.toggle('selected')">
+                        <img src="${imgSrc}" class="prod-thumb">
+                        <b>${p.name}</b> 
+                        <br><small style="color:#636e72">السعر: ${price} SAR</small>
+                        <input type="number" class="so-qty" data-id="${p.id}" data-price="${price}" placeholder="الكمية" onclick="event.stopPropagation()">
+                    </div>
+                `}).join('');
+            },
+
+            createSO: function() {
+                const client = document.getElementById('so-client-select').value;
+                const ref = document.getElementById('so-ref').value;
+                const notes = document.getElementById('so-notes').value;
+                let items = [];
+                document.querySelectorAll('.so-qty').forEach(inp => {
+                    if(inp.value > 0) items.push({ 
+                        id: parseInt(inp.dataset.id), ...this.data.prods.find(p=>p.id==inp.dataset.id), 
+                        req: parseInt(inp.value), conf: 0, price: parseFloat(inp.dataset.price)
+                    });
+                });
+                if(items.length===0 || !client) return alert("بيانات ناقصة");
+                
+                this.data.sos.push({ 
+                    id: Date.now(), client, ref, items, status: 'Wh', 
+                    logisticsStatus: 'تم الطلب', 
+                    inv: '', notes, accFile: '', journalRef: '', accNotes: '', stampedInvoice: '' 
+                });
+                let total = 0;
+                let logDetails = `<strong>العميل: ${client} | Ref: ${ref}</strong><br>
+                                  <table style="width:100%; font-size:0.8rem; margin-top:5px; border-collapse: collapse;">
+                                    <tr style="background:#eee;"><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الاجمالي</th></tr>`;
+                items.forEach(i => {
+                     const rowTot = i.req * i.price;
+                     total += rowTot;
+                     logDetails += `<tr>
+                        <td style="padding:4px; border-bottom:1px solid #eee">${i.name}</td>
+                        <td style="padding:4px; border-bottom:1px solid #eee">${i.req}</td>
+                        <td style="padding:4px; border-bottom:1px solid #eee">${i.price}</td>
+                        <td style="padding:4px; border-bottom:1px solid #eee">${rowTot.toLocaleString()}</td>
+                     </tr>`;
+                });
+                logDetails += `</table><br><strong>الإجمالي الكلي: ${total.toLocaleString()} SAR</strong>`;
+                this.addLog('sales', "أمر بيع جديد", logDetails);
+                this.save(); this.nav('sales'); alert("تم");
+            },
+
+            downloadSOExcel: function(id) {
+                let so = this.data.sos.find(s=>s.id===id);
+                let csv = "\uFEFFProduct Code,Product Name,Requested Qty,Confirmed Qty,Unit Price,Total (Excl VAT),VAT (15%),Total (Incl VAT)\n";
+                so.items.forEach(i => {
+                    let rowTotal = i.conf * i.price;
+                    let vat = rowTotal * 0.15;
+                    let totalInc = rowTotal + vat;
+                    csv += `${i.code},${i.name},${i.req},${i.conf},${i.price},${rowTotal.toFixed(2)},${vat.toFixed(2)},${totalInc.toFixed(2)}\n`;
+                });
+                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+                const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`SO_${so.ref}.csv`; a.click();
+            },
+            
+            accFinalizeSO: function(id) {
+                const inv = document.getElementById(`inv-${id}`).value;
+                const journal = document.getElementById(`acc-ref-${id}`).value;
+                const fileInput = document.getElementById(`acc-file-so-${id}`);
+                const accNotes = document.getElementById(`acc-note-so-${id}`).value;
+
+                if(!inv && !journal) return alert("مطلوب رقم الفاتورة أو القيد");
+                
+                const processFinal = (fileData) => {
+                    const so = this.data.sos.find(s=>s.id===id);
+                    so.status='Delivery'; 
+                    so.inv = inv; so.journalRef = journal; so.accNotes = accNotes;
+                    if(fileData) so.accFile = fileData;
+
+                    let logDetails = `<strong>إصدار فاتورة مبيعات</strong><br>رقم الفاتورة: ${inv}<br>العميل: ${so.client}`;
+                    if(journal) logDetails += `<br>رقم القيد: ${journal}`;
+                    
+                    this.addLog('accounting', "إصدار فاتورة", logDetails); 
+                    this.save(); this.renderAll();
+                };
+
+                if (fileInput && fileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) { processFinal(e.target.result); };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else { processFinal(null); }
+            },
+
+            addTask: function() {
+                const from = document.getElementById('task-from').value;
+                const dept = document.getElementById('task-dept').value;
+                const title = document.getElementById('task-title').value;
+                const desc = document.getElementById('task-desc').value;
+                const fileInput = document.getElementById('task-file');
+                const fileObj = fileInput.files[0];
+                if(!title) return alert("مطلوب عنوان للمهمة");
+                const processTask = (fileData) => {
+                    this.data.tasks.push({ 
+                        id: Date.now(), dept, from, title, desc, file: fileData, reply: '', done: false 
+                    });
+                    this.addLog('tasks', "مهمة جديدة", `من: ${from} -> إلى: ${dept}<br>العنوان: ${title}`);
+                    this.save(); 
+                    this.renderAll(); 
+                    document.getElementById('task-title').value='';
+                    document.getElementById('task-desc').value='';
+                    document.getElementById('task-file').value='';
+                    alert("تم إرسال المهمة للقسم: " + dept);
+                };
+                if (fileObj) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) { processTask(e.target.result); };
+                    reader.readAsDataURL(fileObj);
+                } else { processTask(''); }
+            },
+            solveTask: function(id) {
+                const r = document.getElementById(`tr-${id}`).value;
+                if(!r) return;
+                let t = this.data.tasks.find(x => x.id === id);
+                t.reply = r; t.done = true;
+                this.addLog('tasks', "إنجاز مهمة", `المهمة: ${t.title}<br>الرد: ${r}`);
+                this.save(); this.renderAll();
+            },
+
+            renderDeptTasks: function(dept, containerId) {
+                const tasks = this.data.tasks.filter(t => (t.dept === dept || t.dept === 'General') && !t.done)
+                                             .sort((a,b) => b.id - a.id);
+                const html = tasks.length ? tasks.map(t => `
+                    <div class="card" style="border-right:4px solid var(--primary)">
+                        <div style="display:flex; justify-content:space-between;">
+                            <h4>${t.title}</h4> 
+                            <div>
+                                <small style="background:#eee; padding:2px 5px; border-radius:4px;">من: ${t.from || '?'}</small>
+                                <i class="fas fa-arrow-left" style="font-size:0.7rem"></i>
+                                <small style="background:#ffeaa7; padding:2px 5px; border-radius:4px;">إلى: ${t.dept}</small>
+                            </div>
+                        </div>
+                        <p>${t.desc}</p>
+                        ${t.file ? `<div style="margin-bottom:10px;"><a href="${t.file}" download="attachment" target="_blank" style="color:var(--primary); text-decoration:underline;"><i class="fas fa-paperclip"></i> تحميل المرفق</a></div>` : ''}
+                        <div class="form-row">
+                            <div class="form-group full-width"><input id="tr-${t.id}" placeholder="اكتب ردك هنا للإتمام..."></div>
+                            <button onclick="app.solveTask(${t.id})" class="btn-primary small">إتمام</button>
+                        </div>
+                    </div>
+                `).join('') : '<p style="text-align:center; color:#999; padding:20px;">لا توجد مهام جديدة</p>';
+                document.getElementById(containerId).innerHTML = html;
+            },
+
+            // --- HELPER LOGIC FUNCTIONS FOR READ-ONLY LOGISTICS ---
+            
+            getLogisticsStatePO: function(po) {
+                // Steps: 0:Ordered, 1:Acc Register, 2:Wh Receipt (Partial/Full), 3:Done
+                let step = 0;
+                let statusText = "تم الطلب";
+                
+                if (po.smacc) {
+                    step = 1;
+                    statusText = "تم التسجيل (بانتظار المخزن)";
+                } else {
+                    statusText = "بانتظار تسجيل المحاسب";
+                }
+
+                if (po.logisticsStatus === 'تم الاستلام' || po.whRecNotes) {
+                    step = 3; 
+                    statusText = "تم الاستلام";
+                } else if (step === 1) {
+                    step = 2; // Waiting for WH
+                }
+
+                return { step, text: statusText };
+            },
+
+            getLogisticsStateSO: function(so) {
+                // Steps: 0:Ordered, 1:Wh Confirm, 2:Acc Invoice, 3:Delivery, 4:Done
+                let step = 0;
+                let statusText = "تم الطلب";
+
+                if (so.status === 'Wh') {
+                    step = 1; statusText = "بانتظار تأكيد المخزن";
+                } else if (so.status === 'Acc') {
+                    step = 2; statusText = "بانتظار الفوترة";
+                } else if (so.status === 'Delivery') {
+                    step = 3; statusText = "بانتظار التسليم";
+                } else if (so.status === 'Done') {
+                    step = 4; statusText = "تم التسليم";
+                }
+                return { step, text: statusText };
+            },
+
+            renderAll: function() {
+                this.renderClientsAndProds();
+                this.renderPOGrid();
+                this.renderSOGrid();
+                if (this.currentRole === 'admin') this.updateDashboard();
+                this.renderSecureMsgs();
+
+                // --- Logistics NEW READ-ONLY LOGIC ---
+                
+                // Inbound (POs)
+                const poStepsLabels = ['طلب', 'محاسبة', 'استلام', 'مكتمل'];
+                document.getElementById('log-inbound-readonly').innerHTML = this.data.pos.slice().sort((a,b)=>b.id-a.id).map(p => {
+                    const state = this.getLogisticsStatePO(p);
+                    
+                    // Check Discrepancy
+                    let discrepancyHtml = '';
+                    if(state.step >= 2) { // Only if reached warehouse
+                        let diffs = [];
+                        p.items.forEach(i => {
+                            if(i.got !== i.req) diffs.push(`${i.name}: طلب ${i.req} / وصل ${i.got}`);
+                        });
+                        if(diffs.length > 0) {
+                            discrepancyHtml = `<div class="discrepancy-box"><i class="fas fa-exclamation-triangle"></i> يوجد فروقات: ${diffs.join(', ')}</div>`;
+                        }
+                    }
+
+                    // Attachments
+                    let attachHtml = '';
+                    if(p.file) attachHtml += `<a href="${p.file}" class="attach-badge" download><i class="fas fa-file"></i> ملف الشراء</a>`;
+                    if(p.accFile) attachHtml += `<a href="${p.accFile}" class="attach-badge" download><i class="fas fa-file-invoice-dollar"></i> سند القيد</a>`;
+
+                    // Progress Bar HTML
+                    const progHtml = poStepsLabels.map((lbl, idx) => {
+                        let cls = '';
+                        if(idx < state.step) cls = 'completed';
+                        else if(idx === state.step) cls = 'active';
+                        return `<div class="prog-step ${cls}"></div>`;
+                    }).join('');
+                    
+                    const labelsHtml = poStepsLabels.map((lbl, idx) => {
+                        return `<div class="step-txt ${idx === state.step ? 'active' : ''}">${lbl}</div>`;
+                    }).join('');
+
+                    return `
+                    <div class="log-card" style="border-right: 4px solid var(--secondary);">
+                        <div class="log-header">
+                            <div>
+                                <div class="log-id">PO: ${p.id}</div>
+                                <div class="log-sub">${p.vendor} | ${app.formatDate(p.createdAt)}</div>
+                            </div>
+                            <span class="badge bg-blue">${state.text}</span>
+                        </div>
+                        <div class="log-progress">${progHtml}</div>
+                        <div class="step-labels">${labelsHtml}</div>
+                        ${discrepancyHtml}
+                        ${attachHtml ? `<div class="attach-section">${attachHtml}</div>` : ''}
+                    </div>`;
+                }).join('') || '<p style="text-align:center; color:#ccc">لا توجد طلبات</p>';
+
+                // Outbound (SOs)
+                const soStepsLabels = ['طلب', 'تأكيد', 'فوترة', 'توصيل', 'مكتمل'];
+                document.getElementById('log-outbound-readonly').innerHTML = this.data.sos.slice().sort((a,b)=>b.id-a.id).map(s => {
+                    const state = this.getLogisticsStateSO(s);
+
+                    // Check Discrepancy (Wh Confirmed vs Requested)
+                    let discrepancyHtml = '';
+                    if(state.step >= 2) { // After Wh confirmation
+                        let diffs = [];
+                        s.items.forEach(i => {
+                            if(i.conf !== i.req) diffs.push(`${i.name}: طلب ${i.req} / توفر ${i.conf}`);
+                        });
+                        if(diffs.length > 0) {
+                            discrepancyHtml = `<div class="discrepancy-box"><i class="fas fa-exclamation-circle"></i> فروقات الكميات: ${diffs.join(', ')}</div>`;
+                        }
+                    }
+
+                    // Attachments
+                    let attachHtml = '';
+                    if(s.accFile) attachHtml += `<a href="${s.accFile}" class="attach-badge" download><i class="fas fa-file-invoice"></i> الفاتورة</a>`;
+                    if(s.stampedInvoice) attachHtml += `<a href="${s.stampedInvoice}" class="attach-badge" style="border-color:#00b894; color:#00b894" download><i class="fas fa-stamp"></i> استلام مختوم</a>`;
+
+                    // Progress Bar HTML
+                    const progHtml = soStepsLabels.map((lbl, idx) => {
+                        let cls = '';
+                        if(idx < state.step) cls = 'completed';
+                        else if(idx === state.step) cls = 'active';
+                        return `<div class="prog-step ${cls}"></div>`;
+                    }).join('');
+
+                    const labelsHtml = soStepsLabels.map((lbl, idx) => {
+                        return `<div class="step-txt ${idx === state.step ? 'active' : ''}">${lbl}</div>`;
+                    }).join('');
+
+                    return `
+                    <div class="log-card" style="border-right: 4px solid var(--accent);">
+                        <div class="log-header">
+                            <div>
+                                <div class="log-id">SO: ${s.ref}</div>
+                                <div class="log-sub">${s.client} | ${app.formatDate(s.id)}</div>
+                            </div>
+                            <span class="badge bg-orange">${state.text}</span>
+                        </div>
+                        <div class="log-progress">${progHtml}</div>
+                        <div class="step-labels">${labelsHtml}</div>
+                        ${discrepancyHtml}
+                        ${attachHtml ? `<div class="attach-section">${attachHtml}</div>` : ''}
+                    </div>`;
+                }).join('') || '<p style="text-align:center; color:#ccc">لا توجد مبيعات</p>';
+
+
+                this.renderDeptTasks('Sales', 'list-sales-tasks');
+                this.renderDeptTasks('Purchases', 'list-pur-tasks');
+                this.renderDeptTasks('Warehouse', 'list-wh-tasks');
+                this.renderDeptTasks('Accounting', 'list-acc-tasks');
+                this.renderDeptTasks('Logistics', 'list-log-tasks');
+
+                // Tasks
+                document.getElementById('list-tasks-all').innerHTML = this.data.tasks.slice().sort((a,b)=>b.id-a.id).map(t => `
+                    <div class="card" style="border-right:4px solid ${t.done?'#00b894':'#fdcb6e'}">
+                        <h4>من [${t.from||'?'}] إلى [${t.dept}] : ${t.title}</h4><p>${t.desc}</p>
+                        ${t.file ? `<small><a href="${t.file}" download="attachment" target="_blank">🔗 تحميل المرفق</a></small>` : ''}
+                        ${t.reply ? `<p style="color:green; border-top:1px dashed #eee; margin-top:5px; padding-top:5px;"><strong>تم الإنجاز:</strong> ${t.reply}</p>` : 
+                        `<div style="color:orange; font-size:0.8rem; margin-top:5px;">قيد الانتظار...</div>`}
+                    </div>
+                `).join('');
+
+                // Archive
+                const salesInvoices = this.data.sos.filter(s => s.status === 'Done').sort((a,b) => b.id - a.id);
+                const purchInvoices = this.data.pos.filter(p => p.smacc).sort((a,b) => b.id - a.id);
+                const renderArchItem = (i, type) => {
+                    let total = 0, invNo='', jNo='', notesObj={}, file='';
+                    const dateStr = app.formatDate(type=='sale'?i.id:i.createdAt||i.id);
+                    if(type === 'sale') {
+                        total = i.items.reduce((acc, x) => acc + (x.conf*x.price), 0);
+                        invNo = i.inv; jNo = i.journalRef; file = i.accFile;
+                        notesObj = { s: i.notes, w: i.whNotes, a: i.accNotes };
+                    } else {
+                        total = i.costs.after;
+                        invNo = i.smacc; jNo = 'PO-REG'; file = i.accFile;
+                        notesObj = { s: i.notes, w: i.whRecNotes, a: i.smaccNotes };
+                    }
+                    return `
+                    <div class="card" style="border-right:5px solid ${type=='sale'?'var(--secondary)':'var(--accent)'}">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <h3 style="margin:0">${type=='sale' ? 'فاتورة مبيعات' : 'سند مشتريات'} <small>(${invNo})</small></h3>
+                                <div style="color:#666; font-size:0.9rem;"><span class="date-badge">${dateStr}</span> المرجع: ${type=='sale'?i.ref:i.id} | القيد: ${jNo}</div>
+                                ${type === 'sale' && i.stampedInvoice ? `<div style="margin-top:5px;"><a href="${i.stampedInvoice}" download="Stamped_Inv_${i.ref}" style="color:#00b894; font-weight:bold"><i class="fas fa-check-circle"></i> فاتورة مختومة (تم التسليم)</a></div>` : ''}
+                            </div>
+                            <div style="text-align:left;">
+                                <div style="font-size:1.2rem; font-weight:bold; color:var(--text-dark)">${total.toLocaleString()} SAR</div>
+                                ${file ? `<a href="${file}" download="Inv_File" style="font-size:0.8rem; color:var(--primary)"><i class="fas fa-paperclip"></i> تحميل الملف</a>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+                };
+                document.getElementById('archive-list-sales').innerHTML = salesInvoices.map(i => renderArchItem(i, 'sale')).join('') || '<p>لا توجد فواتير مبيعات مكتملة</p>';
+                document.getElementById('archive-list-purch').innerHTML = purchInvoices.map(i => renderArchItem(i, 'purch')).join('') || '<p>لا توجد سندات مشتريات</p>';
+
+                // Purchases List
+                document.getElementById('po-list-container').innerHTML = this.data.pos.slice().sort((a,b)=>b.id-a.id).map(p => {
+                    const isReg = !!p.smacc;
+                    return `
+                    <div class="card" style="padding:15px; border-right: 4px solid ${isReg?'green':'orange'}">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong><span class="date-badge">${app.formatDate(p.createdAt || p.id)}</span> PO: ${p.id}</strong>
+                            <span class="badge ${isReg?'bg-green':'bg-orange'}">${isReg ? 'تم التسجيل' : 'بانتظار تسجيل المحاسب'}</span>
+                        </div>
+                    </div>
+                `}).join('');
+
+                // Sales List
+                document.getElementById('so-list-container').innerHTML = this.data.sos.slice().sort((a,b)=>b.id-a.id).map(s => {
+                    const isDone = s.status === 'Done';
+                    return `
+                    <div class="card" style="padding:15px; border-right: 4px solid ${isDone?'green':'orange'}">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong><span class="date-badge">${app.formatDate(s.id)}</span> Ref: ${s.ref} (${s.client})</strong>
+                            <span class="badge ${isDone?'bg-green':'bg-orange'}">${isDone ? 'مكتمل' : 'قيد المعالجة'}</span>
+                        </div>
+                    </div>
+                `}).join('');
+
+
+                // Accounting
+                document.getElementById('list-acc-reg').innerHTML = this.data.pos.filter(p => !p.smacc).sort((a,b)=>b.id-a.id).map(p => `
+                    <div class="card">
+                        <h3><span class="date-badge">${app.formatDate(p.createdAt || p.id)}</span> تسجيل: ${p.id} (${p.vendor})</h3>
+                        <p>تكلفة الشراء (قبل الضريبة): <strong>${p.costs.before}</strong></p>
+                        ${p.notes ? `<div class="note-highlight"><i class="fas fa-shopping-bag"></i> ملاحظات المشتريات: ${p.notes}</div>` : ''}
+                        ${p.whRecNotes ? `<div class="note-highlight"><i class="fas fa-warehouse"></i> ملاحظات الاستلام (المخزن): ${p.whRecNotes}</div>` : ''}
+                        
+                        <div style="background:#fcfcfc; padding:10px; margin:10px 0; border:1px solid #eee; border-radius:8px;">
+                            ${p.file ? `<a href="${p.file}" download="PO_Attach_${p.id}" style="display:block; margin-bottom:10px; color:var(--primary)"><i class="fas fa-paperclip"></i> تحميل مرفقات الشراء</a>` : '<small style="color:#aaa">لا توجد مرفقات شراء</small>'}
+                            <div class="form-row" style="margin-top:10px;">
+                                <div class="form-group" style="flex:1"><input id="acc-n-${p.id}" placeholder="ملاحظات المحاسبة (ستظهر للمشتريات).."></div>
+                                <div class="form-group" style="flex:1">
+                                    <label>إرفاق قيد/إيصال</label>
+                                    <input type="file" id="acc-file-${p.id}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <button onclick="app.downloadPOExcel('${p.id}')" class="btn-ghost active">Excel</button>
+                            <div class="form-group"><input id="smacc-${p.id}" placeholder="رقم القيد/الفاتورة"></div>
+                            <button onclick="app.accRegisterPO('${p.id}')" class="btn-primary">تسجيل</button>
+                        </div>
+                    </div>
+                `).join('') || '<p>لا توجد طلبات</p>';
+
+                // Warehouse IN
+                document.getElementById('list-wh-in').innerHTML = this.data.pos.filter(p => !p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').sort((a,b)=>b.id-a.id).map(p => `
+                    <div class="card">
+                        <h3><span class="date-badge">${app.formatDate(p.createdAt || p.id)}</span> استلام الشحنة (PO: ${p.id})</h3>
+                        ${p.notes ? `<div class="note-highlight"><i class="fas fa-info-circle"></i> ملاحظات المشتريات: ${p.notes}</div>` : ''}
+                        
+                        <div style="margin:15px 0;">
+                            ${p.items.map((i,idx)=>{
+                                const imgSrc = i.img ? i.img : 'https://placehold.co/60x60?text=Prod';
+                                return `
+                                <div class="wh-item-row">
+                                    <img src="${imgSrc}" class="wh-img">
+                                    <div class="wh-info">
+                                        <div style="display:flex; align-items:center; gap:10px;">
+                                            <div style="font-weight:800; font-size:1.1rem;">${i.name}</div>
+                                            <div style="color:var(--primary); font-family:monospace; font-size:1rem; background:#f0f3ff; padding:2px 8px; border-radius:4px; border:1px solid #dbeafe;">${i.code}</div>
+                                        </div>
+                                        <div style="color:#666; font-size:0.85rem; margin-top:5px;">المطلوب (PO): <strong>${i.req}</strong></div>
+                                    </div>
+                                    <div class="wh-input-area">
+                                        <label>تم الاستلام</label>
+                                        <input id="rec-${p.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${p.id}', ${idx}, 'in')">
+                                        <div id="stat-rec-${p.id}-${idx}" class="wh-status" style="color:green"><i class="fas fa-check"></i> مطابق</div>
+                                    </div>
+                                    <div style="flex:1"><input id="note-${p.id}-${idx}" placeholder="ملاحظات.."></div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full-width"><input id="wh-po-note-${p.id}" placeholder="ملاحظات الاستلام (للمحاسب)..."></div>
+                            <button onclick="app.whConfirmPO('${p.id}')" class="btn-primary">تأكيد استلام المخزون</button>
+                        </div>
+                    </div>
+                `).join('') || '<p>فارغ</p>';
+
+                // Warehouse OUT
+                document.getElementById('list-wh-out').innerHTML = this.data.sos.filter(s => s.status === 'Wh').sort((a,b)=>b.id-a.id).map(s => `
+                    <div class="card">
+                        <h3><span class="date-badge">${app.formatDate(s.id)}</span> تجهيز وصرف (SO: ${s.ref})</h3>
+                        <p style="color:#666">العميل: ${s.client}</p>
+                        ${s.notes ? `<div class="note-highlight"><i class="fas fa-shopping-cart"></i> ملاحظات المبيعات: ${s.notes}</div>` : ''}
+                        
+                        <div style="margin:15px 0;">
+                            ${s.items.map((i,idx)=>{
+                                const prod = this.data.prods.find(x=>x.id==i.id);
+                                const imgSrc = prod.img ? prod.img : 'https://placehold.co/60x60?text=Prod';
+                                return `
+                                <div class="wh-item-row single-line">
+                                    <div style="position:relative"><img src="${imgSrc}" class="list-thumb"></div>
+                                    <div class="wh-info-compact" style="display:flex; align-items:center; gap:25px;">
+                                        <div style="font-size:1.4rem; font-weight:800; color:#2d3436;">${i.name}</div>
+                                        <div style="font-size:1.3rem; font-family:monospace; font-weight:bold; color:var(--primary); background:#f0f3ff; padding:4px 12px; border-radius:6px; border:1px solid #dbeafe;">${i.code}</div>
+                                    </div>
+                                    <div class="badge bg-blue" style="font-size:1rem; padding:8px 15px;">مطلوب: ${i.req}</div>
+                                    
+                                    <div class="wh-input-compact">
+                                        <input id="conf-${s.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${s.id}', ${idx}, 'out')">
+                                    </div>
+                                    <div class="wh-note-compact">
+                                        <input id="out-note-${s.id}-${idx}" placeholder="ملاحظة لهذا المنتج...">
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                        <div class="form-row" style="margin-top:10px;">
+                            <div class="form-group full-width"><input id="wh-so-note-${s.id}" placeholder="ملاحظات المخزن (ستظهر في الفاتورة للمحاسب)..."></div>
+                            <button onclick="app.whConfirmSO(${s.id})" class="btn-secondary">تأكيد الصرف</button>
+                        </div>
+                    </div>
+                `).join('') || '<p>فارغ</p>';
+                
+                // Warehouse Delivery Confirm
+                document.getElementById('list-wh-delivery').innerHTML = this.data.sos.filter(s => s.status === 'Delivery').sort((a,b)=>b.id-a.id).map(s => `
+                    <div class="card" style="border-right: 4px solid #d63031;">
+                        <h3><i class="fas fa-truck"></i> توصيل الطلب: ${s.ref}</h3>
+                        <p style="color:#666; margin-bottom:5px;">العميل: <strong>${s.client}</strong></p>
+                        <p style="color:#888; font-size:0.9rem;">تم إصدار الفاتورة: ${s.inv} | يرجى تسليم الطلب والحصول على التوقيع.</p>
+                        
+                        <div class="form-row" style="background:#fff5f5; padding:15px; border-radius:8px; margin-top:10px;">
+                            ${s.accFile ? `<div class="form-group"><label>فاتورة المحاسب (للطباعة)</label><a href="${s.accFile}" download="Inv_${s.ref}" class="btn-ghost active">تحميل الفاتورة</a></div>` : ''}
+                            <div class="form-group full-width" style="flex:2">
+                                <label style="color:#d63031">رفع صورة الفاتورة المختومة من العميل</label>
+                                <input type="file" id="wh-del-file-${s.id}" accept="image/*,application/pdf">
+                            </div>
+                        </div>
+                        <button onclick="app.whFinalizeDelivery(${s.id})" class="btn-danger" style="margin-top:10px; width:100%">تأكيد التسليم وإغلاق الطلب</button>
+                    </div>
+                `).join('') || '<p style="text-align:center; padding:20px;">لا توجد طلبات جاهزة للتوصيل</p>';
+
+                // Acc Inv
+                document.getElementById('list-acc-inv').innerHTML = this.data.sos.filter(s => s.status === 'Acc').sort((a,b)=>b.id-a.id).map(s => `
+                    <div class="card">
+                        <h3><span class="date-badge">${app.formatDate(s.id)}</span> فوترة: ${s.client} (${s.ref})</h3>
+                        ${s.whNotes ? `<div class="note-highlight"><i class="fas fa-box"></i> ملاحظات المخزن: ${s.whNotes}</div>` : ''}
+                        
+                        <div class="form-row" style="background:#fcfcfc; padding:10px; border:1px solid #eee; margin-bottom:10px; border-radius:8px;">
+                            <div class="form-group full-width">
+                                <label>إرفاق ملف</label>
+                                <input type="file" id="acc-file-so-${s.id}">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <button onclick="app.downloadSOExcel(${s.id})" class="btn-ghost active">Excel</button>
+                            <div class="form-group"><input id="acc-ref-${s.id}" placeholder="رقم القيد/الفاتورة"></div>
+                            <div class="form-group full-width"><input id="acc-note-so-${s.id}" placeholder="ملاحظات المحاسبة (ستظهر للمبيعات).."></div>
+                            <button onclick="app.accFinalizeSO(${s.id})" class="btn-primary">إصدار الفاتورة وإرسال للتوصيل</button>
+                        </div>
+                        <input type="hidden" id="inv-${s.id}" value="NA"> 
+                    </div>
+                `).join('');
+            },
+
+            updateDashboard: function() {
+                document.getElementById('d-prod-count').innerText = this.data.prods.length;
+                document.getElementById('d-client-count').innerText = this.data.clients.length;
+                document.getElementById('d-msgs-all').innerText = this.data.secureMsgs.length;
+
+                const salesDone = this.data.sos.filter(s => s.status === 'Done');
+                const salesPending = this.data.sos.filter(s => s.status !== 'Done');
+                const totalSalesVal = salesDone.reduce((acc, so) => acc + so.items.reduce((sum, i) => sum + (i.conf * i.price), 0), 0);
+                document.getElementById('d-sales-val').innerText = totalSalesVal.toLocaleString() + " SAR";
+                document.getElementById('d-sales-done').innerText = salesDone.length;
+                document.getElementById('d-sales-pend').innerText = salesPending.length;
+
+                const purDone = this.data.pos.filter(p => p.smacc); 
+                const totalPurVal = purDone.reduce((acc, po) => acc + (po.costs ? po.costs.after : 0), 0);
+                document.getElementById('d-pur-val').innerText = totalPurVal.toLocaleString() + " SAR";
+                document.getElementById('d-pur-count').innerText = purDone.length;
+
+                const whPendingSales = this.data.sos.filter(s => s.status === 'Wh').length;
+                const whPendingPurch = this.data.pos.filter(p => !p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').length;
+                const whPendingDel = this.data.sos.filter(s => s.status === 'Delivery').length;
+                const totalWhPending = whPendingSales + whPendingPurch + whPendingDel;
+                
+                document.getElementById('d-pend-wh').innerText = totalWhPending;
+                document.getElementById('badge-wh').style.display = totalWhPending > 0 ? 'block' : 'none';
+
+                const accPendingSales = this.data.sos.filter(s => s.status === 'Acc').length;
+                const accPendingPurch = this.data.pos.filter(p => !p.smacc).length;
+                const totalAccPending = accPendingSales + accPendingPurch;
+                document.getElementById('d-pend-acc').innerText = totalAccPending;
+                document.getElementById('badge-acc').style.display = totalAccPending > 0 ? 'block' : 'none';
+
+                let soldMap = {};
+                this.data.prods.forEach(p => soldMap[p.id] = 0);
+                salesDone.forEach(so => {
+                    so.items.forEach(item => { if(soldMap[item.id] !== undefined) soldMap[item.id] += (item.conf || 0); });
+                });
+                let sortedProds = this.data.prods.map(p => ({ ...p, soldQty: soldMap[p.id] || 0 })).sort((a, b) => b.soldQty - a.soldQty);
+                const renderRankList = (list, isTop) => {
+                    return list.map((p, idx) => {
+                        const imgSrc = p.img ? p.img : 'https://placehold.co/40x40?text=P';
+                        return `
+                        <div class="rank-item">
+                            <div class="rank-info">
+                                <span style="font-weight:bold; color:#aaa; width:20px;">#${isTop ? idx+1 : sortedProds.length - idx}</span>
+                                <img src="${imgSrc}" class="rank-img">
+                                <div>
+                                    <div style="font-weight:bold; font-size:0.9rem">${p.name}</div>
+                                    <div style="font-size:0.75rem; color:#888">${p.code}</div>
+                                </div>
+                            </div>
+                            <div class="rank-score ${isTop?'rs-high':'rs-low'}">${p.soldQty} مباع</div>
+                        </div>`;
+                    }).join('');
+                };
+                const top10 = sortedProds.filter(p => p.soldQty > 0).slice(0, 10);
+                const bottom10 = [...sortedProds].reverse().slice(0, 10);
+                document.getElementById('top-10-list').innerHTML = top10.length ? renderRankList(top10, true) : '<p style="text-align:center; padding:10px; color:#999">لا توجد مبيعات مكتملة بعد</p>';
+                document.getElementById('bot-10-list').innerHTML = sortedProds.length ? renderRankList(bottom10, false) : '<p style="text-align:center; padding:10px; color:#999">لا توجد منتجات</p>';
+            }
+        };
+
+        window.onload = function() { app.init(); };
+    </script>
+
+<script type="module">
+  // استيراد المكتبات الضرورية (App + Database)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  // إعدادات مشروعك (كما أرسلتها)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCFac0BuHGESaPxRPAhtwRT4D9VuFoMFyU",
+    authDomain: "blanche-ops.firebaseapp.com",
+    databaseURL: "https://blanche-ops-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "blanche-ops",
+    storageBucket: "blanche-ops.firebasestorage.app",
+    messagingSenderId: "89153512310",
+    appId: "1:89153512310:web:162cd1fe232fcd49309057",
+    measurementId: "G-0JX94PZ903"
+  };
+
+  // تهيئة التطبيق وقاعدة البيانات
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // جعل دوال فايربيس متاحة للتطبيق الرئيسي
+  window.dbRef = ref;
+  window.dbSet = set;
+  window.dbOnValue = onValue;
+  window.realtimeDb = db;
+
+  // تشغيل المزامنة فور تحميل الصفحة
+  console.log("Firebase initialized, starting sync...");
+  if(window.startAppSync) window.startAppSync();
+</script>
+
+
+</body>
+</html>
