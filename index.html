@@ -1989,37 +1989,36 @@
     </script>
 
 <script type="module">
-  // استيراد المكتبات الضرورية (App + Database)
+  // استيراد المكتبات (التطبيق + قاعدة البيانات)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // إعدادات مشروعك (كما أرسلتها)
+  // إعدادات مشروعك الجديد (تم التحديث)
   const firebaseConfig = {
-    apiKey: "AIzaSyCFac0BuHGESaPxRPAhtwRT4D9VuFoMFyU",
-    authDomain: "blanche-ops.firebaseapp.com",
-    databaseURL: "https://blanche-ops-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "blanche-ops",
-    storageBucket: "blanche-ops.firebasestorage.app",
-    messagingSenderId: "89153512310",
-    appId: "1:89153512310:web:162cd1fe232fcd49309057",
-    measurementId: "G-0JX94PZ903"
+    apiKey: "AIzaSyBB8kMXBgwoPKnsLylktWSWLeM4mX23sJo",
+    authDomain: "blanche-ksa.firebaseapp.com",
+    databaseURL: "https://blanche-ksa-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "blanche-ksa",
+    storageBucket: "blanche-ksa.firebasestorage.app",
+    messagingSenderId: "914541537325",
+    appId: "1:914541537325:web:0cfed5799623b14033b0a4",
+    measurementId: "G-M9T5VSCH0P"
   };
 
-  // تهيئة التطبيق وقاعدة البيانات
+  // تهيئة Firebase
   const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+  const db = getDatabase(app); // تشغيل قاعدة البيانات
 
-  // جعل دوال فايربيس متاحة للتطبيق الرئيسي
+  // ربط الدوال بالكود القديم للنظام
   window.dbRef = ref;
   window.dbSet = set;
   window.dbOnValue = onValue;
   window.realtimeDb = db;
 
-  // تشغيل المزامنة فور تحميل الصفحة
-  console.log("Firebase initialized, starting sync...");
+  // بدء التشغيل والمزامنة
+  console.log("Firebase initialized (KSA Project), starting sync...");
   if(window.startAppSync) window.startAppSync();
 </script>
-
 
 </body>
 </html>
