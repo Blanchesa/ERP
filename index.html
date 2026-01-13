@@ -2005,9 +2005,9 @@
     measurementId: "G-M9T5VSCH0P"
   };
 
-  // تهيئة Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app); // تشغيل قاعدة البيانات
+  // تهيئة Firebase (تم تغيير اسم المتغير لمنع التعارض)
+  const appFirebase = initializeApp(firebaseConfig);
+  const db = getDatabase(appFirebase); // تشغيل قاعدة البيانات
 
   // ربط الدوال بالكود القديم للنظام
   window.dbRef = ref;
