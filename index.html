@@ -38,7 +38,6 @@
         /* --- LOGIN SCREEN STYLES --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* خلفية زرقاء داكنة احترافية */
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             z-index: 99999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -84,7 +83,6 @@
         .role-card h3 { margin: 0; color: var(--text-dark); font-size: 1.2rem; }
         .role-card p { margin: 0; color: var(--text-gray); font-size: 0.85rem; }
 
-        /* Role specific colors on hover */
         .role-card.admin:hover { border-color: #2d3436; } .role-card.admin:hover i { color: #2d3436; }
         .role-card.sales:hover { border-color: #00cec9; } .role-card.sales:hover i { color: #00cec9; }
         .role-card.purch:hover { border-color: #fdcb6e; } .role-card.purch:hover i { color: #fdcb6e; }
@@ -232,7 +230,7 @@
         .pending-alert { position: absolute; top: 15px; left: 15px; background: #ff7675; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Logistics UI (Read Only & Organized) */
+        /* Logistics UI */
         .log-split-view { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
         .log-col { background: transparent; }
         .log-col h3 { margin-top: 0; font-size: 1.1rem; margin-bottom: 15px; display:flex; align-items:center; gap:8px;}
@@ -313,6 +311,32 @@
             .floating-inbox { width: 300px; }
             .log-split-view { grid-template-columns: 1fr; }
             input, select, textarea { max-width: 100%; }
+        }
+
+        /* --- CSS: تصميم مربع البحث الجديد --- */
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        .search-wrapper input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .search-wrapper input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(108, 92, 231, 0.1);
+        }
+        .search-wrapper i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b2bec3;
         }
     </style>
 </head>
@@ -537,6 +561,11 @@
 
         <section id="products-view" class="section">
             <h1>عرض المنتجات (Catalog)</h1>
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="ابحث عن منتج بالاسم أو الكود..." onkeyup="app.searchUI(this.value, 'tbl-products', 'tr')">
+            </div>
+
             <div class="card">
                 <table>
                     <thead><tr><th>صورة</th><th>كود</th><th>اسم</th><th>سعر أساسي</th><th>أسعار خاصة</th><th>إجراء</th></tr></thead>
@@ -585,6 +614,11 @@
                             <label><i class="fas fa-paperclip"></i> إرفاق ملفات (فواتير / عروض أسعار) - للمحاسب</label>
                             <input type="file" id="po-file" style="max-width:100%">
                         </div>
+                    </div>
+
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="ابحث في القائمة لإضافة منتج..." onkeyup="app.searchUI(this.value, 'grid-po-prods', '.prod-box')">
                     </div>
 
                     <h4 style="margin:15px 0 5px;">اختر الأصناف:</h4>
@@ -638,6 +672,12 @@
                 <button onclick="app.switchTab('wh-delivery', this)" class="btn-ghost" style="color:#d63031;border-color:#d63031"><i class="fas fa-truck"></i> توثيق التسليم</button>
                 <button onclick="app.switchTab('wh-tasks', this)" class="btn-ghost">🔔 مهام المخزن</button>
             </div>
+
+            <div class="search-wrapper" style="margin-top:10px;">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="ابحث في أوامر الاستلام أو الصرف (رقم الطلب، اسم المنتج، العميل)..." onkeyup="app.searchWh(this.value)">
+            </div>
+
             <div id="wh-in" class="sub-tab"><div id="list-wh-in"></div></div>
             <div id="wh-out" class="sub-tab" style="display:none"><div id="list-wh-out"></div></div>
             <div id="wh-delivery" class="sub-tab" style="display:none">
@@ -668,6 +708,12 @@
                         <div class="form-group"><label>رقم مرجع (Ref)</label><input id="so-ref"></div>
                         <div class="form-group full-width" style="flex:2"><label>ملاحظات (ستظهر للمخازن)</label><input id="so-notes"></div>
                     </div>
+                    
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="ابحث في القائمة للبيع..." onkeyup="app.searchUI(this.value, 'grid-so-prods', '.prod-box')">
+                    </div>
+
                     <h4 style="margin:15px 0 5px;">المنتجات:</h4>
                     <div id="grid-so-prods" class="prod-grid"></div>
                     <br>
@@ -811,8 +857,6 @@
             },
 
             init: function() {
-                // سيتم استبدال التحميل المحلي بـ Firebase في السكريبت السفلي
-                // لكن نترك هذا كاحتياط
                 const saved = localStorage.getItem('cozy_erp_v9');
                 if(saved) this.data = JSON.parse(saved);
                 if(!this.data.logs) this.data.logs = [];
@@ -820,6 +864,25 @@
                 
                 document.getElementById('floating-inbox').classList.remove('open');
             },
+
+            // --- دوال البحث المضافة ---
+            searchUI: function(val, containerId, itemSelector) {
+                const term = val.toLowerCase();
+                const container = document.getElementById(containerId);
+                if(!container) return;
+                const items = container.querySelectorAll(itemSelector);
+                items.forEach(item => {
+                    const text = item.innerText.toLowerCase();
+                    item.style.display = text.includes(term) ? "" : "none";
+                });
+            },
+
+            searchWh: function(val) {
+                // دالة خاصة للمخازن للبحث في تاب الاستلام وتاب الصرف في نفس الوقت
+                this.searchUI(val, 'list-wh-in', '.card');
+                this.searchUI(val, 'list-wh-out', '.card');
+            },
+            // ---------------------------
 
             login: function(role) {
                 this.currentRole = role;
@@ -879,7 +942,6 @@
             },
 
             save: function() {
-                // سيتم تجاوز هذه الدالة بواسطة Firebase بالأسفل
                 try {
                     localStorage.setItem('cozy_erp_v9', JSON.stringify(this.data));
                     if(this.currentRole === 'admin') this.updateDashboard();
@@ -1155,7 +1217,6 @@
             },
 
             renderClientsAndProds: function() {
-                // التأكد من وجود المصفوفات قبل الرسم
                 if(!this.data.clients) this.data.clients = [];
                 if(!this.data.prods) this.data.prods = [];
 
@@ -1379,12 +1440,16 @@
                 if(!this.data.prods) this.data.prods = [];
                 const client = document.getElementById('so-client-select').value;
                 document.getElementById('grid-so-prods').innerHTML = this.data.prods.map(p => {
+                    // حساب السعر (خاص أو عادي)
                     const price = (client && p.specials && p.specials[client]) ? p.specials[client] : p.price;
                     const imgSrc = p.img ? p.img : 'https://placehold.co/100x100?text=No+Img';
+                    
                     return `
                     <div class="prod-box" onclick="this.classList.toggle('selected')">
                         <img src="${imgSrc}" class="prod-thumb">
-                        <b>${p.name}</b> 
+                        
+                        <div style="font-weight:bold; margin-bottom:4px; line-height:1.2;">${p.name}</div>
+                        <div style="color:var(--primary); font-family:monospace; font-size:0.85rem; background:#f0f3ff; border:1px solid #dbeafe; border-radius:4px; padding:1px 6px; display:inline-block; margin-bottom:6px;">${p.code}</div>
                         <br><small style="color:#636e72">السعر: ${price} SAR</small>
                         <input type="number" class="so-qty" data-id="${p.id}" data-price="${price}" placeholder="الكمية" onclick="event.stopPropagation()">
                     </div>
@@ -1901,7 +1966,6 @@
             },
 
             updateDashboard: function() {
-                // التأكد من وجود البيانات
                 if(!this.data.prods) this.data.prods = [];
                 if(!this.data.clients) this.data.clients = [];
                 if(!this.data.secureMsgs) this.data.secureMsgs = [];
@@ -1992,18 +2056,13 @@
         const db = getDatabase(fApp);
 
         function loadFromFirebase() {
-            // نستخدم 'erp_data_clean' لنضمن أننا نبدأ بقاعدة بيانات نظيفة ومستقرة
-            // إذا كنت تريد العودة للقديمة يمكن تغيير الاسم هنا
             const dataRef = ref(db, 'erp_data_final'); 
             onValue(dataRef, (snapshot) => {
                 const cloudData = snapshot.val();
                 
-                // === الإصلاح الجذري هنا ===
                 if (cloudData) {
                     app.data = cloudData;
                 } else {
-                    // إذا كانت القاعدة فارغة، لا تجعل المتغير null
-                    // بل أنشئ الهيكل الأساسي الفارغ
                     console.log("قاعدة البيانات فارغة، جاري التهيئة الأولية...");
                     app.data = {
                         clients: [],
@@ -2016,7 +2075,6 @@
                     };
                 }
 
-                // خطوة أمان إضافية: التأكد من وجود جميع المصفوفات حتى لو جاءت البيانات ناقصة
                 if(!app.data.clients) app.data.clients = [];
                 if(!app.data.prods) app.data.prods = [];
                 if(!app.data.pos) app.data.pos = [];
@@ -2032,7 +2090,6 @@
 
         app.save = function() {
             try {
-                // التأكد من أن البيانات موجودة قبل الحفظ
                 if(!this.data) return;
                 set(ref(db, 'erp_data_final'), this.data);
                 console.log("تم الحفظ...");
