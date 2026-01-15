@@ -313,31 +313,10 @@
             input, select, textarea { max-width: 100%; }
         }
 
-        /* --- CSS: تصميم مربع البحث الجديد --- */
-        .search-wrapper {
-            position: relative;
-            margin-bottom: 15px;
-            width: 100%;
-        }
-        .search-wrapper input {
-            width: 100%;
-            padding: 12px 40px 12px 15px;
-            border: 2px solid #dfe6e9;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        .search-wrapper input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(108, 92, 231, 0.1);
-        }
-        .search-wrapper i {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #b2bec3;
-        }
+        .search-wrapper { position: relative; margin-bottom: 15px; width: 100%; }
+        .search-wrapper input { width: 100%; padding: 12px 40px 12px 15px; border: 2px solid #dfe6e9; border-radius: 12px; font-size: 1rem; transition: all 0.3s; }
+        .search-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(108, 92, 231, 0.1); }
+        .search-wrapper i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #b2bec3; }
     </style>
 </head>
 <body>
@@ -349,34 +328,22 @@
             
             <div class="roles-grid">
                 <div class="role-card sales" onclick="app.login('sales')">
-                    <i class="fas fa-shopping-cart"></i>
-                    <h3>المبيعات</h3>
-                    <p>أوامر البيع والعملاء</p>
+                    <i class="fas fa-shopping-cart"></i><h3>المبيعات</h3><p>أوامر البيع والعملاء</p>
                 </div>
                 <div class="role-card purch" onclick="app.login('purchases')">
-                    <i class="fas fa-shopping-bag"></i>
-                    <h3>المشتريات</h3>
-                    <p>طلبات الشراء والموردين</p>
+                    <i class="fas fa-shopping-bag"></i><h3>المشتريات</h3><p>طلبات الشراء والموردين</p>
                 </div>
                 <div class="role-card admin" onclick="app.login('admin')">
-                    <i class="fas fa-user-tie"></i>
-                    <h3>الإدارة العامة</h3>
-                    <p>صلاحيات كاملة</p>
+                    <i class="fas fa-user-tie"></i><h3>الإدارة العامة</h3><p>صلاحيات كاملة</p>
                 </div>
                 <div class="role-card acc" onclick="app.login('accounting')">
-                    <i class="fas fa-calculator"></i>
-                    <h3>المحاسبة</h3>
-                    <p>الفواتير والقيود</p>
+                    <i class="fas fa-calculator"></i><h3>المحاسبة</h3><p>الفواتير والقيود</p>
                 </div>
                 <div class="role-card logis" onclick="app.login('logistics')">
-                    <i class="fas fa-truck-fast"></i>
-                    <h3>اللوجستيات</h3>
-                    <p>الشحن والتتبع</p>
+                    <i class="fas fa-truck-fast"></i><h3>اللوجستيات</h3><p>الشحن والتتبع</p>
                 </div>
                 <div class="role-card wh" onclick="app.login('warehouse')">
-                    <i class="fas fa-warehouse"></i>
-                    <h3>المخازن</h3>
-                    <p>الاستلام والصرف</p>
+                    <i class="fas fa-warehouse"></i><h3>المخازن</h3><p>الاستلام والصرف</p>
                 </div>
             </div>
         </div>
@@ -399,6 +366,8 @@
         <div class="nav-item" id="nav-arch" onclick="app.nav('invoices-archive', this)"><i class="fas fa-archive"></i> أرشيف الفواتير</div>
         <div class="nav-item" id="nav-tasks" onclick="app.nav('tasks', this)"><i class="fas fa-tasks"></i> إدارة المهام</div>
         
+        <div class="nav-item" id="nav-settings" onclick="app.nav('settings', this)" style="display:none; color:var(--text-dark); margin-top:10px; border-top:1px dashed #ccc;"><i class="fas fa-cogs"></i> كلمات المرور</div>
+
         <div style="margin-top:auto;">
             <button onclick="location.reload()" class="btn-ghost" style="width:100%; margin-bottom:10px;"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
             <button onclick="app.reset()" class="btn-danger" style="width:100%; font-size:0.8rem; border-radius: 8px;"><i class="fas fa-lock"></i> تصفير النظام (محمي)</button>
@@ -409,7 +378,6 @@
 
         <section id="dashboard" class="section active">
             <h1>لوحة المعلومات والملخص العام</h1>
-
             <div class="dash-stats-grid">
                 <div class="d-card dc-purple" onclick="app.nav('products-view', document.getElementById('nav-prod-v'))" style="cursor:pointer">
                     <div class="d-card-icon"><i class="fas fa-boxes"></i></div>
@@ -417,14 +385,12 @@
                     <div class="d-card-val" id="d-prod-count">0</div>
                     <div class="d-card-sub">مسجلة في النظام</div>
                 </div>
-
                 <div class="d-card dc-blue" onclick="app.nav('clients', document.getElementById('nav-clients'))" style="cursor:pointer">
                     <div class="d-card-icon"><i class="fas fa-users"></i></div>
                     <div class="d-card-title">قاعدة العملاء</div>
                     <div class="d-card-val" id="d-client-count">0</div>
                     <div class="d-card-sub">عميل نشط</div>
                 </div>
-
                 <div class="d-card dc-green">
                     <div class="d-card-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="d-card-title">المبيعات (القيمة)</div>
@@ -434,7 +400,6 @@
                         <span style="color:orange; margin-right:10px;"><i class="fas fa-clock"></i> <span id="d-sales-pend">0</span> معلقة</span>
                     </div>
                 </div>
-
                 <div class="d-card dc-orange">
                     <div class="d-card-icon"><i class="fas fa-shopping-bag"></i></div>
                     <div class="d-card-title">المشتريات (التكلفة)</div>
@@ -474,25 +439,19 @@
             <div class="rank-container">
                 <div class="card">
                     <h3 style="color:#00b894; margin-top:0"><i class="fas fa-trophy"></i> أعلى 10 منتجات مبيعاً</h3>
-                    <div class="rank-list" id="top-10-list">
-                        <p style="text-align:center; color:#ccc">لا توجد مبيعات كافية</p>
-                    </div>
+                    <div class="rank-list" id="top-10-list"><p style="text-align:center; color:#ccc">لا توجد مبيعات كافية</p></div>
                 </div>
-
                 <div class="card">
                     <h3 style="color:#ff7675; margin-top:0"><i class="fas fa-arrow-down"></i> أقل 10 منتجات مبيعاً</h3>
-                    <div class="rank-list" id="bot-10-list">
-                        <p style="text-align:center; color:#ccc">لا توجد بيانات كافية</p>
-                    </div>
+                    <div class="rank-list" id="bot-10-list"><p style="text-align:center; color:#ccc">لا توجد بيانات كافية</p></div>
                 </div>
             </div>
         </section>
+
         <section id="secure-msg" class="section">
             <h1>إرسال رسالة مشفرة للإدارة</h1>
             <div class="card">
-                <p style="color: var(--text-gray); font-size: 0.9rem;">
-                    <i class="fas fa-lock"></i> الرسالة ستكون محمية برقم سري (PIN).
-                </p>
+                <p style="color: var(--text-gray); font-size: 0.9rem;"><i class="fas fa-lock"></i> الرسالة ستكون محمية برقم سري (PIN).</p>
                 <div class="form-row">
                     <div class="form-group"><label>الاسم</label><input id="sec-name"></div>
                     <div class="form-group"><label>القسم</label>
@@ -519,21 +478,18 @@
 
         <section id="products-create" class="section">
             <h1>إنشاء وإدارة المنتجات</h1>
-            
             <div class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                     <h3 id="form-title" style="margin:0">1. إضافة منتج جديد</h3>
                     <div style="display:flex; gap:10px;">
                          <input type="file" id="import-csv" style="display:none" accept=".csv" onchange="app.importCSV(this)">
-                        <button onclick="document.getElementById('import-csv').click()" class="btn-ghost active" title="يجب أن يكون الملف CSV (كود,اسم,سعر,رابط الصورة)"><i class="fas fa-file-csv"></i> استيراد منتجات (CSV)</button>
+                        <button onclick="document.getElementById('import-csv').click()" class="btn-ghost active" title="CSV: code,name,price,img"><i class="fas fa-file-csv"></i> استيراد (CSV)</button>
                         
                         <input type="file" id="import-prices" style="display:none" accept=".csv" onchange="app.importSpecialPricesCSV(this)">
-                        <button onclick="document.getElementById('import-prices').click()" class="btn-ghost" style="color:var(--accent); border-color:var(--accent)" title="يجب أن يكون الملف CSV (كود المنتج, اسم العميل, السعر)"><i class="fas fa-tags"></i> استيراد أسعار خاصة</button>
+                        <button onclick="document.getElementById('import-prices').click()" class="btn-ghost" style="color:var(--accent); border-color:var(--accent)"><i class="fas fa-tags"></i> استيراد أسعار</button>
                     </div>
                 </div>
-                <p style="font-size:0.8rem; color:#888;">* ملف المنتجات: <strong>[الكود]، [الاسم]، [السعر]، [رابط الصورة]</strong> | ملف الأسعار الخاصة: <strong>[كود المنتج]، [اسم العميل]، [السعر]</strong></p>
                 <hr style="margin:15px 0; border-top:1px solid #eee;">
-                
                 <div class="form-row">
                     <div class="form-group"><label>الكود</label><input id="p-code"></div>
                     <div class="form-group"><label>الاسم</label><input id="p-name"></div>
@@ -563,9 +519,8 @@
             <h1>عرض المنتجات (Catalog)</h1>
             <div class="search-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="ابحث عن منتج بالاسم أو الكود..." onkeyup="app.searchUI(this.value, 'tbl-products', 'tr')">
+                <input type="text" placeholder="ابحث عن منتج..." onkeyup="app.searchUI(this.value, 'tbl-products', 'tr')">
             </div>
-
             <div class="card">
                 <table>
                     <thead><tr><th>صورة</th><th>كود</th><th>اسم</th><th>سعر أساسي</th><th>أسعار خاصة</th><th>إجراء</th></tr></thead>
@@ -605,22 +560,19 @@
                     </div>
                     <div class="form-row" style="background:#f9f9f9; padding:15px; border-radius:10px;">
                         <div class="form-group"><label>التكلفة (قبل الضريبة)</label><input id="po-cost-before" type="number" oninput="app.calcVat(this.value)"></div>
-                        <div class="form-group"><label>التكلفة (بعد الضريبة 15%)</label><div id="po-cost-after-display" style="padding:10px; font-weight:bold; color:var(--primary);">0.00</div></div>
-                        <div class="form-group full-width" style="flex:2"><label>ملاحظات (ستظهر للمخازن واللوجستيات والمحاسبة)</label><input id="po-notes"></div>
+                        <div class="form-group"><label>التكلفة (بعد الضريبة)</label><div id="po-cost-after-display" style="padding:10px; font-weight:bold; color:var(--primary);">0.00</div></div>
+                        <div class="form-group full-width" style="flex:2"><label>ملاحظات</label><input id="po-notes"></div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group full-width">
-                            <label><i class="fas fa-paperclip"></i> إرفاق ملفات (فواتير / عروض أسعار) - للمحاسب</label>
+                            <label><i class="fas fa-paperclip"></i> إرفاق ملفات</label>
                             <input type="file" id="po-file" style="max-width:100%">
                         </div>
                     </div>
-
                     <div class="search-wrapper">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="ابحث في القائمة لإضافة منتج..." onkeyup="app.searchUI(this.value, 'grid-po-prods', '.prod-box')">
+                        <input type="text" placeholder="ابحث لإضافة منتج..." onkeyup="app.searchUI(this.value, 'grid-po-prods', '.prod-box')">
                     </div>
-
                     <h4 style="margin:15px 0 5px;">اختر الأصناف:</h4>
                     <div id="grid-po-prods" class="prod-grid"></div>
                     <br>
@@ -628,36 +580,29 @@
                 </div>
             </div>
             <div id="pur-tasks" class="sub-tab" style="display:none"><div id="list-pur-tasks"></div></div>
-            
             <div id="pur-list" class="sub-tab" style="display:none">
-                <div class="card">
-                     <h3>متابعة أوامر الشراء</h3>
-                     <div id="po-list-container"></div>
-                </div>
+                <div class="card"><h3>متابعة أوامر الشراء</h3><div id="po-list-container"></div></div>
             </div>
         </section>
 
         <section id="logistics" class="section">
             <h1>اللوجستيات والشحن (حالات وروابط)</h1>
             <div class="form-row">
-                <button onclick="app.switchTab('log-dashboard', this)" class="btn-ghost active">📊 تتبع الحالات (للقراءة فقط)</button>
+                <button onclick="app.switchTab('log-dashboard', this)" class="btn-ghost active">📊 تتبع الحالات</button>
                 <button onclick="app.switchTab('log-tasks', this)" class="btn-ghost">🔔 مهام اللوجستيات</button>
             </div>
-
             <div id="log-dashboard" class="sub-tab">
                 <div class="log-split-view">
                     <div class="log-col">
-                        <h3 style="color:var(--secondary)"><i class="fas fa-arrow-down"></i> الوارد (مشتريات)</h3>
+                        <h3 style="color:var(--secondary)"><i class="fas fa-arrow-down"></i> الوارد</h3>
                         <div id="log-inbound-readonly"></div>
                     </div>
-                    
                     <div class="log-col">
-                        <h3 style="color:var(--accent)"><i class="fas fa-arrow-up"></i> الصادر (مبيعات)</h3>
+                        <h3 style="color:var(--accent)"><i class="fas fa-arrow-up"></i> الصادر</h3>
                         <div id="log-outbound-readonly"></div>
                     </div>
                 </div>
             </div>
-
              <div id="log-tasks" class="sub-tab" style="display:none"><div id="list-log-tasks"></div></div>
         </section>
 
@@ -668,22 +613,20 @@
             </div>
             <div class="form-row">
                 <button onclick="app.switchTab('wh-in', this)" class="btn-ghost active">📥 استلام</button>
-                <button onclick="app.switchTab('wh-out', this)" class="btn-ghost">📦 صرف (مبيعات)</button>
+                <button onclick="app.switchTab('wh-out', this)" class="btn-ghost">📦 صرف</button>
                 <button onclick="app.switchTab('wh-delivery', this)" class="btn-ghost" style="color:#d63031;border-color:#d63031"><i class="fas fa-truck"></i> توثيق التسليم</button>
-                <button onclick="app.switchTab('wh-tasks', this)" class="btn-ghost">🔔 مهام المخزن</button>
+                <button onclick="app.switchTab('wh-tasks', this)" class="btn-ghost">🔔 المهام</button>
             </div>
-
             <div class="search-wrapper" style="margin-top:10px;">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="ابحث في أوامر الاستلام أو الصرف (رقم الطلب، اسم المنتج، العميل)..." onkeyup="app.searchWh(this.value)">
+                <input type="text" placeholder="بحث..." onkeyup="app.searchWh(this.value)">
             </div>
-
             <div id="wh-in" class="sub-tab"><div id="list-wh-in"></div></div>
             <div id="wh-out" class="sub-tab" style="display:none"><div id="list-wh-out"></div></div>
             <div id="wh-delivery" class="sub-tab" style="display:none">
                 <div class="card" style="background:#fff5f5; border:1px solid #ffcccc">
-                    <h3><i class="fas fa-file-signature"></i> توثيق استلام العميل (الفواتير المختومة)</h3>
-                    <p style="color:#666; font-size:0.9rem;">هنا تظهر الطلبات التي أصدر المحاسب فواتيرها. يرجى توصيل الطلب للعميل، والحصول على ختم الاستلام على الفاتورة، ثم رفع الصورة هنا للإغلاق.</p>
+                    <h3><i class="fas fa-file-signature"></i> توثيق استلام العميل</h3>
+                    <p style="color:#666; font-size:0.9rem;">يرجى رفع صورة الفاتورة المختومة من العميل لإغلاق الطلب.</p>
                 </div>
                 <div id="list-wh-delivery"></div>
             </div>
@@ -696,24 +639,21 @@
                 <button onclick="app.showDeptHistory('sales')" class="btn-ghost small"><i class="fas fa-history"></i> سجل المبيعات</button>
             </div>
             <div class="form-row">
-                <button onclick="app.switchTab('sales-main', this)" class="btn-ghost active">🛒 أمر بيع جديد</button>
+                <button onclick="app.switchTab('sales-main', this)" class="btn-ghost active">🛒 أمر بيع</button>
                 <button onclick="app.switchTab('sales-tasks', this)" class="btn-ghost">🔔 مهام المبيعات</button>
-                <button onclick="app.switchTab('sales-list', this)" class="btn-ghost">📋 قائمة المبيعات</button>
+                <button onclick="app.switchTab('sales-list', this)" class="btn-ghost">📋 القائمة</button>
             </div>
-            
             <div id="sales-main" class="sub-tab">
                 <div class="card">
                     <div class="form-row">
                         <div class="form-group"><label>العميل</label><select id="so-client-select" onchange="app.renderSOGrid()"><option value="">اختر...</option></select></div>
-                        <div class="form-group"><label>رقم مرجع (Ref)</label><input id="so-ref"></div>
-                        <div class="form-group full-width" style="flex:2"><label>ملاحظات (ستظهر للمخازن)</label><input id="so-notes"></div>
+                        <div class="form-group"><label>Ref</label><input id="so-ref"></div>
+                        <div class="form-group full-width" style="flex:2"><label>ملاحظات</label><input id="so-notes"></div>
                     </div>
-                    
                     <div class="search-wrapper">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="ابحث في القائمة للبيع..." onkeyup="app.searchUI(this.value, 'grid-so-prods', '.prod-box')">
+                        <input type="text" placeholder="بحث..." onkeyup="app.searchUI(this.value, 'grid-so-prods', '.prod-box')">
                     </div>
-
                     <h4 style="margin:15px 0 5px;">المنتجات:</h4>
                     <div id="grid-so-prods" class="prod-grid"></div>
                     <br>
@@ -722,10 +662,7 @@
             </div>
             <div id="sales-tasks" class="sub-tab" style="display:none"><div id="list-sales-tasks"></div></div>
             <div id="sales-list" class="sub-tab" style="display:none">
-                <div class="card">
-                     <h3>متابعة المبيعات</h3>
-                     <div id="so-list-container"></div>
-                </div>
+                <div class="card"><h3>متابعة المبيعات</h3><div id="so-list-container"></div></div>
             </div>
         </section>
 
@@ -737,7 +674,7 @@
             <div class="form-row">
                 <button onclick="app.switchTab('acc-reg', this)" class="btn-ghost active">تسجيل PO</button>
                 <button onclick="app.switchTab('acc-inv', this)" class="btn-ghost">الفواتير</button>
-                <button onclick="app.switchTab('acc-tasks', this)" class="btn-ghost">🔔 مهام الحسابات</button>
+                <button onclick="app.switchTab('acc-tasks', this)" class="btn-ghost">🔔 المهام</button>
             </div>
             <div id="acc-reg" class="sub-tab"><div id="list-acc-reg"></div></div>
             <div id="acc-inv" class="sub-tab" style="display:none"><div id="list-acc-inv"></div></div>
@@ -750,16 +687,8 @@
                 <button onclick="app.switchTab('arch-sales-tab', this)" class="btn-ghost active">فواتير المبيعات</button>
                 <button onclick="app.switchTab('arch-purch-tab', this)" class="btn-ghost">سندات المشتريات</button>
             </div>
-            <div id="arch-sales-tab" class="sub-tab">
-                <div class="card">
-                    <div id="archive-list-sales"></div>
-                </div>
-            </div>
-            <div id="arch-purch-tab" class="sub-tab" style="display:none">
-                <div class="card">
-                    <div id="archive-list-purch"></div>
-                </div>
-            </div>
+            <div id="arch-sales-tab" class="sub-tab"><div class="card"><div id="archive-list-sales"></div></div></div>
+            <div id="arch-purch-tab" class="sub-tab" style="display:none"><div class="card"><div id="archive-list-purch"></div></div></div>
         </section>
 
         <section id="tasks" class="section">
@@ -768,36 +697,18 @@
                 <h3>إرسال مهمة جديدة</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>من قسم (المرسل)</label>
-                        <select id="task-from">
-                            <option value="General">الإدارة العامة</option>
-                            <option value="Sales">المبيعات</option>
-                            <option value="Purchases">المشتريات</option>
-                            <option value="Warehouse">المخازن</option>
-                            <option value="Accounting">المحاسبة</option>
-                            <option value="Logistics">اللوجستيات</option>
-                        </select>
+                        <label>من</label>
+                        <select id="task-from"><option value="General">الإدارة العامة</option><option value="Sales">المبيعات</option><option value="Purchases">المشتريات</option><option value="Warehouse">المخازن</option><option value="Accounting">المحاسبة</option><option value="Logistics">اللوجستيات</option></select>
                     </div>
                     <div class="form-group">
-                        <label>إلى قسم (المستلم)</label>
-                        <select id="task-dept">
-                            <option value="General">عام</option>
-                            <option value="Sales">المبيعات</option>
-                            <option value="Purchases">المشتريات</option>
-                            <option value="Warehouse">المخازن</option>
-                            <option value="Accounting">المحاسبة</option>
-                            <option value="Logistics">اللوجستيات</option>
-                        </select>
+                        <label>إلى</label>
+                        <select id="task-dept"><option value="General">عام</option><option value="Sales">المبيعات</option><option value="Purchases">المشتريات</option><option value="Warehouse">المخازن</option><option value="Accounting">المحاسبة</option><option value="Logistics">اللوجستيات</option></select>
                     </div>
                 </div>
                 <div class="form-group full-width"><label>عنوان المهمة</label><input id="task-title"></div>
-                
                 <div class="form-row">
                     <div class="form-group full-width" style="flex:2"><label>التفاصيل</label><input id="task-desc"></div>
-                    <div class="form-group">
-                        <label>إرفاق ملف (من الجهاز)</label>
-                        <input type="file" id="task-file">
-                    </div>
+                    <div class="form-group"><label>إرفاق ملف</label><input type="file" id="task-file"></div>
                 </div>
                 <button onclick="app.addTask()" class="btn-primary">إرسال المهمة</button>
             </div>
@@ -805,24 +716,39 @@
             <div id="list-tasks-all"></div>
         </section>
 
+        <section id="settings" class="section">
+            <h1><i class="fas fa-cogs"></i> إعدادات النظام وكلمات المرور</h1>
+            <div class="card" style="border-right: 5px solid #2d3436;">
+                <div style="background:#f8f9fa; padding:15px; border-radius:10px; margin-bottom:20px;">
+                    <h3 style="margin-top:0"><i class="fas fa-user-shield"></i> لوحة التحكم في كلمات المرور</h3>
+                    <p style="color:#666; font-size:0.9rem;">يمكنك من هنا تغيير كلمة المرور الخاصة بكل قسم. <br><strong>تنبيه:</strong> كلمة المرور الافتراضية لجميع الأقسام حالياً هي <code>1234</code></p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>الإدارة العامة (Admin)</label><input type="text" id="pass-admin" placeholder="كلمة المرور الجديدة" style="border-color:#2d3436"></div>
+                    <div class="form-group"><label>المبيعات (Sales)</label><input type="text" id="pass-sales" placeholder="كلمة المرور الجديدة"></div>
+                    <div class="form-group"><label>المشتريات (Purchases)</label><input type="text" id="pass-purchases" placeholder="كلمة المرور الجديدة"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>المخازن (Warehouse)</label><input type="text" id="pass-warehouse" placeholder="كلمة المرور الجديدة"></div>
+                    <div class="form-group"><label>اللوجستيات (Logistics)</label><input type="text" id="pass-logistics" placeholder="كلمة المرور الجديدة"></div>
+                    <div class="form-group"><label>المحاسبة (Accounting)</label><input type="text" id="pass-accounting" placeholder="كلمة المرور الجديدة"></div>
+                </div>
+                <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
+                <button onclick="app.savePasswords()" class="btn-primary" style="background:#2d3436; width:100%; justify-content:center; padding:15px;"><i class="fas fa-save"></i> حفظ جميع كلمات المرور</button>
+            </div>
+        </section>
+
     </main>
 
     <div class="inbox-wrapper">
         <div id="floating-inbox" class="floating-inbox">
             <div class="inbox-header">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-inbox"></i> البريد السري
-                    <small>الإدارة</small>
-                </div>
+                <div style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-inbox"></i> البريد السري<small>الإدارة</small></div>
                 <i class="fas fa-times" style="cursor: pointer;" onclick="app.toggleInbox()"></i>
             </div>
-            <div id="floating-inbox-body" class="inbox-body">
-                <p style="color:#aaa; text-align:center;">لا توجد رسائل جديدة</p>
-            </div>
+            <div id="floating-inbox-body" class="inbox-body"><p style="color:#aaa; text-align:center;">لا توجد رسائل جديدة</p></div>
         </div>
-        <div class="inbox-toggle-btn" onclick="app.toggleInbox()" title="الرسائل">
-            <i class="fas fa-comment-dots"></i>
-        </div>
+        <div class="inbox-toggle-btn" onclick="app.toggleInbox()" title="الرسائل"><i class="fas fa-comment-dots"></i></div>
     </div>
 
     <div id="history-modal" class="modal">
@@ -835,18 +761,8 @@
 
     <script>
         const app = {
-            data: {
-                clients: [],
-                prods: [],
-                pos: [], 
-                sos: [], 
-                tasks: [],
-                logs: [],
-                secureMsgs: []
-            },
-            editingProdId: null,
-            currentRole: null,
-            
+            data: { clients: [], prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [], passwords: {} },
+            editingProdId: null, currentRole: null,
             permissions: {
                 'admin': 'all',
                 'sales': ['nav-sales', 'nav-prod-v', 'nav-msg', 'nav-tasks'], 
@@ -861,129 +777,108 @@
                 if(saved) this.data = JSON.parse(saved);
                 if(!this.data.logs) this.data.logs = [];
                 if(!this.data.secureMsgs) this.data.secureMsgs = [];
-                
+                if(!this.data.passwords) this.data.passwords = { admin: '1234', sales: '1234', purchases: '1234', warehouse: '1234', logistics: '1234', accounting: '1234' };
                 document.getElementById('floating-inbox').classList.remove('open');
             },
 
-            // --- دوال البحث المضافة ---
+            login: function(role) {
+                const savedPass = (this.data.passwords && this.data.passwords[role]) ? this.data.passwords[role] : '1234';
+                const inputPass = prompt("🔒 هذا القسم محمي. أدخل كلمة المرور:");
+                if (inputPass !== savedPass) { alert("⛔ كلمة المرور خاطئة!"); return; }
+
+                this.currentRole = role;
+                const overlay = document.getElementById('login-overlay');
+                overlay.style.opacity = '0';
+                overlay.style.transform = 'translateY(-100vh)';
+                setTimeout(() => { overlay.style.display = 'none'; }, 600);
+                document.querySelector('.sidebar').style.display = 'flex';
+                document.querySelector('.main-content').style.display = 'block';
+
+                document.getElementById('nav-settings').style.display = (role === 'admin') ? 'flex' : 'none';
+
+                const allNavs = document.querySelectorAll('.nav-item');
+                if (this.permissions[role] !== 'all') {
+                    allNavs.forEach(nav => { if (nav.id && !this.permissions[role].includes(nav.id)) nav.style.display = 'none'; });
+                }
+
+                if (role === 'admin') {
+                    document.querySelector('.inbox-wrapper').style.display = 'flex';
+                    this.renderAll();
+                } else {
+                    document.querySelector('.inbox-wrapper').style.display = 'none';
+                    document.getElementById('nav-dash').style.display = 'none'; 
+                    document.getElementById('dashboard').classList.remove('active');
+                    let firstNav = '';
+                    if(role === 'sales') firstNav = 'sales'; else if(role === 'purchases') firstNav = 'purchases'; else if(role === 'warehouse') firstNav = 'warehouse'; else if(role === 'logistics') firstNav = 'logistics'; else if(role === 'accounting') firstNav = 'accounting';
+                    if(firstNav) this.nav(firstNav, document.getElementById('nav-' + (firstNav==='sales'?'sales':(firstNav==='purchases'?'purch':(firstNav==='warehouse'?'wh':(firstNav==='logistics'?'logis':'acc'))))));
+                }
+            },
+
+            savePasswords: function() {
+                if(!this.data.passwords) this.data.passwords = {};
+                this.data.passwords.admin = document.getElementById('pass-admin').value;
+                this.data.passwords.sales = document.getElementById('pass-sales').value;
+                this.data.passwords.purchases = document.getElementById('pass-purchases').value;
+                this.data.passwords.warehouse = document.getElementById('pass-warehouse').value;
+                this.data.passwords.logistics = document.getElementById('pass-logistics').value;
+                this.data.passwords.accounting = document.getElementById('pass-accounting').value;
+                this.save();
+                alert("تم تحديث كلمات المرور بنجاح ✅");
+            },
+
+            renderSettings: function() {
+                const p = this.data.passwords || {};
+                document.getElementById('pass-admin').value = p.admin || '1234';
+                document.getElementById('pass-sales').value = p.sales || '1234';
+                document.getElementById('pass-purchases').value = p.purchases || '1234';
+                document.getElementById('pass-warehouse').value = p.warehouse || '1234';
+                document.getElementById('pass-logistics').value = p.logistics || '1234';
+                document.getElementById('pass-accounting').value = p.accounting || '1234';
+            },
+
             searchUI: function(val, containerId, itemSelector) {
                 const term = val.toLowerCase();
                 const container = document.getElementById(containerId);
                 if(!container) return;
                 const items = container.querySelectorAll(itemSelector);
-                items.forEach(item => {
-                    const text = item.innerText.toLowerCase();
-                    item.style.display = text.includes(term) ? "" : "none";
-                });
+                items.forEach(item => { item.style.display = item.innerText.toLowerCase().includes(term) ? "" : "none"; });
             },
-
-            searchWh: function(val) {
-                // دالة خاصة للمخازن للبحث في تاب الاستلام وتاب الصرف في نفس الوقت
-                this.searchUI(val, 'list-wh-in', '.card');
-                this.searchUI(val, 'list-wh-out', '.card');
-            },
-            // ---------------------------
-
-            login: function(role) {
-                this.currentRole = role;
-                
-                const overlay = document.getElementById('login-overlay');
-                overlay.style.opacity = '0';
-                overlay.style.transform = 'translateY(-100vh)';
-                setTimeout(() => { overlay.style.display = 'none'; }, 600);
-
-                document.querySelector('.sidebar').style.display = 'flex';
-                document.querySelector('.main-content').style.display = 'block';
-
-                const allNavs = document.querySelectorAll('.nav-item');
-                if (this.permissions[role] !== 'all') {
-                    allNavs.forEach(nav => {
-                        if (nav.id && !this.permissions[role].includes(nav.id)) {
-                            nav.style.display = 'none';
-                        }
-                    });
-                }
-
-                if (role === 'admin') {
-                    document.querySelector('.inbox-wrapper').style.display = 'flex';
-                } else {
-                    document.querySelector('.inbox-wrapper').style.display = 'none';
-                }
-
-                if (role !== 'admin') {
-                    document.getElementById('nav-dash').style.display = 'none'; 
-                    document.getElementById('dashboard').classList.remove('active');
-                    
-                    let firstNav = '';
-                    if(role === 'sales') firstNav = 'sales';
-                    else if(role === 'purchases') firstNav = 'purchases';
-                    else if(role === 'warehouse') firstNav = 'warehouse';
-                    else if(role === 'logistics') firstNav = 'logistics';
-                    else if(role === 'accounting') firstNav = 'accounting';
-
-                    if(firstNav) {
-                        this.nav(firstNav, document.getElementById('nav-' + (firstNav==='sales'?'sales':(firstNav==='purchases'?'purch':(firstNav==='warehouse'?'wh':(firstNav==='logistics'?'logis':'acc'))))));
-                    }
-                } else {
-                    this.renderAll();
-                }
-            },
-            
-            toggleInbox: function() {
-                const inbox = document.getElementById('floating-inbox');
-                inbox.classList.toggle('open');
-            },
-
+            searchWh: function(val) { this.searchUI(val, 'list-wh-in', '.card'); this.searchUI(val, 'list-wh-out', '.card'); },
+            toggleInbox: function() { document.getElementById('floating-inbox').classList.toggle('open'); },
             formatDate: function(timestamp) {
                 if(!timestamp) return new Date().toLocaleDateString('en-GB');
                 const num = Number(timestamp);
-                if (num < 946684800000) { return new Date().toLocaleDateString('en-GB'); }
-                return new Date(num).toLocaleDateString('en-GB'); 
+                return (num < 946684800000) ? new Date().toLocaleDateString('en-GB') : new Date(num).toLocaleDateString('en-GB'); 
             },
-
             save: function() {
                 try {
                     localStorage.setItem('cozy_erp_v9', JSON.stringify(this.data));
-                    if(this.currentRole === 'admin') this.updateDashboard();
-                } catch(e) {
-                    alert("خطأ في الحفظ: مساحة التخزين ممتلئة.");
-                }
+                    if(this.currentRole === 'admin') { this.updateDashboard(); this.renderSettings(); }
+                } catch(e) { alert("خطأ في الحفظ: مساحة التخزين ممتلئة."); }
             },
-
             addLog: function(dept, action, details) {
                 const date = new Date().toLocaleString('en-GB'); 
                 this.data.logs.unshift({ date, action, details, dept });
                 if(this.data.logs.length > 200) this.data.logs.pop();
                 this.save();
             },
-
             showDeptHistory: function(dept) {
                 const logs = this.data.logs.filter(l => l.dept === dept);
                 const titleMap = { 'sales': 'سجل المبيعات', 'purchases': 'سجل المشتريات', 'warehouse': 'سجل المخازن', 'accounting': 'سجل المحاسبة' };
                 document.getElementById('modal-title').innerText = titleMap[dept] || 'السجل';
-                const html = logs.length > 0 ? logs.map(l => `
-                    <div class="log-item">
-                        <div class="log-date">${l.date}</div>
-                        <strong>${l.action}</strong>
-                        <div style="margin-top:5px;">${l.details}</div>
-                    </div>
-                `).join('') : '<p style="text-align:center; color:#999">لا توجد سجلات بعد.</p>';
-                document.getElementById('modal-body').innerHTML = html;
+                document.getElementById('modal-body').innerHTML = logs.length > 0 ? logs.map(l => `<div class="log-item"><div class="log-date">${l.date}</div><strong>${l.action}</strong><div style="margin-top:5px;">${l.details}</div></div>`).join('') : '<p style="text-align:center; color:#999">لا توجد سجلات بعد.</p>';
                 document.getElementById('history-modal').style.display = 'block';
             },
-
             reset: function() {
                 const pass = prompt("أدخل كلمة المرور لتصفير النظام:");
                 if(pass === "20002000") {
                     if(confirm("تحذير نهائي: سيتم حذف كل البيانات!")) {
                         localStorage.removeItem('cozy_erp_v9');
-                        this.data = { clients: [], prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [] };
-                        this.save();
-                        location.reload();
+                        this.data = { clients: [], prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [], passwords: { admin: '1234', sales: '1234', purchases: '1234', warehouse: '1234', logistics: '1234', accounting: '1234' } };
+                        this.save(); location.reload();
                     }
                 } else { alert("كلمة المرور خاطئة!"); }
             },
-
             nav: function(id, btn) {
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -991,7 +886,6 @@
                 if(btn) btn.classList.add('active');
                 this.renderAll();
             },
-
             switchTab: function(id, btn) {
                 const parent = btn.parentElement.parentElement;
                 parent.querySelectorAll('.sub-tab').forEach(d => d.style.display = 'none');
@@ -999,1106 +893,263 @@
                 document.getElementById(id).style.display = 'block';
                 btn.classList.add('active');
             },
-
             sendSecureMsg: function() {
-                const name = document.getElementById('sec-name').value || 'مجهول';
-                const dept = document.getElementById('sec-dept').value;
-                const text = document.getElementById('sec-text').value;
-                const pin = document.getElementById('sec-pin').value;
+                const name = document.getElementById('sec-name').value || 'مجهول', dept = document.getElementById('sec-dept').value, text = document.getElementById('sec-text').value, pin = document.getElementById('sec-pin').value;
                 if(!text || !pin) return alert("الرسالة والـ PIN مطلوبين!");
-                this.data.secureMsgs.unshift({
-                    id: Date.now(), name, dept, text, pin, reply: '', date: new Date().toLocaleString('en-GB')
-                });
-                this.save();
-                document.getElementById('sec-text').value = '';
-                document.getElementById('sec-pin').value = '';
-                alert("تم إرسال الرسالة بنجاح. احتفظ بالـ PIN لمراجعة الرد.");
-                this.renderSecureMsgs();
+                this.data.secureMsgs.unshift({ id: Date.now(), name, dept, text, pin, reply: '', date: new Date().toLocaleString('en-GB') });
+                this.save(); document.getElementById('sec-text').value = ''; document.getElementById('sec-pin').value = ''; alert("تم إرسال الرسالة."); this.renderSecureMsgs();
             },
-
             checkMyMsgs: function() {
                 const pin = document.getElementById('check-pin').value;
                 if(!pin) return alert("أدخل الـ PIN");
                 const myMsgs = this.data.secureMsgs.filter(m => m.pin === pin);
-                if(myMsgs.length === 0) {
-                    document.getElementById('my-msgs-status').innerHTML = '<p style="color:red">لا توجد رسائل بهذا الرقم السري.</p>';
-                    return;
-                }
-                const html = myMsgs.map(m => `
-                    <div class="msg-box" style="border-right:3px solid var(--primary)">
-                        <small>${m.date} | ${m.dept}</small>
-                        <p><strong>رسالتك:</strong> ${m.text}</p>
-                        ${m.reply ? `<div class="msg-admin-reply"><strong>رد الإدارة:</strong> ${m.reply}</div>` : '<small style="color:orange">بانتظار الرد...</small>'}
-                    </div>
-                `).join('');
-                document.getElementById('my-msgs-status').innerHTML = html;
+                document.getElementById('my-msgs-status').innerHTML = myMsgs.length > 0 ? myMsgs.map(m => `<div class="msg-box" style="border-right:3px solid var(--primary)"><small>${m.date} | ${m.dept}</small><p><strong>رسالتك:</strong> ${m.text}</p>${m.reply ? `<div class="msg-admin-reply"><strong>رد الإدارة:</strong> ${m.reply}</div>` : '<small style="color:orange">بانتظار الرد...</small>'}</div>`).join('') : '<p style="color:red">لا توجد رسائل بهذا الرقم السري.</p>';
             },
-
             replySecureMsg: function(id) {
                 const reply = prompt("اكتب الرد:");
-                if(reply) {
-                    const msg = this.data.secureMsgs.find(m => m.id === id);
-                    msg.reply = reply;
-                    this.save();
-                    this.renderSecureMsgs();
-                }
+                if(reply) { const msg = this.data.secureMsgs.find(m => m.id === id); msg.reply = reply; this.save(); this.renderSecureMsgs(); }
             },
-
             renderSecureMsgs: function() {
                 if(this.currentRole === 'admin') {
-                    const adminHtml = this.data.secureMsgs.sort((a,b)=>b.id-a.id).map(m => `
-                        <div class="msg-box">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                                <strong><i class="fas fa-user-secret"></i> ${m.name}</strong>
-                                <small style="font-size:0.7rem">${m.dept}</small>
-                            </div>
-                            <p style="margin:0; font-size:0.9rem;">${m.text}</p>
-                            ${m.reply ? `<div class="msg-admin-reply"><strong>ردك:</strong> ${m.reply}</div>` : 
-                            `<button onclick="app.replySecureMsg(${m.id})" class="small-btn btn-ghost" style="margin-top:5px;">رد</button>`}
-                        </div>
-                    `).join('') || '<p style="text-align:center; color:#ccc; font-size:0.9rem;">لا توجد رسائل</p>';
-                    document.getElementById('floating-inbox-body').innerHTML = adminHtml;
+                    document.getElementById('floating-inbox-body').innerHTML = this.data.secureMsgs.sort((a,b)=>b.id-a.id).map(m => `<div class="msg-box"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><strong><i class="fas fa-user-secret"></i> ${m.name}</strong><small style="font-size:0.7rem">${m.dept}</small></div><p style="margin:0; font-size:0.9rem;">${m.text}</p>${m.reply ? `<div class="msg-admin-reply"><strong>ردك:</strong> ${m.reply}</div>` : `<button onclick="app.replySecureMsg(${m.id})" class="small-btn btn-ghost" style="margin-top:5px;">رد</button>`}</div>`).join('') || '<p style="text-align:center; color:#ccc; font-size:0.9rem;">لا توجد رسائل</p>';
                 }
             },
-
             addClient: function() {
                 const name = document.getElementById('client-name').value;
-                if(name && !this.data.clients.includes(name)) {
-                    this.data.clients.push(name);
-                    this.addLog('general', "إضافة عميل", name);
-                    this.save();
-                    document.getElementById('client-name').value = '';
-                    this.renderClientsAndProds();
-                }
+                if(name && !this.data.clients.includes(name)) { this.data.clients.push(name); this.addLog('general', "إضافة عميل", name); this.save(); document.getElementById('client-name').value = ''; this.renderClientsAndProds(); }
             },
-
             importCSV: function(input) {
-                const file = input.files[0];
-                if(!file) return;
-                const reader = new FileReader();
+                const file = input.files[0]; if(!file) return; const reader = new FileReader();
                 reader.onload = function(e) {
-                    const text = e.target.result;
-                    const rows = text.split('\n');
-                    let count = 0;
-                    rows.forEach((row) => {
-                        const cols = row.split(',');
-                        if(cols.length >= 3) {
-                            const code = cols[0].trim();
-                            const name = cols[1].trim();
-                            const price = parseFloat(cols[2]) || 0;
-                            const img = cols[3] ? cols[3].trim() : '';
-                            const qty = 0; 
-                            if(code && name && code !== 'Code' && code !== 'الكود') {
-                                app.data.prods.push({ id: Date.now() + Math.floor(Math.random() * 1000), code, name, price, qty, img, specials: {} });
-                                count++;
-                            }
-                        }
-                    });
-                    if(count > 0) {
-                        app.addLog('general', "استيراد منتجات", `تم استيراد ${count} منتج`);
-                        app.save();
-                        app.renderClientsAndProds();
-                        alert(`تم استيراد ${count} منتج بنجاح`);
-                    } else { alert("لم يتم العثور على بيانات صالحة."); }
+                    const rows = e.target.result.split('\n'); let count = 0;
+                    rows.forEach((row) => { const cols = row.split(','); if(cols.length >= 3) { const code=cols[0].trim(),name=cols[1].trim(),price=parseFloat(cols[2])||0,img=cols[3]?cols[3].trim():''; if(code&&name&&code!=='Code') { app.data.prods.push({id:Date.now()+Math.floor(Math.random()*1000),code,name,price,qty:0,img,specials:{}}); count++; } } });
+                    if(count > 0) { app.addLog('general', "استيراد منتجات", `تم استيراد ${count}`); app.save(); app.renderClientsAndProds(); alert(`تم استيراد ${count}`); }
                     input.value = ''; 
-                };
-                reader.readAsText(file);
+                }; reader.readAsText(file);
             },
-            
             importSpecialPricesCSV: function(input) {
-                const file = input.files[0];
-                if(!file) return;
-                const reader = new FileReader();
+                const file = input.files[0]; if(!file) return; const reader = new FileReader();
                 reader.onload = function(e) {
-                    const text = e.target.result;
-                    const rows = text.split('\n');
-                    let count = 0;
-                    rows.forEach((row) => {
-                        const cols = row.split(',');
-                        if(cols.length >= 3) {
-                            const code = cols[0].trim();
-                            const clientName = cols[1].trim();
-                            const price = parseFloat(cols[2]) || 0;
-                            const prod = app.data.prods.find(p => p.code === code);
-                            if(prod && clientName && price > 0) {
-                                if(!prod.specials) prod.specials = {};
-                                prod.specials[clientName] = price;
-                                count++;
-                            }
-                        }
-                    });
-                    if(count > 0) {
-                        app.addLog('general', "استيراد أسعار خاصة", `تم تحديث ${count} سعر`);
-                        app.save();
-                        app.renderClientsAndProds();
-                        alert(`تم تحديث ${count} سعر خاص بنجاح`);
-                    } else { alert("لم يتم العثور على بيانات مطابقة."); }
+                    const rows = e.target.result.split('\n'); let count = 0;
+                    rows.forEach((row) => { const cols = row.split(','); if(cols.length>=3) { const code=cols[0].trim(),clientName=cols[1].trim(),price=parseFloat(cols[2])||0,prod=app.data.prods.find(p=>p.code===code); if(prod&&clientName&&price>0) { if(!prod.specials)prod.specials={}; prod.specials[clientName]=price; count++; } } });
+                    if(count>0) { app.addLog('general', "استيراد أسعار", `تم تحديث ${count}`); app.save(); app.renderClientsAndProds(); alert(`تم تحديث ${count}`); }
                     input.value = ''; 
-                };
-                reader.readAsText(file);
+                }; reader.readAsText(file);
             },
-
             saveProduct: function() {
-                const code = document.getElementById('p-code').value;
-                const name = document.getElementById('p-name').value;
-                const price = document.getElementById('p-price').value;
-                const img = document.getElementById('p-img').value;
-
-                if(!code || !name || !price) return alert("أكمل البيانات الأساسية");
-
+                const code = document.getElementById('p-code').value, name = document.getElementById('p-name').value, price = document.getElementById('p-price').value, img = document.getElementById('p-img').value;
+                if(!code || !name || !price) return alert("أكمل البيانات");
                 if(this.editingProdId) {
                     const p = this.data.prods.find(x => x.id === this.editingProdId);
-                    if(p) {
-                        p.code = code; p.name = name; p.price = parseFloat(price); p.img = img;
-                        this.addLog('general', "تعديل منتج", `${name} (${code})`);
-                        alert("تم التعديل بنجاح");
-                    }
+                    if(p) { p.code = code; p.name = name; p.price = parseFloat(price); p.img = img; this.addLog('general', "تعديل منتج", `${name}`); alert("تم التعديل"); }
                 } else {
                     this.data.prods.push({ id: Date.now(), code, name, price: parseFloat(price), qty: 0, img, specials: {} });
-                    this.addLog('general', "إضافة منتج", `${name} (${code})`);
-                    alert("تمت الإضافة");
+                    this.addLog('general', "إضافة منتج", `${name}`); alert("تمت الإضافة");
                 }
                 this.save(); this.cancelEdit(); this.renderClientsAndProds();
             },
-
             editProduct: function(id) {
-                const p = this.data.prods.find(x => x.id === id);
-                if(!p) return;
-                this.editingProdId = id;
-                document.getElementById('p-code').value = p.code;
-                document.getElementById('p-name').value = p.name;
-                document.getElementById('p-price').value = p.price;
-                document.getElementById('p-img').value = p.img || '';
-                document.getElementById('form-title').innerText = "تعديل منتج: " + p.name;
-                document.getElementById('btn-save-prod').innerText = "حفظ التعديلات";
-                document.getElementById('btn-cancel-edit').style.display = 'inline-block';
-                this.nav('products-create');
+                const p = this.data.prods.find(x => x.id === id); if(!p) return;
+                this.editingProdId = id; document.getElementById('p-code').value = p.code; document.getElementById('p-name').value = p.name; document.getElementById('p-price').value = p.price; document.getElementById('p-img').value = p.img || '';
+                document.getElementById('form-title').innerText = "تعديل منتج: " + p.name; document.getElementById('btn-save-prod').innerText = "حفظ التعديلات"; document.getElementById('btn-cancel-edit').style.display = 'inline-block'; this.nav('products-create');
             },
-
-            deleteProduct: function(id) {
-                if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
-                    this.data.prods = this.data.prods.filter(p => p.id !== id);
-                    this.save(); this.renderClientsAndProds();
-                }
-            },
-
-            navToSpecialPrice: function(id) {
-                this.nav('products-create');
-                setTimeout(() => {
-                    const p = this.data.prods.find(x => x.id === id);
-                    if(p) {
-                         document.getElementById('price-prod-select').value = id;
-                         document.getElementById('special-price-box').scrollIntoView({behavior: "smooth"});
-                         document.getElementById('special-price-box').style.borderColor = "var(--primary)";
-                    }
-                }, 100);
-            },
-
-            cancelEdit: function() {
-                this.editingProdId = null;
-                document.getElementById('p-code').value = '';
-                document.getElementById('p-name').value = '';
-                document.getElementById('p-price').value = '';
-                document.getElementById('p-img').value = '';
-                document.getElementById('form-title').innerText = "1. إضافة منتج جديد";
-                document.getElementById('btn-save-prod').innerText = "حفظ المنتج";
-                document.getElementById('btn-cancel-edit').style.display = 'none';
-            },
-
+            deleteProduct: function(id) { if(confirm("حذف؟")) { this.data.prods = this.data.prods.filter(p => p.id !== id); this.save(); this.renderClientsAndProds(); } },
+            navToSpecialPrice: function(id) { this.nav('products-create'); setTimeout(() => { document.getElementById('price-prod-select').value = id; document.getElementById('special-price-box').scrollIntoView({behavior: "smooth"}); }, 100); },
+            cancelEdit: function() { this.editingProdId = null; document.getElementById('p-code').value = ''; document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; document.getElementById('p-img').value = ''; document.getElementById('form-title').innerText = "1. إضافة منتج جديد"; document.getElementById('btn-save-prod').innerText = "حفظ المنتج"; document.getElementById('btn-cancel-edit').style.display = 'none'; },
             assignSpecialPrice: function() {
-                const prodId = document.getElementById('price-prod-select').value;
-                const client = document.getElementById('price-client-select').value;
-                const price = document.getElementById('price-special').value;
+                const prodId = document.getElementById('price-prod-select').value, client = document.getElementById('price-client-select').value, price = document.getElementById('price-special').value;
                 if(!prodId || !client || !price) return;
-                const prod = this.data.prods.find(p=>p.id==prodId);
-                prod.specials[client] = parseFloat(price);
-                this.addLog('general', "تخصيص سعر", `منتج: ${prod.name} | عميل: ${client} | سعر: ${price}`);
-                this.save(); this.renderClientsAndProds(); alert("تم الحفظ");
+                const prod = this.data.prods.find(p=>p.id==prodId); prod.specials[client] = parseFloat(price);
+                this.addLog('general', "تخصيص سعر", `منتج: ${prod.name} | عميل: ${client}`); this.save(); this.renderClientsAndProds(); alert("تم");
             },
-
             renderClientsAndProds: function() {
-                if(!this.data.clients) this.data.clients = [];
-                if(!this.data.prods) this.data.prods = [];
-
+                if(!this.data.clients) this.data.clients = []; if(!this.data.prods) this.data.prods = [];
                 const clientOpts = `<option value="">اختر...</option>` + this.data.clients.map(c => `<option value="${c}">${c}</option>`).join('');
                 document.getElementById('clients-list').innerHTML = this.data.clients.map(c => `<span class="badge" style="background:var(--primary); padding:8px;">${c}</span>`).join('');
-                document.getElementById('price-client-select').innerHTML = clientOpts;
-                document.getElementById('so-client-select').innerHTML = clientOpts;
-
+                document.getElementById('price-client-select').innerHTML = clientOpts; document.getElementById('so-client-select').innerHTML = clientOpts;
                 document.getElementById('tbl-products').innerHTML = this.data.prods.map(p => {
                     let specialsHtml = Object.keys(p.specials || {}).length > 0 ? Object.entries(p.specials).map(([c, pr]) => `<span class="special-tag">${c}: ${pr}</span>`).join(' ') : "-";
-                    const imgSrc = p.img ? p.img : 'https://placehold.co/40x40?text=IMG';
-                    return `
-                    <tr>
-                        <td style="position:relative"><img src="${imgSrc}" class="list-thumb"></td>
-                        <td><b>${p.code}</b></td>
-                        <td>${p.name}</td>
-                        <td>${p.price} SAR</td>
-                        <td>${specialsHtml}</td>
-                        <td>
-                            <button onclick="app.editProduct(${p.id})" class="btn-ghost small" title="تعديل"><i class="fas fa-edit"></i></button>
-                            <button onclick="app.navToSpecialPrice(${p.id})" class="btn-ghost small" title="سعر خاص" style="color:var(--accent)"><i class="fas fa-tag"></i></button>
-                            <button onclick="app.deleteProduct(${p.id})" class="btn-ghost small" title="حذف" style="color:red"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    `;
+                    return `<tr><td style="position:relative"><img src="${p.img||'https://placehold.co/40x40'}" class="list-thumb"></td><td><b>${p.code}</b></td><td>${p.name}</td><td>${p.price} SAR</td><td>${specialsHtml}</td><td><button onclick="app.editProduct(${p.id})" class="btn-ghost small"><i class="fas fa-edit"></i></button><button onclick="app.navToSpecialPrice(${p.id})" class="btn-ghost small" style="color:var(--accent)"><i class="fas fa-tag"></i></button><button onclick="app.deleteProduct(${p.id})" class="btn-ghost small" style="color:red"><i class="fas fa-trash"></i></button></td></tr>`;
                 }).join('');
                 document.getElementById('price-prod-select').innerHTML = `<option value="">اختر...</option>` + this.data.prods.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
             },
-
             renderPOGrid: function() {
-                if(!this.data.prods) this.data.prods = [];
-                document.getElementById('grid-po-prods').innerHTML = this.data.prods.map(p => {
-                    const imgSrc = p.img ? p.img : 'https://placehold.co/100x100?text=No+Img';
-                    return `
-                    <div class="prod-box" onclick="this.classList.toggle('selected')">
-                        <img src="${imgSrc}" class="prod-thumb">
-                        <b>${p.name}</b> <small>(${p.code})</small>
-                        <input type="number" class="po-qty" data-id="${p.id}" placeholder="الكمية" onclick="event.stopPropagation()">
-                    </div>
-                `}).join('');
+                document.getElementById('grid-po-prods').innerHTML = this.data.prods.map(p => `<div class="prod-box" onclick="this.classList.toggle('selected')"><img src="${p.img||'https://placehold.co/100x100'}" class="prod-thumb"><b>${p.name}</b> <small>(${p.code})</small><input type="number" class="po-qty" data-id="${p.id}" placeholder="الكمية" onclick="event.stopPropagation()"></div>`).join('');
             },
-
-            calcVat: function(val) {
-                const v = parseFloat(val) || 0;
-                const withVat = v * 1.15;
-                document.getElementById('po-cost-after-display').innerText = withVat.toFixed(2) + " SAR";
-            },
-
+            calcVat: function(val) { document.getElementById('po-cost-after-display').innerText = (parseFloat(val||0) * 1.15).toFixed(2) + " SAR"; },
             createPO: function() {
-                const ref = document.getElementById('po-ref').value;
-                const vnd = document.getElementById('po-vnd').value;
-                const country = document.getElementById('po-country').value;
-                const costB = parseFloat(document.getElementById('po-cost-before').value) || 0;
-                const costA = costB * 1.15;
-                const notes = document.getElementById('po-notes').value;
-                const fileInput = document.getElementById('po-file');
-
-                let items = [];
-                document.querySelectorAll('.po-qty').forEach(inp => {
-                    if(inp.value > 0) items.push({ ...this.data.prods.find(p=>p.id==inp.dataset.id), req: parseInt(inp.value), got: 0, note: '' });
-                });
-
+                const ref = document.getElementById('po-ref').value, vnd = document.getElementById('po-vnd').value, country = document.getElementById('po-country').value, costB = parseFloat(document.getElementById('po-cost-before').value)||0, costA = costB * 1.15, notes = document.getElementById('po-notes').value, fileInput = document.getElementById('po-file');
+                let items = []; document.querySelectorAll('.po-qty').forEach(inp => { if(inp.value > 0) items.push({ ...this.data.prods.find(p=>p.id==inp.dataset.id), req: parseInt(inp.value), got: 0, note: '' }); });
                 if(items.length===0 || !ref) return alert("البيانات ناقصة");
-
                 const processPO = (fileData) => {
-                    this.data.pos.push({
-                        id: ref, vendor: vnd, country, items, logisticsStatus: 'تم الطلب',
-                        costs: { before: costB, after: costA }, notes, smacc: '', smaccNotes: '',
-                        file: fileData, createdAt: Date.now()
-                    });
-
-                    let logDetails = `<strong>المورد: ${vnd} | Ref: ${ref}</strong><br>
-                                      <table style="width:100%; font-size:0.8rem; margin-top:5px; border-collapse: collapse;">
-                                        <tr style="background:#eee;"><th>المنتج</th><th>الكمية</th></tr>`;
-                    items.forEach(i => {
-                         logDetails += `<tr><td style="padding:4px; border-bottom:1px solid #eee">${i.name}</td><td style="padding:4px; border-bottom:1px solid #eee">${i.req}</td></tr>`;
-                    });
-                    logDetails += `</table><br><strong>الإجمالي: ${costA.toFixed(2)} SAR</strong>`;
-                    this.addLog('purchases', "أمر شراء جديد", logDetails);
-                    this.save(); this.nav('purchases'); alert("تم");
+                    this.data.pos.push({ id: ref, vendor: vnd, country, items, logisticsStatus: 'تم الطلب', costs: { before: costB, after: costA }, notes, smacc: '', smaccNotes: '', file: fileData, createdAt: Date.now() });
+                    this.addLog('purchases', "أمر شراء جديد", `المورد: ${vnd} | Ref: ${ref}`); this.save(); this.nav('purchases'); alert("تم");
                 };
-
-                if (fileInput.files.length > 0) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) { processPO(e.target.result); };
-                    reader.readAsDataURL(fileInput.files[0]);
-                } else { processPO(''); }
+                if (fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processPO(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { processPO(''); }
             },
-
             downloadPOExcel: function(poId) {
-                const po = this.data.pos.find(p=>p.id===poId);
-                let csv = "\uFEFFCode,Name,Retail Price,Qty Requested\n";
-                po.items.forEach(i => csv += `${i.code},${i.name},${i.price},${i.req}\n`);
-                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-                const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`PO_${po.id}.csv`; a.click();
+                const po = this.data.pos.find(p=>p.id===poId); let csv = "\uFEFFCode,Name,Price,Qty\n"; po.items.forEach(i => csv += `${i.code},${i.name},${i.price},${i.req}\n`);
+                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'}); const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`PO_${po.id}.csv`; a.click();
             },
-            
             accRegisterPO: function(id) {
-                const smaccRef = document.getElementById(`smacc-${id}`).value;
-                const fileInput = document.getElementById(`acc-file-${id}`);
-                const accNotes = document.getElementById(`acc-n-${id}`).value;
+                const smaccRef = document.getElementById(`smacc-${id}`).value, fileInput = document.getElementById(`acc-file-${id}`), accNotes = document.getElementById(`acc-n-${id}`).value;
                 if(!smaccRef) return alert("أدخل رقم القيد");
-                
-                const processAcc = (fileData) => {
-                    const po = this.data.pos.find(p=>p.id===id);
-                    po.smacc = smaccRef;
-                    po.smaccNotes = accNotes;
-                    if(fileData) po.accFile = fileData;
-                    this.addLog('accounting', "تسجيل محاسبي (PO)", `للمرجع ${id} برقم القيد ${smaccRef}`); 
-                    this.save(); this.renderAll();
-                };
-
-                if (fileInput && fileInput.files.length > 0) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) { processAcc(e.target.result); };
-                    reader.readAsDataURL(fileInput.files[0]);
-                } else { processAcc(null); }
+                const processAcc = (fileData) => { const po = this.data.pos.find(p=>p.id===id); po.smacc = smaccRef; po.smaccNotes = accNotes; if(fileData) po.accFile = fileData; this.addLog('accounting', "تسجيل محاسبي PO", `Ref ${id}`); this.save(); this.renderAll(); };
+                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processAcc(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { processAcc(null); }
             },
-
             checkWhShortage: function(id, idx, type) {
-                const input = document.getElementById(`${type==='in'?'rec':'conf'}-${id}-${idx}`);
-                const val = parseInt(input.value) || 0;
-                let req = 0;
-                if (type === 'in') {
-                    const po = this.data.pos.find(p=>p.id===id);
-                    req = po.items[idx].req;
-                } else {
-                    const so = this.data.sos.find(s=>s.id===id);
-                    req = so.items[idx].req;
-                }
+                const input = document.getElementById(`${type==='in'?'rec':'conf'}-${id}-${idx}`), val = parseInt(input.value) || 0;
+                let req = (type === 'in') ? this.data.pos.find(p=>p.id===id).items[idx].req : this.data.sos.find(s=>s.id===id).items[idx].req;
                 const diff = req - val;
-                
-                if (type === 'out') {
-                     if(diff > 0) {
-                        input.style.borderColor = "red";
-                        input.style.background = "#fff0f0";
-                    } else {
-                        input.style.borderColor = "#dfe6e9";
-                        input.style.background = "#fff";
-                    }
-                    return;
-                }
-                const statusDiv = document.getElementById(`${type==='in'?'stat-rec':'stat-conf'}-${id}-${idx}`);
-                if(diff > 0) {
-                    statusDiv.innerHTML = `<span style="color:red">عجز: ${diff}</span>`;
-                    input.style.borderColor = "red";
-                    input.style.background = "#fff0f0";
-                } else if (diff < 0) {
-                    statusDiv.innerHTML = `<span style="color:orange">زيادة: ${Math.abs(diff)}</span>`;
-                } else {
-                    statusDiv.innerHTML = `<span style="color:green"><i class="fas fa-check"></i> مطابق</span>`;
-                    input.style.borderColor = "#dfe6e9";
-                    input.style.background = "#fff";
-                }
+                if (type === 'out') { input.style.background = (diff > 0) ? "#fff0f0" : "#fff"; return; }
+                document.getElementById(`stat-rec-${id}-${idx}`).innerHTML = (diff>0) ? `<span style="color:red">عجز: ${diff}</span>` : ((diff<0)?`<span style="color:orange">زيادة</span>`:`<span style="color:green">مطابق</span>`);
             },
-
             whConfirmPO: function(id) {
-                const po = this.data.pos.find(p=>p.id===id);
-                const whNote = document.getElementById(`wh-po-note-${id}`).value;
-                let logDetails = `<strong>استلام شحنة PO: ${id}</strong><br><table style="width:100%; font-size:0.8rem; border-collapse:collapse;"><tr><th>الصنف</th><th>طلب</th><th>وصل</th></tr>`;
-                po.items.forEach((item, idx) => {
-                    item.got = parseInt(document.getElementById(`rec-${id}-${idx}`).value)||0;
-                    item.note = document.getElementById(`note-${id}-${idx}`).value;
-                    let prod = this.data.prods.find(p=>p.id==item.id);
-                    if(prod) prod.qty += item.got;
-                    const color = item.got < item.req ? 'red' : 'green';
-                    logDetails += `<tr><td>${item.name}</td><td>${item.req}</td><td style="color:${color}">${item.got}</td></tr>`;
-                });
-                logDetails += `</table>`;
-                if(whNote) {
-                    po.whRecNotes = whNote; 
-                    logDetails += `<br>ملاحظات الاستلام: ${whNote}`;
-                }
-                po.logisticsStatus = 'تم الاستلام'; 
-                this.addLog('warehouse', "استلام مخزني", logDetails); 
-                this.save(); this.renderAll();
+                const po = this.data.pos.find(p=>p.id===id), whNote = document.getElementById(`wh-po-note-${id}`).value;
+                po.items.forEach((item, idx) => { item.got = parseInt(document.getElementById(`rec-${id}-${idx}`).value)||0; item.note = document.getElementById(`note-${id}-${idx}`).value; let prod = this.data.prods.find(p=>p.id==item.id); if(prod) prod.qty += item.got; });
+                po.whRecNotes = whNote; po.logisticsStatus = 'تم الاستلام'; this.addLog('warehouse', "استلام مخزني", `PO: ${id}`); this.save(); this.renderAll();
             },
-
             whConfirmSO: function(id) {
-                let so = this.data.sos.find(s=>s.id===id);
-                const note = document.getElementById(`wh-so-note-${id}`).value;
-                let logDetails = `<strong>صرف طلبية SO: ${so.ref}</strong><br><table style="width:100%; font-size:0.8rem; border-collapse:collapse;"><tr><th>الصنف</th><th>مطلوب</th><th>تم صرف</th><th>ملاحظة</th></tr>`;
-                so.items.forEach((item, idx) => {
-                    item.conf = parseInt(document.getElementById(`conf-${id}-${idx}`).value)||0;
-                    const itemNote = document.getElementById(`out-note-${id}-${idx}`).value;
-                    const color = item.conf < item.req ? 'red' : 'green';
-                    logDetails += `<tr><td>${item.name}</td><td>${item.req}</td><td style="color:${color}">${item.conf}</td><td>${itemNote}</td></tr>`;
-                });
+                let so = this.data.sos.find(s=>s.id===id), note = document.getElementById(`wh-so-note-${id}`).value;
+                so.items.forEach((item, idx) => { item.conf = parseInt(document.getElementById(`conf-${id}-${idx}`).value)||0; });
                 so.items.forEach(item => this.data.prods.find(p=>p.id==item.id).qty -= item.conf);
-                so.status = 'Acc'; so.whNotes = note;
-                logDetails += `</table>`;
-                this.addLog('warehouse', "صرف مخزني", logDetails); 
-                this.save(); this.renderAll();
+                so.status = 'Acc'; so.whNotes = note; this.addLog('warehouse', "صرف مخزني", `SO: ${so.ref}`); this.save(); this.renderAll();
             },
-            
             whFinalizeDelivery: function(id) {
                 const fileInput = document.getElementById(`wh-del-file-${id}`);
-                
-                const processDelivery = (fileData) => {
-                    if(!fileData) return alert("يجب إرفاق صورة الفاتورة المختومة من العميل!");
-                    
-                    const so = this.data.sos.find(s=>s.id===id);
-                    so.status = 'Done'; 
-                    so.stampedInvoice = fileData;
-                    so.logisticsStatus = 'تم التسليم';
-
-                    this.addLog('warehouse', "توثيق تسليم", `تم رفع الفاتورة المختومة للطلب: ${so.ref}`);
-                    this.save(); this.renderAll();
-                };
-
-                if (fileInput && fileInput.files.length > 0) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) { processDelivery(e.target.result); };
-                    reader.readAsDataURL(fileInput.files[0]);
-                } else { 
-                    alert("الرجاء اختيار ملف الفاتورة المختومة.");
-                }
+                const processDelivery = (fileData) => { if(!fileData) return alert("مطلوب الصورة"); const so = this.data.sos.find(s=>s.id===id); so.status = 'Done'; so.stampedInvoice = fileData; so.logisticsStatus = 'تم التسليم'; this.addLog('warehouse', "تسليم", so.ref); this.save(); this.renderAll(); };
+                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processDelivery(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { alert("اختر ملف"); }
             },
-
             renderSOGrid: function() {
-                if(!this.data.prods) this.data.prods = [];
                 const client = document.getElementById('so-client-select').value;
                 document.getElementById('grid-so-prods').innerHTML = this.data.prods.map(p => {
-                    // حساب السعر (خاص أو عادي)
                     const price = (client && p.specials && p.specials[client]) ? p.specials[client] : p.price;
-                    const imgSrc = p.img ? p.img : 'https://placehold.co/100x100?text=No+Img';
-                    
-                    return `
-                    <div class="prod-box" onclick="this.classList.toggle('selected')">
-                        <img src="${imgSrc}" class="prod-thumb">
-                        
-                        <div style="font-weight:bold; margin-bottom:4px; line-height:1.2;">${p.name}</div>
-                        <div style="color:var(--primary); font-family:monospace; font-size:0.85rem; background:#f0f3ff; border:1px solid #dbeafe; border-radius:4px; padding:1px 6px; display:inline-block; margin-bottom:6px;">${p.code}</div>
-                        <br><small style="color:#636e72">السعر: ${price} SAR</small>
-                        <input type="number" class="so-qty" data-id="${p.id}" data-price="${price}" placeholder="الكمية" onclick="event.stopPropagation()">
-                    </div>
-                `}).join('');
+                    return `<div class="prod-box" onclick="this.classList.toggle('selected')"><img src="${p.img||'https://placehold.co/100x100'}" class="prod-thumb"><b>${p.name}</b><small>(${p.code})</small><br><small>${price} SAR</small><input type="number" class="so-qty" data-id="${p.id}" data-price="${price}" placeholder="الكمية" onclick="event.stopPropagation()"></div>`;
+                }).join('');
             },
-
             createSO: function() {
-                const client = document.getElementById('so-client-select').value;
-                const ref = document.getElementById('so-ref').value;
-                const notes = document.getElementById('so-notes').value;
-                let items = [];
-                document.querySelectorAll('.so-qty').forEach(inp => {
-                    if(inp.value > 0) items.push({ 
-                        id: parseInt(inp.dataset.id), ...this.data.prods.find(p=>p.id==inp.dataset.id), 
-                        req: parseInt(inp.value), conf: 0, price: parseFloat(inp.dataset.price)
-                    });
-                });
+                const client = document.getElementById('so-client-select').value, ref = document.getElementById('so-ref').value, notes = document.getElementById('so-notes').value;
+                let items = []; document.querySelectorAll('.so-qty').forEach(inp => { if(inp.value > 0) items.push({ id: parseInt(inp.dataset.id), ...this.data.prods.find(p=>p.id==inp.dataset.id), req: parseInt(inp.value), conf: 0, price: parseFloat(inp.dataset.price) }); });
                 if(items.length===0 || !client) return alert("بيانات ناقصة");
-                
-                this.data.sos.push({ 
-                    id: Date.now(), client, ref, items, status: 'Wh', 
-                    logisticsStatus: 'تم الطلب', 
-                    inv: '', notes, accFile: '', journalRef: '', accNotes: '', stampedInvoice: '' 
-                });
-                let total = 0;
-                let logDetails = `<strong>العميل: ${client} | Ref: ${ref}</strong><br>
-                                  <table style="width:100%; font-size:0.8rem; margin-top:5px; border-collapse: collapse;">
-                                    <tr style="background:#eee;"><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الاجمالي</th></tr>`;
-                items.forEach(i => {
-                     const rowTot = i.req * i.price;
-                     total += rowTot;
-                     logDetails += `<tr>
-                        <td style="padding:4px; border-bottom:1px solid #eee">${i.name}</td>
-                        <td style="padding:4px; border-bottom:1px solid #eee">${i.req}</td>
-                        <td style="padding:4px; border-bottom:1px solid #eee">${i.price}</td>
-                        <td style="padding:4px; border-bottom:1px solid #eee">${rowTot.toLocaleString()}</td>
-                     </tr>`;
-                });
-                logDetails += `</table><br><strong>الإجمالي الكلي: ${total.toLocaleString()} SAR</strong>`;
-                this.addLog('sales', "أمر بيع جديد", logDetails);
-                this.save(); this.nav('sales'); alert("تم");
+                this.data.sos.push({ id: Date.now(), client, ref, items, status: 'Wh', logisticsStatus: 'تم الطلب', inv: '', notes, accFile: '', journalRef: '', accNotes: '', stampedInvoice: '' });
+                this.addLog('sales', "أمر بيع جديد", `Ref: ${ref}`); this.save(); this.nav('sales'); alert("تم");
             },
-
             downloadSOExcel: function(id) {
-                let so = this.data.sos.find(s=>s.id===id);
-                let csv = "\uFEFFProduct Code,Product Name,Requested Qty,Confirmed Qty,Unit Price,Total (Excl VAT),VAT (15%),Total (Incl VAT)\n";
-                so.items.forEach(i => {
-                    let rowTotal = i.conf * i.price;
-                    let vat = rowTotal * 0.15;
-                    let totalInc = rowTotal + vat;
-                    csv += `${i.code},${i.name},${i.req},${i.conf},${i.price},${rowTotal.toFixed(2)},${vat.toFixed(2)},${totalInc.toFixed(2)}\n`;
-                });
-                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-                const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`SO_${so.ref}.csv`; a.click();
+                let so = this.data.sos.find(s=>s.id===id), csv = "\uFEFFCode,Name,Req,Conf,Price,Total\n";
+                so.items.forEach(i => { csv += `${i.code},${i.name},${i.req},${i.conf},${i.price},${(i.conf*i.price).toFixed(2)}\n`; });
+                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'}); const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`SO_${so.ref}.csv`; a.click();
             },
-            
             accFinalizeSO: function(id) {
-                const inv = document.getElementById(`inv-${id}`).value;
-                const journal = document.getElementById(`acc-ref-${id}`).value;
-                const fileInput = document.getElementById(`acc-file-so-${id}`);
-                const accNotes = document.getElementById(`acc-note-so-${id}`).value;
-
-                if(!inv && !journal) return alert("مطلوب رقم الفاتورة أو القيد");
-                
-                const processFinal = (fileData) => {
-                    const so = this.data.sos.find(s=>s.id===id);
-                    so.status='Delivery'; 
-                    so.inv = inv; so.journalRef = journal; so.accNotes = accNotes;
-                    if(fileData) so.accFile = fileData;
-
-                    let logDetails = `<strong>إصدار فاتورة مبيعات</strong><br>رقم الفاتورة: ${inv}<br>العميل: ${so.client}`;
-                    if(journal) logDetails += `<br>رقم القيد: ${journal}`;
-                    
-                    this.addLog('accounting', "إصدار فاتورة", logDetails); 
-                    this.save(); this.renderAll();
-                };
-
-                if (fileInput && fileInput.files.length > 0) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) { processFinal(e.target.result); };
-                    reader.readAsDataURL(fileInput.files[0]);
-                } else { processFinal(null); }
+                const inv = document.getElementById(`inv-${id}`).value, journal = document.getElementById(`acc-ref-${id}`).value, fileInput = document.getElementById(`acc-file-so-${id}`), accNotes = document.getElementById(`acc-note-so-${id}`).value;
+                if(!inv && !journal) return alert("مطلوب الفاتورة/القيد");
+                const processFinal = (fileData) => { const so = this.data.sos.find(s=>s.id===id); so.status='Delivery'; so.inv = inv; so.journalRef = journal; so.accNotes = accNotes; if(fileData) so.accFile = fileData; this.addLog('accounting', "إصدار فاتورة", inv); this.save(); this.renderAll(); };
+                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processFinal(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { processFinal(null); }
             },
-
             addTask: function() {
-                const from = document.getElementById('task-from').value;
-                const dept = document.getElementById('task-dept').value;
-                const title = document.getElementById('task-title').value;
-                const desc = document.getElementById('task-desc').value;
-                const fileInput = document.getElementById('task-file');
-                const fileObj = fileInput.files[0];
-                if(!title) return alert("مطلوب عنوان للمهمة");
-                const processTask = (fileData) => {
-                    this.data.tasks.push({ 
-                        id: Date.now(), dept, from, title, desc, file: fileData, reply: '', done: false 
-                    });
-                    this.addLog('tasks', "مهمة جديدة", `من: ${from} -> إلى: ${dept}<br>العنوان: ${title}`);
-                    this.save(); 
-                    this.renderAll(); 
-                    document.getElementById('task-title').value='';
-                    document.getElementById('task-desc').value='';
-                    document.getElementById('task-file').value='';
-                    alert("تم إرسال المهمة للقسم: " + dept);
-                };
-                if (fileObj) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) { processTask(e.target.result); };
-                    reader.readAsDataURL(fileObj);
-                } else { processTask(''); }
+                const from = document.getElementById('task-from').value, dept = document.getElementById('task-dept').value, title = document.getElementById('task-title').value, desc = document.getElementById('task-desc').value, fileObj = document.getElementById('task-file').files[0];
+                if(!title) return alert("مطلوب العنوان");
+                const processTask = (fileData) => { this.data.tasks.push({ id: Date.now(), dept, from, title, desc, file: fileData, reply: '', done: false }); this.addLog('tasks', "مهمة جديدة", `${title} -> ${dept}`); this.save(); this.renderAll(); alert("تم"); };
+                if (fileObj) { const reader = new FileReader(); reader.onload = function(e) { processTask(e.target.result); }; reader.readAsDataURL(fileObj); } else { processTask(''); }
             },
             solveTask: function(id) {
-                const r = document.getElementById(`tr-${id}`).value;
-                if(!r) return;
-                let t = this.data.tasks.find(x => x.id === id);
-                t.reply = r; t.done = true;
-                this.addLog('tasks', "إنجاز مهمة", `المهمة: ${t.title}<br>الرد: ${r}`);
-                this.save(); this.renderAll();
+                const r = document.getElementById(`tr-${id}`).value; if(!r) return;
+                let t = this.data.tasks.find(x => x.id === id); t.reply = r; t.done = true; this.save(); this.renderAll();
             },
-
             renderDeptTasks: function(dept, containerId) {
-                if(!this.data.tasks) this.data.tasks = [];
-                const tasks = this.data.tasks.filter(t => (t.dept === dept || t.dept === 'General') && !t.done)
-                                             .sort((a,b) => b.id - a.id);
-                const html = tasks.length ? tasks.map(t => `
-                    <div class="card" style="border-right:4px solid var(--primary)">
-                        <div style="display:flex; justify-content:space-between;">
-                            <h4>${t.title}</h4> 
-                            <div>
-                                <small style="background:#eee; padding:2px 5px; border-radius:4px;">من: ${t.from || '?'}</small>
-                                <i class="fas fa-arrow-left" style="font-size:0.7rem"></i>
-                                <small style="background:#ffeaa7; padding:2px 5px; border-radius:4px;">إلى: ${t.dept}</small>
-                            </div>
-                        </div>
-                        <p>${t.desc}</p>
-                        ${t.file ? `<div style="margin-bottom:10px;"><a href="${t.file}" download="attachment" target="_blank" style="color:var(--primary); text-decoration:underline;"><i class="fas fa-paperclip"></i> تحميل المرفق</a></div>` : ''}
-                        <div class="form-row">
-                            <div class="form-group full-width"><input id="tr-${t.id}" placeholder="اكتب ردك هنا للإتمام..."></div>
-                            <button onclick="app.solveTask(${t.id})" class="btn-primary small">إتمام</button>
-                        </div>
-                    </div>
-                `).join('') : '<p style="text-align:center; color:#999; padding:20px;">لا توجد مهام جديدة</p>';
-                document.getElementById(containerId).innerHTML = html;
+                const tasks = this.data.tasks.filter(t => (t.dept === dept || t.dept === 'General') && !t.done).sort((a,b) => b.id - a.id);
+                document.getElementById(containerId).innerHTML = tasks.length ? tasks.map(t => `<div class="card" style="border-right:4px solid var(--primary)"><h4>${t.title}</h4><small>من: ${t.from}</small><p>${t.desc}</p>${t.file?`<a href="${t.file}" download>مرفق</a>`:''}<div class="form-row"><input id="tr-${t.id}" placeholder="الرد..."><button onclick="app.solveTask(${t.id})" class="btn-primary small">إتمام</button></div></div>`).join('') : '<p style="text-align:center;color:#999">لا مهام</p>';
             },
-
-            // --- HELPER LOGIC FUNCTIONS FOR READ-ONLY LOGISTICS ---
-            
             getLogisticsStatePO: function(po) {
-                // Steps: 0:Ordered, 1:Acc Register, 2:Wh Receipt (Partial/Full), 3:Done
-                let step = 0;
-                let statusText = "تم الطلب";
-                
-                if (po.smacc) {
-                    step = 1;
-                    statusText = "تم التسجيل (بانتظار المخزن)";
-                } else {
-                    statusText = "بانتظار تسجيل المحاسب";
-                }
-
-                if (po.logisticsStatus === 'تم الاستلام' || po.whRecNotes) {
-                    step = 3; 
-                    statusText = "تم الاستلام";
-                } else if (step === 1) {
-                    step = 2; // Waiting for WH
-                }
-
+                let step = 0, statusText = "تم الطلب";
+                if (po.smacc) { step = 1; statusText = "تم التسجيل"; } else { statusText = "انتظار محاسب"; }
+                if (po.logisticsStatus === 'تم الاستلام' || po.whRecNotes) { step = 3; statusText = "تم الاستلام"; } else if (step === 1) { step = 2; }
                 return { step, text: statusText };
             },
-
             getLogisticsStateSO: function(so) {
-                // Steps: 0:Ordered, 1:Wh Confirm, 2:Acc Invoice, 3:Delivery, 4:Done
-                let step = 0;
-                let statusText = "تم الطلب";
-
-                if (so.status === 'Wh') {
-                    step = 1; statusText = "بانتظار تأكيد المخزن";
-                } else if (so.status === 'Acc') {
-                    step = 2; statusText = "بانتظار الفوترة";
-                } else if (so.status === 'Delivery') {
-                    step = 3; statusText = "بانتظار التسليم";
-                } else if (so.status === 'Done') {
-                    step = 4; statusText = "تم التسليم";
-                }
+                let step = 0, statusText = "تم الطلب";
+                if (so.status === 'Wh') { step = 1; statusText = "انتظار مخزن"; } else if (so.status === 'Acc') { step = 2; statusText = "انتظار فوترة"; } else if (so.status === 'Delivery') { step = 3; statusText = "انتظار تسليم"; } else if (so.status === 'Done') { step = 4; statusText = "تم التسليم"; }
                 return { step, text: statusText };
             },
-
             renderAll: function() {
-                // ضمان وجود البيانات دائما
-                if(!this.data.clients) this.data.clients = [];
-                if(!this.data.prods) this.data.prods = [];
-                if(!this.data.pos) this.data.pos = [];
-                if(!this.data.sos) this.data.sos = [];
-                if(!this.data.tasks) this.data.tasks = [];
-                if(!this.data.secureMsgs) this.data.secureMsgs = [];
+                if(!this.data.clients) this.data.clients = []; if(!this.data.prods) this.data.prods = []; if(!this.data.pos) this.data.pos = []; if(!this.data.sos) this.data.sos = []; if(!this.data.tasks) this.data.tasks = [];
+                this.renderClientsAndProds(); this.renderPOGrid(); this.renderSOGrid(); if (this.currentRole === 'admin') { this.updateDashboard(); this.renderSettings(); } this.renderSecureMsgs();
 
-                this.renderClientsAndProds();
-                this.renderPOGrid();
-                this.renderSOGrid();
-                if (this.currentRole === 'admin') this.updateDashboard();
-                this.renderSecureMsgs();
-
-                // --- Logistics NEW READ-ONLY LOGIC ---
-                
-                // Inbound (POs)
-                const poStepsLabels = ['طلب', 'محاسبة', 'استلام', 'مكتمل'];
+                const poSteps = ['طلب', 'محاسبة', 'استلام', 'مكتمل'];
                 document.getElementById('log-inbound-readonly').innerHTML = this.data.pos.slice().sort((a,b)=>b.id-a.id).map(p => {
                     const state = this.getLogisticsStatePO(p);
-                    
-                    // Check Discrepancy
-                    let discrepancyHtml = '';
-                    if(state.step >= 2) { // Only if reached warehouse
-                        let diffs = [];
-                        p.items.forEach(i => {
-                            if(i.got !== i.req) diffs.push(`${i.name}: طلب ${i.req} / وصل ${i.got}`);
-                        });
-                        if(diffs.length > 0) {
-                            discrepancyHtml = `<div class="discrepancy-box"><i class="fas fa-exclamation-triangle"></i> يوجد فروقات: ${diffs.join(', ')}</div>`;
-                        }
-                    }
+                    const progHtml = poSteps.map((lbl, idx) => `<div class="prog-step ${idx<state.step?'completed':(idx===state.step?'active':'')}"></div>`).join('');
+                    return `<div class="log-card" style="border-right:4px solid var(--secondary)"><div class="log-header"><div>PO: ${p.id}</div><span class="badge bg-blue">${state.text}</span></div><div class="log-progress">${progHtml}</div></div>`;
+                }).join('') || '<p style="text-align:center">لا طلبات</p>';
 
-                    // Attachments
-                    let attachHtml = '';
-                    if(p.file) attachHtml += `<a href="${p.file}" class="attach-badge" download><i class="fas fa-file"></i> ملف الشراء</a>`;
-                    if(p.accFile) attachHtml += `<a href="${p.accFile}" class="attach-badge" download><i class="fas fa-file-invoice-dollar"></i> سند القيد</a>`;
-
-                    // Progress Bar HTML
-                    const progHtml = poStepsLabels.map((lbl, idx) => {
-                        let cls = '';
-                        if(idx < state.step) cls = 'completed';
-                        else if(idx === state.step) cls = 'active';
-                        return `<div class="prog-step ${cls}"></div>`;
-                    }).join('');
-                    
-                    const labelsHtml = poStepsLabels.map((lbl, idx) => {
-                        return `<div class="step-txt ${idx === state.step ? 'active' : ''}">${lbl}</div>`;
-                    }).join('');
-
-                    return `
-                    <div class="log-card" style="border-right: 4px solid var(--secondary);">
-                        <div class="log-header">
-                            <div>
-                                <div class="log-id">PO: ${p.id}</div>
-                                <div class="log-sub">${p.vendor} | ${app.formatDate(p.createdAt)}</div>
-                            </div>
-                            <span class="badge bg-blue">${state.text}</span>
-                        </div>
-                        <div class="log-progress">${progHtml}</div>
-                        <div class="step-labels">${labelsHtml}</div>
-                        ${discrepancyHtml}
-                        ${attachHtml ? `<div class="attach-section">${attachHtml}</div>` : ''}
-                    </div>`;
-                }).join('') || '<p style="text-align:center; color:#ccc">لا توجد طلبات</p>';
-
-                // Outbound (SOs)
-                const soStepsLabels = ['طلب', 'تأكيد', 'فوترة', 'توصيل', 'مكتمل'];
+                const soSteps = ['طلب', 'تأكيد', 'فوترة', 'توصيل', 'مكتمل'];
                 document.getElementById('log-outbound-readonly').innerHTML = this.data.sos.slice().sort((a,b)=>b.id-a.id).map(s => {
                     const state = this.getLogisticsStateSO(s);
+                    const progHtml = soSteps.map((lbl, idx) => `<div class="prog-step ${idx<state.step?'completed':(idx===state.step?'active':'')}"></div>`).join('');
+                    return `<div class="log-card" style="border-right:4px solid var(--accent)"><div class="log-header"><div>SO: ${s.ref}</div><span class="badge bg-orange">${state.text}</span></div><div class="log-progress">${progHtml}</div></div>`;
+                }).join('') || '<p style="text-align:center">لا مبيعات</p>';
 
-                    // Check Discrepancy (Wh Confirmed vs Requested)
-                    let discrepancyHtml = '';
-                    if(state.step >= 2) { // After Wh confirmation
-                        let diffs = [];
-                        s.items.forEach(i => {
-                            if(i.conf !== i.req) diffs.push(`${i.name}: طلب ${i.req} / توفر ${i.conf}`);
-                        });
-                        if(diffs.length > 0) {
-                            discrepancyHtml = `<div class="discrepancy-box"><i class="fas fa-exclamation-circle"></i> فروقات الكميات: ${diffs.join(', ')}</div>`;
-                        }
-                    }
+                this.renderDeptTasks('Sales','list-sales-tasks'); this.renderDeptTasks('Purchases','list-pur-tasks'); this.renderDeptTasks('Warehouse','list-wh-tasks'); this.renderDeptTasks('Accounting','list-acc-tasks'); this.renderDeptTasks('Logistics','list-log-tasks');
 
-                    // Attachments
-                    let attachHtml = '';
-                    if(s.accFile) attachHtml += `<a href="${s.accFile}" class="attach-badge" download><i class="fas fa-file-invoice"></i> الفاتورة</a>`;
-                    if(s.stampedInvoice) attachHtml += `<a href="${s.stampedInvoice}" class="attach-badge" style="border-color:#00b894; color:#00b894" download><i class="fas fa-stamp"></i> استلام مختوم</a>`;
+                document.getElementById('list-tasks-all').innerHTML = this.data.tasks.slice().sort((a,b)=>b.id-a.id).map(t => `<div class="card" style="border-right:4px solid ${t.done?'#00b894':'#fdcb6e'}"><h4>${t.title} [${t.from}->${t.dept}]</h4><p>${t.desc}</p>${t.reply?`<p style="color:green">تم: ${t.reply}</p>`:'<div style="color:orange">انتظار...</div>'}</div>`).join('');
 
-                    // Progress Bar HTML
-                    const progHtml = soStepsLabels.map((lbl, idx) => {
-                        let cls = '';
-                        if(idx < state.step) cls = 'completed';
-                        else if(idx === state.step) cls = 'active';
-                        return `<div class="prog-step ${cls}"></div>`;
-                    }).join('');
+                const renderArch = (i, type) => `<div class="card" style="border-right:5px solid ${type=='sale'?'var(--secondary)':'var(--accent)'}"><h3>${type=='sale'?'بيع':'شراء'} (${type=='sale'?i.inv:i.smacc})</h3><div>${app.formatDate(type=='sale'?i.id:i.createdAt)}</div></div>`;
+                document.getElementById('archive-list-sales').innerHTML = this.data.sos.filter(s=>s.status==='Done').map(i=>renderArch(i,'sale')).join('');
+                document.getElementById('archive-list-purch').innerHTML = this.data.pos.filter(p=>p.smacc).map(i=>renderArch(i,'purch')).join('');
 
-                    const labelsHtml = soStepsLabels.map((lbl, idx) => {
-                        return `<div class="step-txt ${idx === state.step ? 'active' : ''}">${lbl}</div>`;
-                    }).join('');
+                document.getElementById('po-list-container').innerHTML = this.data.pos.slice().sort((a,b)=>b.id-a.id).map(p=>`<div class="card" style="padding:15px">PO: ${p.id} (${p.smacc?'مسجل':'غير مسجل'})</div>`).join('');
+                document.getElementById('so-list-container').innerHTML = this.data.sos.slice().sort((a,b)=>b.id-a.id).map(s=>`<div class="card" style="padding:15px">Ref: ${s.ref} (${s.status==='Done'?'مكتمل':'معالج'})</div>`).join('');
 
-                    return `
-                    <div class="log-card" style="border-right: 4px solid var(--accent);">
-                        <div class="log-header">
-                            <div>
-                                <div class="log-id">SO: ${s.ref}</div>
-                                <div class="log-sub">${s.client} | ${app.formatDate(s.id)}</div>
-                            </div>
-                            <span class="badge bg-orange">${state.text}</span>
-                        </div>
-                        <div class="log-progress">${progHtml}</div>
-                        <div class="step-labels">${labelsHtml}</div>
-                        ${discrepancyHtml}
-                        ${attachHtml ? `<div class="attach-section">${attachHtml}</div>` : ''}
-                    </div>`;
-                }).join('') || '<p style="text-align:center; color:#ccc">لا توجد مبيعات</p>';
+                document.getElementById('list-acc-reg').innerHTML = this.data.pos.filter(p=>!p.smacc).map(p=>`<div class="card"><h3>PO: ${p.id}</h3><p>قبل الضريبة: ${p.costs.before}</p>${p.file?`<a href="${p.file}" download>مرفق</a>`:''}<div class="form-row"><input id="smacc-${p.id}" placeholder="القيد"><input id="acc-n-${p.id}" placeholder="ملاحظة"><input type="file" id="acc-file-${p.id}"><button onclick="app.accRegisterPO('${p.id}')" class="btn-primary">تسجيل</button></div></div>`).join('');
 
+                document.getElementById('list-wh-in').innerHTML = this.data.pos.filter(p=>!p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').map(p=>`<div class="card"><h3>استلام PO: ${p.id}</h3>${p.items.map((i,idx)=>`<div class="wh-item-row">${i.name} (مطلوب:${i.req}) <input id="rec-${p.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${p.id}',${idx},'in')"><span id="stat-rec-${p.id}-${idx}"></span><input id="note-${p.id}-${idx}" placeholder="ملاحظة"></div>`).join('')}<div class="form-row"><input id="wh-po-note-${p.id}" placeholder="ملاحظات.."><button onclick="app.whConfirmPO('${p.id}')" class="btn-primary">تأكيد الاستلام</button></div></div>`).join('');
 
-                this.renderDeptTasks('Sales', 'list-sales-tasks');
-                this.renderDeptTasks('Purchases', 'list-pur-tasks');
-                this.renderDeptTasks('Warehouse', 'list-wh-tasks');
-                this.renderDeptTasks('Accounting', 'list-acc-tasks');
-                this.renderDeptTasks('Logistics', 'list-log-tasks');
+                document.getElementById('list-wh-out').innerHTML = this.data.sos.filter(s=>s.status==='Wh').map(s=>`<div class="card"><h3>صرف SO: ${s.ref}</h3>${s.items.map((i,idx)=>`<div class="wh-item-row single-line">${i.name} (مطلوب:${i.req}) <input id="conf-${s.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${s.id}',${idx},'out')"><input id="out-note-${s.id}-${idx}" placeholder="ملاحظة"></div>`).join('')}<div class="form-row"><input id="wh-so-note-${s.id}" placeholder="ملاحظات.."><button onclick="app.whConfirmSO(${s.id})" class="btn-secondary">تأكيد الصرف</button></div></div>`).join('');
 
-                // Tasks
-                document.getElementById('list-tasks-all').innerHTML = this.data.tasks.slice().sort((a,b)=>b.id-a.id).map(t => `
-                    <div class="card" style="border-right:4px solid ${t.done?'#00b894':'#fdcb6e'}">
-                        <h4>من [${t.from||'?'}] إلى [${t.dept}] : ${t.title}</h4><p>${t.desc}</p>
-                        ${t.file ? `<small><a href="${t.file}" download="attachment" target="_blank">🔗 تحميل المرفق</a></small>` : ''}
-                        ${t.reply ? `<p style="color:green; border-top:1px dashed #eee; margin-top:5px; padding-top:5px;"><strong>تم الإنجاز:</strong> ${t.reply}</p>` : 
-                        `<div style="color:orange; font-size:0.8rem; margin-top:5px;">قيد الانتظار...</div>`}
-                    </div>
-                `).join('');
+                document.getElementById('list-wh-delivery').innerHTML = this.data.sos.filter(s=>s.status==='Delivery').map(s=>`<div class="card" style="border-right:4px solid red"><h3>توصيل: ${s.ref}</h3><p>فاتورة: ${s.inv}</p>${s.accFile?`<a href="${s.accFile}" download>تحميل الفاتورة</a>`:''}<input type="file" id="wh-del-file-${s.id}"><button onclick="app.whFinalizeDelivery(${s.id})" class="btn-danger">إغلاق الطلب</button></div>`).join('');
 
-                // Archive
-                const salesInvoices = this.data.sos.filter(s => s.status === 'Done').sort((a,b) => b.id - a.id);
-                const purchInvoices = this.data.pos.filter(p => p.smacc).sort((a,b) => b.id - a.id);
-                const renderArchItem = (i, type) => {
-                    let total = 0, invNo='', jNo='', notesObj={}, file='';
-                    const dateStr = app.formatDate(type=='sale'?i.id:i.createdAt||i.id);
-                    if(type === 'sale') {
-                        total = i.items.reduce((acc, x) => acc + (x.conf*x.price), 0);
-                        invNo = i.inv; jNo = i.journalRef; file = i.accFile;
-                        notesObj = { s: i.notes, w: i.whNotes, a: i.accNotes };
-                    } else {
-                        total = i.costs.after;
-                        invNo = i.smacc; jNo = 'PO-REG'; file = i.accFile;
-                        notesObj = { s: i.notes, w: i.whRecNotes, a: i.smaccNotes };
-                    }
-                    return `
-                    <div class="card" style="border-right:5px solid ${type=='sale'?'var(--secondary)':'var(--accent)'}">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                            <div>
-                                <h3 style="margin:0">${type=='sale' ? 'فاتورة مبيعات' : 'سند مشتريات'} <small>(${invNo})</small></h3>
-                                <div style="color:#666; font-size:0.9rem;"><span class="date-badge">${dateStr}</span> المرجع: ${type=='sale'?i.ref:i.id} | القيد: ${jNo}</div>
-                                ${type === 'sale' && i.stampedInvoice ? `<div style="margin-top:5px;"><a href="${i.stampedInvoice}" download="Stamped_Inv_${i.ref}" style="color:#00b894; font-weight:bold"><i class="fas fa-check-circle"></i> فاتورة مختومة (تم التسليم)</a></div>` : ''}
-                            </div>
-                            <div style="text-align:left;">
-                                <div style="font-size:1.2rem; font-weight:bold; color:var(--text-dark)">${total.toLocaleString()} SAR</div>
-                                ${file ? `<a href="${file}" download="Inv_File" style="font-size:0.8rem; color:var(--primary)"><i class="fas fa-paperclip"></i> تحميل الملف</a>` : ''}
-                            </div>
-                        </div>
-                    </div>`;
-                };
-                document.getElementById('archive-list-sales').innerHTML = salesInvoices.map(i => renderArchItem(i, 'sale')).join('') || '<p>لا توجد فواتير مبيعات مكتملة</p>';
-                document.getElementById('archive-list-purch').innerHTML = purchInvoices.map(i => renderArchItem(i, 'purch')).join('') || '<p>لا توجد سندات مشتريات</p>';
-
-                // Purchases List
-                document.getElementById('po-list-container').innerHTML = this.data.pos.slice().sort((a,b)=>b.id-a.id).map(p => {
-                    const isReg = !!p.smacc;
-                    return `
-                    <div class="card" style="padding:15px; border-right: 4px solid ${isReg?'green':'orange'}">
-                        <div style="display:flex; justify-content:space-between;">
-                            <strong><span class="date-badge">${app.formatDate(p.createdAt || p.id)}</span> PO: ${p.id}</strong>
-                            <span class="badge ${isReg?'bg-green':'bg-orange'}">${isReg ? 'تم التسجيل' : 'بانتظار تسجيل المحاسب'}</span>
-                        </div>
-                    </div>
-                `}).join('');
-
-                // Sales List
-                document.getElementById('so-list-container').innerHTML = this.data.sos.slice().sort((a,b)=>b.id-a.id).map(s => {
-                    const isDone = s.status === 'Done';
-                    return `
-                    <div class="card" style="padding:15px; border-right: 4px solid ${isDone?'green':'orange'}">
-                        <div style="display:flex; justify-content:space-between;">
-                            <strong><span class="date-badge">${app.formatDate(s.id)}</span> Ref: ${s.ref} (${s.client})</strong>
-                            <span class="badge ${isDone?'bg-green':'bg-orange'}">${isDone ? 'مكتمل' : 'قيد المعالجة'}</span>
-                        </div>
-                    </div>
-                `}).join('');
-
-
-                // Accounting
-                document.getElementById('list-acc-reg').innerHTML = this.data.pos.filter(p => !p.smacc).sort((a,b)=>b.id-a.id).map(p => `
-                    <div class="card">
-                        <h3><span class="date-badge">${app.formatDate(p.createdAt || p.id)}</span> تسجيل: ${p.id} (${p.vendor})</h3>
-                        <p>تكلفة الشراء (قبل الضريبة): <strong>${p.costs.before}</strong></p>
-                        ${p.notes ? `<div class="note-highlight"><i class="fas fa-shopping-bag"></i> ملاحظات المشتريات: ${p.notes}</div>` : ''}
-                        ${p.whRecNotes ? `<div class="note-highlight"><i class="fas fa-warehouse"></i> ملاحظات الاستلام (المخزن): ${p.whRecNotes}</div>` : ''}
-                        
-                        <div style="background:#fcfcfc; padding:10px; margin:10px 0; border:1px solid #eee; border-radius:8px;">
-                            ${p.file ? `<a href="${p.file}" download="PO_Attach_${p.id}" style="display:block; margin-bottom:10px; color:var(--primary)"><i class="fas fa-paperclip"></i> تحميل مرفقات الشراء</a>` : '<small style="color:#aaa">لا توجد مرفقات شراء</small>'}
-                            <div class="form-row" style="margin-top:10px;">
-                                <div class="form-group" style="flex:1"><input id="acc-n-${p.id}" placeholder="ملاحظات المحاسبة (ستظهر للمشتريات).."></div>
-                                <div class="form-group" style="flex:1">
-                                    <label>إرفاق قيد/إيصال</label>
-                                    <input type="file" id="acc-file-${p.id}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <button onclick="app.downloadPOExcel('${p.id}')" class="btn-ghost active">Excel</button>
-                            <div class="form-group"><input id="smacc-${p.id}" placeholder="رقم القيد/الفاتورة"></div>
-                            <button onclick="app.accRegisterPO('${p.id}')" class="btn-primary">تسجيل</button>
-                        </div>
-                    </div>
-                `).join('') || '<p>لا توجد طلبات</p>';
-
-                // Warehouse IN
-                document.getElementById('list-wh-in').innerHTML = this.data.pos.filter(p => !p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').sort((a,b)=>b.id-a.id).map(p => `
-                    <div class="card">
-                        <h3><span class="date-badge">${app.formatDate(p.createdAt || p.id)}</span> استلام الشحنة (PO: ${p.id})</h3>
-                        ${p.notes ? `<div class="note-highlight"><i class="fas fa-info-circle"></i> ملاحظات المشتريات: ${p.notes}</div>` : ''}
-                        
-                        <div style="margin:15px 0;">
-                            ${p.items.map((i,idx)=>{
-                                const imgSrc = i.img ? i.img : 'https://placehold.co/60x60?text=Prod';
-                                return `
-                                <div class="wh-item-row">
-                                    <img src="${imgSrc}" class="wh-img">
-                                    <div class="wh-info">
-                                        <div style="display:flex; align-items:center; gap:10px;">
-                                            <div style="font-weight:800; font-size:1.1rem;">${i.name}</div>
-                                            <div style="color:var(--primary); font-family:monospace; font-size:1rem; background:#f0f3ff; padding:2px 8px; border-radius:4px; border:1px solid #dbeafe;">${i.code}</div>
-                                        </div>
-                                        <div style="color:#666; font-size:0.85rem; margin-top:5px;">المطلوب (PO): <strong>${i.req}</strong></div>
-                                    </div>
-                                    <div class="wh-input-area">
-                                        <label>تم الاستلام</label>
-                                        <input id="rec-${p.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${p.id}', ${idx}, 'in')">
-                                        <div id="stat-rec-${p.id}-${idx}" class="wh-status" style="color:green"><i class="fas fa-check"></i> مطابق</div>
-                                    </div>
-                                    <div style="flex:1"><input id="note-${p.id}-${idx}" placeholder="ملاحظات.."></div>
-                                </div>`;
-                            }).join('')}
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group full-width"><input id="wh-po-note-${p.id}" placeholder="ملاحظات الاستلام (للمحاسب)..."></div>
-                            <button onclick="app.whConfirmPO('${p.id}')" class="btn-primary">تأكيد استلام المخزون</button>
-                        </div>
-                    </div>
-                `).join('') || '<p>فارغ</p>';
-
-                // Warehouse OUT
-                document.getElementById('list-wh-out').innerHTML = this.data.sos.filter(s => s.status === 'Wh').sort((a,b)=>b.id-a.id).map(s => `
-                    <div class="card">
-                        <h3><span class="date-badge">${app.formatDate(s.id)}</span> تجهيز وصرف (SO: ${s.ref})</h3>
-                        <p style="color:#666">العميل: ${s.client}</p>
-                        ${s.notes ? `<div class="note-highlight"><i class="fas fa-shopping-cart"></i> ملاحظات المبيعات: ${s.notes}</div>` : ''}
-                        
-                        <div style="margin:15px 0;">
-                            ${s.items.map((i,idx)=>{
-                                const prod = this.data.prods.find(x=>x.id==i.id);
-                                const imgSrc = prod.img ? prod.img : 'https://placehold.co/60x60?text=Prod';
-                                return `
-                                <div class="wh-item-row single-line">
-                                    <div style="position:relative"><img src="${imgSrc}" class="list-thumb"></div>
-                                    <div class="wh-info-compact" style="display:flex; align-items:center; gap:25px;">
-                                        <div style="font-size:1.4rem; font-weight:800; color:#2d3436;">${i.name}</div>
-                                        <div style="font-size:1.3rem; font-family:monospace; font-weight:bold; color:var(--primary); background:#f0f3ff; padding:4px 12px; border-radius:6px; border:1px solid #dbeafe;">${i.code}</div>
-                                    </div>
-                                    <div class="badge bg-blue" style="font-size:1rem; padding:8px 15px;">مطلوب: ${i.req}</div>
-                                    
-                                    <div class="wh-input-compact">
-                                        <input id="conf-${s.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${s.id}', ${idx}, 'out')">
-                                    </div>
-                                    <div class="wh-note-compact">
-                                        <input id="out-note-${s.id}-${idx}" placeholder="ملاحظة لهذا المنتج...">
-                                    </div>
-                                </div>`;
-                            }).join('')}
-                        </div>
-                        <div class="form-row" style="margin-top:10px;">
-                            <div class="form-group full-width"><input id="wh-so-note-${s.id}" placeholder="ملاحظات المخزن (ستظهر في الفاتورة للمحاسب)..."></div>
-                            <button onclick="app.whConfirmSO(${s.id})" class="btn-secondary">تأكيد الصرف</button>
-                        </div>
-                    </div>
-                `).join('') || '<p>فارغ</p>';
-                
-                // Warehouse Delivery Confirm
-                document.getElementById('list-wh-delivery').innerHTML = this.data.sos.filter(s => s.status === 'Delivery').sort((a,b)=>b.id-a.id).map(s => `
-                    <div class="card" style="border-right: 4px solid #d63031;">
-                        <h3><i class="fas fa-truck"></i> توصيل الطلب: ${s.ref}</h3>
-                        <p style="color:#666; margin-bottom:5px;">العميل: <strong>${s.client}</strong></p>
-                        <p style="color:#888; font-size:0.9rem;">تم إصدار الفاتورة: ${s.inv} | يرجى تسليم الطلب والحصول على التوقيع.</p>
-                        
-                        <div class="form-row" style="background:#fff5f5; padding:15px; border-radius:8px; margin-top:10px;">
-                            ${s.accFile ? `<div class="form-group"><label>فاتورة المحاسب (للطباعة)</label><a href="${s.accFile}" download="Inv_${s.ref}" class="btn-ghost active">تحميل الفاتورة</a></div>` : ''}
-                            <div class="form-group full-width" style="flex:2">
-                                <label style="color:#d63031">رفع صورة الفاتورة المختومة من العميل</label>
-                                <input type="file" id="wh-del-file-${s.id}" accept="image/*,application/pdf">
-                            </div>
-                        </div>
-                        <button onclick="app.whFinalizeDelivery(${s.id})" class="btn-danger" style="margin-top:10px; width:100%">تأكيد التسليم وإغلاق الطلب</button>
-                    </div>
-                `).join('') || '<p style="text-align:center; padding:20px;">لا توجد طلبات جاهزة للتوصيل</p>';
-
-                // Acc Inv
-                document.getElementById('list-acc-inv').innerHTML = this.data.sos.filter(s => s.status === 'Acc').sort((a,b)=>b.id-a.id).map(s => `
-                    <div class="card">
-                        <h3><span class="date-badge">${app.formatDate(s.id)}</span> فوترة: ${s.client} (${s.ref})</h3>
-                        ${s.whNotes ? `<div class="note-highlight"><i class="fas fa-box"></i> ملاحظات المخزن: ${s.whNotes}</div>` : ''}
-                        
-                        <div class="form-row" style="background:#fcfcfc; padding:10px; border:1px solid #eee; margin-bottom:10px; border-radius:8px;">
-                            <div class="form-group full-width">
-                                <label>إرفاق ملف</label>
-                                <input type="file" id="acc-file-so-${s.id}">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <button onclick="app.downloadSOExcel(${s.id})" class="btn-ghost active">Excel</button>
-                            <div class="form-group"><input id="acc-ref-${s.id}" placeholder="رقم القيد/الفاتورة"></div>
-                            <div class="form-group full-width"><input id="acc-note-so-${s.id}" placeholder="ملاحظات المحاسبة (ستظهر للمبيعات).."></div>
-                            <button onclick="app.accFinalizeSO(${s.id})" class="btn-primary">إصدار الفاتورة وإرسال للتوصيل</button>
-                        </div>
-                        <input type="hidden" id="inv-${s.id}" value="NA"> 
-                    </div>
-                `).join('');
+                document.getElementById('list-acc-inv').innerHTML = this.data.sos.filter(s=>s.status==='Acc').map(s=>`<div class="card"><h3>فوترة: ${s.ref}</h3><input type="file" id="acc-file-so-${s.id}"><div class="form-row"><input id="acc-ref-${s.id}" placeholder="القيد"><input id="acc-note-so-${s.id}" placeholder="ملاحظة"><button onclick="app.accFinalizeSO(${s.id})" class="btn-primary">إصدار</button></div><input type="hidden" id="inv-${s.id}" value="GEN"></div>`).join('');
             },
 
             updateDashboard: function() {
-                if(!this.data.prods) this.data.prods = [];
-                if(!this.data.clients) this.data.clients = [];
-                if(!this.data.secureMsgs) this.data.secureMsgs = [];
-                if(!this.data.sos) this.data.sos = [];
-                if(!this.data.pos) this.data.pos = [];
-
                 document.getElementById('d-prod-count').innerText = this.data.prods.length;
                 document.getElementById('d-client-count').innerText = this.data.clients.length;
                 document.getElementById('d-msgs-all').innerText = this.data.secureMsgs.length;
-
                 const salesDone = this.data.sos.filter(s => s.status === 'Done');
-                const salesPending = this.data.sos.filter(s => s.status !== 'Done');
-                const totalSalesVal = salesDone.reduce((acc, so) => acc + so.items.reduce((sum, i) => sum + (i.conf * i.price), 0), 0);
-                document.getElementById('d-sales-val').innerText = totalSalesVal.toLocaleString() + " SAR";
+                document.getElementById('d-sales-val').innerText = salesDone.reduce((acc, so) => acc + so.items.reduce((sum, i) => sum + (i.conf * i.price), 0), 0).toLocaleString() + " SAR";
                 document.getElementById('d-sales-done').innerText = salesDone.length;
-                document.getElementById('d-sales-pend').innerText = salesPending.length;
-
-                const purDone = this.data.pos.filter(p => p.smacc); 
-                const totalPurVal = purDone.reduce((acc, po) => acc + (po.costs ? po.costs.after : 0), 0);
-                document.getElementById('d-pur-val').innerText = totalPurVal.toLocaleString() + " SAR";
+                document.getElementById('d-sales-pend').innerText = this.data.sos.filter(s => s.status !== 'Done').length;
+                const purDone = this.data.pos.filter(p => p.smacc);
+                document.getElementById('d-pur-val').innerText = purDone.reduce((acc, po) => acc + (po.costs ? po.costs.after : 0), 0).toLocaleString() + " SAR";
                 document.getElementById('d-pur-count').innerText = purDone.length;
-
-                const whPendingSales = this.data.sos.filter(s => s.status === 'Wh').length;
-                const whPendingPurch = this.data.pos.filter(p => !p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').length;
-                const whPendingDel = this.data.sos.filter(s => s.status === 'Delivery').length;
-                const totalWhPending = whPendingSales + whPendingPurch + whPendingDel;
                 
-                document.getElementById('d-pend-wh').innerText = totalWhPending;
-                document.getElementById('badge-wh').style.display = totalWhPending > 0 ? 'block' : 'none';
+                const whPend = this.data.sos.filter(s=>s.status==='Wh').length + this.data.pos.filter(p=>!p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').length + this.data.sos.filter(s=>s.status==='Delivery').length;
+                document.getElementById('d-pend-wh').innerText = whPend; document.getElementById('badge-wh').style.display = whPend>0?'block':'none';
+                const accPend = this.data.sos.filter(s=>s.status==='Acc').length + this.data.pos.filter(p=>!p.smacc).length;
+                document.getElementById('d-pend-acc').innerText = accPend; document.getElementById('badge-acc').style.display = accPend>0?'block':'none';
 
-                const accPendingSales = this.data.sos.filter(s => s.status === 'Acc').length;
-                const accPendingPurch = this.data.pos.filter(p => !p.smacc).length;
-                const totalAccPending = accPendingSales + accPendingPurch;
-                document.getElementById('d-pend-acc').innerText = totalAccPending;
-                document.getElementById('badge-acc').style.display = totalAccPending > 0 ? 'block' : 'none';
-
-                let soldMap = {};
-                this.data.prods.forEach(p => soldMap[p.id] = 0);
-                salesDone.forEach(so => {
-                    so.items.forEach(item => { if(soldMap[item.id] !== undefined) soldMap[item.id] += (item.conf || 0); });
-                });
-                let sortedProds = this.data.prods.map(p => ({ ...p, soldQty: soldMap[p.id] || 0 })).sort((a, b) => b.soldQty - a.soldQty);
-                const renderRankList = (list, isTop) => {
-                    return list.map((p, idx) => {
-                        const imgSrc = p.img ? p.img : 'https://placehold.co/40x40?text=P';
-                        return `
-                        <div class="rank-item">
-                            <div class="rank-info">
-                                <span style="font-weight:bold; color:#aaa; width:20px;">#${isTop ? idx+1 : sortedProds.length - idx}</span>
-                                <img src="${imgSrc}" class="rank-img">
-                                <div>
-                                    <div style="font-weight:bold; font-size:0.9rem">${p.name}</div>
-                                    <div style="font-size:0.75rem; color:#888">${p.code}</div>
-                                </div>
-                            </div>
-                            <div class="rank-score ${isTop?'rs-high':'rs-low'}">${p.soldQty} مباع</div>
-                        </div>`;
-                    }).join('');
-                };
-                const top10 = sortedProds.filter(p => p.soldQty > 0).slice(0, 10);
-                const bottom10 = [...sortedProds].reverse().slice(0, 10);
-                document.getElementById('top-10-list').innerHTML = top10.length ? renderRankList(top10, true) : '<p style="text-align:center; padding:10px; color:#999">لا توجد مبيعات مكتملة بعد</p>';
-                document.getElementById('bot-10-list').innerHTML = sortedProds.length ? renderRankList(bottom10, false) : '<p style="text-align:center; padding:10px; color:#999">لا توجد منتجات</p>';
+                let soldMap = {}; this.data.prods.forEach(p=>soldMap[p.id]=0); salesDone.forEach(so=>so.items.forEach(i=>{if(soldMap[i.id]!==undefined)soldMap[i.id]+=i.conf}));
+                let sorted = this.data.prods.map(p=>({...p, soldQty:soldMap[p.id]||0})).sort((a,b)=>b.soldQty-a.soldQty);
+                document.getElementById('top-10-list').innerHTML = sorted.slice(0,10).map(p=>`<div class="rank-item"><div class="rank-info"><img src="${p.img||'https://placehold.co/40'}" class="rank-img"><span>${p.name}</span></div><div class="rank-score rs-high">${p.soldQty}</div></div>`).join('');
+                document.getElementById('bot-10-list').innerHTML = sorted.slice().reverse().slice(0,10).map(p=>`<div class="rank-item"><div class="rank-info"><img src="${p.img||'https://placehold.co/40'}" class="rank-img"><span>${p.name}</span></div><div class="rank-score rs-low">${p.soldQty}</div></div>`).join('');
             }
         };
-
         window.onload = function() { app.init(); };
     </script>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBB8kMXBgwoPKnsLylktWSWLeM4mX23sJo",
-            authDomain: "blanche-ksa.firebaseapp.com",
-            databaseURL: "https://blanche-ksa-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "blanche-ksa",
-            storageBucket: "blanche-ksa.firebasestorage.app",
-            messagingSenderId: "914541537325",
-            appId: "1:914541537325:web:0cfed5799623b14033b0a4",
-            measurementId: "G-M9T5VSCH0P"
-        };
-
-        const fApp = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(fApp);
-        const db = getDatabase(fApp);
-
+        const firebaseConfig = { apiKey: "AIzaSyBB8kMXBgwoPKnsLylktWSWLeM4mX23sJo", authDomain: "blanche-ksa.firebaseapp.com", databaseURL: "https://blanche-ksa-default-rtdb.europe-west1.firebasedatabase.app", projectId: "blanche-ksa", storageBucket: "blanche-ksa.firebasestorage.app", messagingSenderId: "914541537325", appId: "1:914541537325:web:0cfed5799623b14033b0a4", measurementId: "G-M9T5VSCH0P" };
+        const fApp = initializeApp(firebaseConfig); const db = getDatabase(fApp);
         function loadFromFirebase() {
-            const dataRef = ref(db, 'erp_data_final'); 
-            onValue(dataRef, (snapshot) => {
+            onValue(ref(db, 'erp_data_final'), (snapshot) => {
                 const cloudData = snapshot.val();
-                
-                if (cloudData) {
-                    app.data = cloudData;
-                } else {
-                    console.log("قاعدة البيانات فارغة، جاري التهيئة الأولية...");
-                    app.data = {
-                        clients: [],
-                        prods: [],
-                        pos: [],
-                        sos: [],
-                        tasks: [],
-                        logs: [],
-                        secureMsgs: []
-                    };
-                }
-
-                if(!app.data.clients) app.data.clients = [];
-                if(!app.data.prods) app.data.prods = [];
-                if(!app.data.pos) app.data.pos = [];
-                if(!app.data.sos) app.data.sos = [];
-                if(!app.data.tasks) app.data.tasks = [];
-                if(!app.data.logs) app.data.logs = [];
-                if(!app.data.secureMsgs) app.data.secureMsgs = [];
-
-                if(app.currentRole) app.renderAll(); 
-                console.log("تم تحميل البيانات وتحديث الواجهة");
+                if (cloudData) { app.data = cloudData; } 
+                else { app.data = { clients:[], prods:[], pos:[], sos:[], tasks:[], logs:[], secureMsgs:[], passwords:{ admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' } }; }
+                if(!app.data.passwords) app.data.passwords = { admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' };
+                if(app.currentRole) app.renderAll(); console.log("Loaded");
             });
         }
-
-        app.save = function() {
-            try {
-                if(!this.data) return;
-                set(ref(db, 'erp_data_final'), this.data);
-                console.log("تم الحفظ...");
-            } catch(e) {
-                console.error("Firebase Error:", e);
-                alert("حدث خطأ في الاتصال بقاعدة البيانات");
-            }
-        };
-
+        app.save = function() { try { if(!this.data) return; set(ref(db, 'erp_data_final'), this.data); } catch(e) { console.error(e); } };
         loadFromFirebase();
     </script>
 </body>
