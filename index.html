@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlanChe Ops v2.4</title>
+    <title>BlanChe Ops(Notifications)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -832,6 +832,11 @@
 
                 this.currentRole = role;
                 localStorage.setItem('erp_last_role', role); // Save session
+                
+                // Request Notification Permission
+                if("Notification" in window) {
+                    Notification.requestPermission();
+                }
 
                 const overlay = document.getElementById('login-overlay');
                 overlay.style.opacity = '0';
@@ -1138,7 +1143,7 @@
                 if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processStamp(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { alert("اختر ملف"); }
             },
 
-            // --- EXCEL EXPORT FUNCTION (UPDATED v2.4) ---
+            // --- EXCEL EXPORT FUNCTION (UPDATED v2.4 - NO TAX & BOLD WORKAROUND) ---
             downloadAccExcel: function(id, mode) {
                 const so = this.data.sos.find(s => s.id === id);
                 if (!so) return;
@@ -1169,6 +1174,55 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+            },
+
+            checkNotifications: function(newData) {
+                if(!this.currentRole) return;
+                
+                // Get Notified List from Session
+                let notified = JSON.parse(sessionStorage.getItem('notified_items') || '[]');
+
+                const notify = (title, body, id) => {
+                    if(!notified.includes(id)) {
+                        if(Notification.permission === "granted") {
+                            new Notification(title, { body, icon: 'https://placehold.co/100' });
+                        }
+                        notified.push(id);
+                        sessionStorage.setItem('notified_items', JSON.stringify(notified));
+                    }
+                };
+
+                // Logic based on Role
+                if(newData.sos) {
+                    newData.sos.forEach(s => {
+                        // Warehouse: New Order
+                        if(this.currentRole === 'warehouse' && s.status === 'Wh') {
+                            notify("📦 طلب جديد", `SO: ${s.ref} بانتظار التجهيز`, `so_wh_${s.id}`);
+                        }
+                        // Warehouse: Delivery Phase
+                        if(this.currentRole === 'warehouse' && s.status === 'WhDelivery') {
+                            notify("🚚 توصيل", `SO: ${s.ref} جاهز للتوصيل (تم إصدار عرض السعر)`, `so_del_${s.id}`);
+                        }
+                        // Warehouse: Stamp Phase
+                        if(this.currentRole === 'warehouse' && s.status === 'WhStamp') {
+                            notify("📝 مطلوب الختم", `SO: ${s.ref} (صدرت الفاتورة النهائية)`, `so_stamp_${s.id}`);
+                        }
+
+                        // Accounting: Quotation
+                        if(this.currentRole === 'accounting' && s.status === 'AccQuot') {
+                            notify("📜 إصدار عرض سعر", `SO: ${s.ref} جاهز من المخزن`, `so_quot_${s.id}`);
+                        }
+                        // Accounting: Final Invoice
+                        if(this.currentRole === 'accounting' && s.status === 'AccFinal') {
+                            notify("💰 إصدار فاتورة نهائية", `SO: ${s.ref} تم تسليمه للعميل`, `so_inv_${s.id}`);
+                        }
+
+                        // Sales: Done
+                        if(this.currentRole === 'sales' && s.status === 'Done') {
+                            notify("✅ اكتمل الطلب", `SO: ${s.ref} تم إغلاقه بنجاح`, `so_done_${s.id}`);
+                        }
+                    });
+                }
             },
 
             renderSOGrid: function() {
@@ -1407,7 +1461,7 @@
         function loadFromFirebase() {
             onValue(ref(db, 'erp_data_final'), (snapshot) => {
                 const cloudData = snapshot.val();
-                if (cloudData) { app.data = cloudData; } 
+                if (cloudData) { app.checkNotifications(cloudData); app.data = cloudData; } 
                 else { app.data = { clients:[], prods:[], pos:[], sos:[], tasks:[], logs:[], secureMsgs:[], passwords:{ admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' } }; }
                 if(!app.data.passwords) app.data.passwords = { admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' };
                 // Ensure logs/msgs array exists
