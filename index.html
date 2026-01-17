@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blanche Operations System</title>
+    <title>BlanChe Ops v2.4</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -169,7 +169,8 @@
         .btn-warning { background: #fdcb6e; color: #444; }
         .btn-ghost { background: #fff; color: var(--text-gray); border: 1px solid var(--border); box-shadow: none; }
         .btn-ghost:hover { background: #f1f2f6; }
-        .btn-ghost.active { background: var(--primary); color: white; border-color: var(--primary); }
+        /* FIX FOR BUTTON TEXT COLOR ON ACTIVE STATE */
+        .btn-ghost.active { background: var(--primary); color: white !important; border-color: var(--primary) !important; }
         .small-btn { padding: 5px 12px; font-size: 0.8rem; margin-left: 5px; }
 
         /* Tables & Lists */
@@ -201,7 +202,7 @@
         }
         .list-thumb:hover { transform: scale(3.5); z-index: 9999; box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--primary); }
 
-        /* Dashboard & Stats */
+        /* Dash & Stats */
         .dash-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px; }
         .d-card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid #f0f0f0; position: relative; overflow: hidden; }
         .d-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
@@ -258,7 +259,7 @@
         
         .discrepancy-box { background: #fff0f0; border: 1px solid #ff7675; color: #d63031; padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-top: 15px; display: flex; align-items: center; gap: 10px; }
         .attach-section { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
-        .attach-badge { font-size: 0.75rem; background: #f1f2f6; padding: 5px 10px; border-radius: 6px; color: var(--text-gray); text-decoration: none; border: 1px solid #dfe6e9; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .attach-badge { font-size: 0.75rem; background: #f1f1f6; padding: 5px 10px; border-radius: 6px; color: var(--text-gray); text-decoration: none; border: 1px solid #dfe6e9; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
         .attach-badge:hover { border-color: var(--primary); color: var(--primary); background: #fff; }
 
         /* Secure Messages */
@@ -323,7 +324,7 @@
 
     <div id="login-overlay">
         <div class="login-container">
-            <div class="login-title"><i class="fas fa-cubes"></i>Blanche Operations System</div>
+            <div class="login-title"><i class="fas fa-cubes"></i>BlanChe Ops</div>
             <p style="color:white; margin-bottom:30px; font-size:1.1rem; opacity:0.9;">أهلاً بك، الرجاء اختيار القسم للدخول</p>
             
             <div class="roles-grid">
@@ -350,7 +351,7 @@
     </div>
 
     <aside class="sidebar" style="display:none">
-        <div class="logo"><i class="fas fa-cubes"></i>Blanche Operations System</div>
+        <div class="logo"><i class="fas fa-cubes"></i>BlanChe Ops</div>
         <div class="nav-item active" id="nav-dash" onclick="app.nav('dashboard', this)"><i class="fas fa-chart-pie"></i> الرئيسية</div>
         <div class="nav-item" id="nav-msg" onclick="app.nav('secure-msg', this)"><i class="fas fa-envelope-open-text"></i> إرسال رسالة</div>
         
@@ -369,7 +370,7 @@
         <div class="nav-item" id="nav-settings" onclick="app.nav('settings', this)" style="display:none; color:var(--text-dark); margin-top:10px; border-top:1px dashed #ccc;"><i class="fas fa-cogs"></i> كلمات المرور</div>
 
         <div style="margin-top:auto;">
-            <button onclick="location.reload()" class="btn-ghost" style="width:100%; margin-bottom:10px;"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
+            <button onclick="app.logout()" class="btn-ghost" style="width:100%; margin-bottom:10px;"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
             <button onclick="app.reset()" class="btn-danger" style="width:100%; font-size:0.8rem; border-radius: 8px;"><i class="fas fa-lock"></i> تصفير النظام (محمي)</button>
         </div>
     </aside>
@@ -424,7 +425,7 @@
                     <div class="d-card-icon" style="background:#fff0f0; color:#d63031"><i class="fas fa-calculator"></i></div>
                     <div class="d-card-title">معلق في المحاسبة</div>
                     <div class="d-card-val" id="d-pend-acc">0</div>
-                    <div class="d-card-sub">فواتير مبيعات + تسجيل شراء</div>
+                    <div class="d-card-sub">عروض أسعار + فواتير</div>
                     <div id="badge-acc" class="pending-alert" style="display:none">انتباه</div>
                 </div>
 
@@ -612,24 +613,40 @@
                 <button onclick="app.showDeptHistory('warehouse')" class="btn-ghost small"><i class="fas fa-history"></i> سجل المخازن</button>
             </div>
             <div class="form-row">
-                <button onclick="app.switchTab('wh-in', this)" class="btn-ghost active">📥 استلام</button>
-                <button onclick="app.switchTab('wh-out', this)" class="btn-ghost">📦 صرف</button>
-                <button onclick="app.switchTab('wh-delivery', this)" class="btn-ghost" style="color:#d63031;border-color:#d63031"><i class="fas fa-truck"></i> توثيق التسليم</button>
+                <button onclick="app.switchTab('wh-in', this)" class="btn-ghost active">📥 استلام مشتريات</button>
+                <button onclick="app.switchTab('wh-out', this)" class="btn-ghost">📤 صرف مبدئي</button>
+                <button onclick="app.switchTab('wh-delivery', this)" class="btn-ghost" style="color:#e67e22;border-color:#e67e22"><i class="fas fa-truck"></i> تسليم العميل</button>
+                <button onclick="app.switchTab('wh-stamp', this)" class="btn-ghost" style="color:#d63031;border-color:#d63031"><i class="fas fa-stamp"></i> ختم وإغلاق</button>
                 <button onclick="app.switchTab('wh-tasks', this)" class="btn-ghost">🔔 المهام</button>
             </div>
             <div class="search-wrapper" style="margin-top:10px;">
                 <i class="fas fa-search"></i>
                 <input type="text" placeholder="بحث..." onkeyup="app.searchWh(this.value)">
             </div>
+            
             <div id="wh-in" class="sub-tab"><div id="list-wh-in"></div></div>
-            <div id="wh-out" class="sub-tab" style="display:none"><div id="list-wh-out"></div></div>
+            
+            <div id="wh-out" class="sub-tab" style="display:none">
+                 <p style="color:#666">تأكيد توفر البضاعة وصرفها ليقوم المحاسب بإصدار عرض السعر.</p>
+                 <div id="list-wh-out"></div>
+            </div>
+
             <div id="wh-delivery" class="sub-tab" style="display:none">
-                <div class="card" style="background:#fff5f5; border:1px solid #ffcccc">
-                    <h3><i class="fas fa-file-signature"></i> توثيق استلام العميل</h3>
-                    <p style="color:#666; font-size:0.9rem;">يرجى رفع صورة الفاتورة المختومة من العميل لإغلاق الطلب.</p>
+                <div class="card" style="background:#fffaf0; border:1px solid #ffeaa7">
+                    <h3><i class="fas fa-truck-loading"></i> تأكيد الاستلام الفعلي للعميل</h3>
+                    <p style="color:#666; font-size:0.9rem;">الرجاء إدخال الكميات التي استلمها العميل فعلياً. سيقوم النظام بإرجاع الفوارق للمخزون وتحويل الطلب للمحاسب لإصدار الفاتورة النهائية.</p>
                 </div>
                 <div id="list-wh-delivery"></div>
             </div>
+
+            <div id="wh-stamp" class="sub-tab" style="display:none">
+                 <div class="card" style="background:#fff5f5; border:1px solid #ffcccc">
+                    <h3><i class="fas fa-file-signature"></i> رفع الفاتورة المختومة</h3>
+                    <p style="color:#666; font-size:0.9rem;">بعد صدور الفاتورة النهائية، قم بطباعتها وختمها من العميل وارفع الصورة هنا للإغلاق.</p>
+                </div>
+                <div id="list-wh-stamp"></div>
+            </div>
+
             <div id="wh-tasks" class="sub-tab" style="display:none"><div id="list-wh-tasks"></div></div>
         </section>
 
@@ -673,11 +690,28 @@
             </div>
             <div class="form-row">
                 <button onclick="app.switchTab('acc-reg', this)" class="btn-ghost active">تسجيل PO</button>
-                <button onclick="app.switchTab('acc-inv', this)" class="btn-ghost">الفواتير</button>
+                <button onclick="app.switchTab('acc-quot', this)" class="btn-ghost" style="color:var(--secondary); border-color:var(--secondary)">📜 إصدار عروض الأسعار</button>
+                <button onclick="app.switchTab('acc-inv', this)" class="btn-ghost" style="color:var(--primary); border-color:var(--primary)">🧾 الفواتير النهائية</button>
                 <button onclick="app.switchTab('acc-tasks', this)" class="btn-ghost">🔔 المهام</button>
             </div>
             <div id="acc-reg" class="sub-tab"><div id="list-acc-reg"></div></div>
-            <div id="acc-inv" class="sub-tab" style="display:none"><div id="list-acc-inv"></div></div>
+            
+            <div id="acc-quot" class="sub-tab" style="display:none">
+                <div class="card" style="background:#f0faff; border:1px solid #cceeff">
+                    <h3>إصدار عرض السعر (Quotation)</h3>
+                    <p style="color:#666">الخطوة الأولى: إصدار عرض سعر بناءً على توفر المخزن ليقوم المخزن بالتوصيل.</p>
+                </div>
+                <div id="list-acc-quot"></div>
+            </div>
+
+            <div id="acc-inv" class="sub-tab" style="display:none">
+                <div class="card" style="background:#fff0f6; border:1px solid #ffadd2">
+                    <h3>إصدار الفاتورة النهائية</h3>
+                    <p style="color:#666">الخطوة الأخيرة: إصدار الفاتورة بناءً على الكميات الفعلية التي تم تسليمها.</p>
+                </div>
+                <div id="list-acc-inv"></div>
+            </div>
+            
             <div id="acc-tasks" class="sub-tab" style="display:none"><div id="list-acc-tasks"></div></div>
         </section>
 
@@ -686,9 +720,11 @@
             <div class="form-row">
                 <button onclick="app.switchTab('arch-sales-tab', this)" class="btn-ghost active">فواتير المبيعات</button>
                 <button onclick="app.switchTab('arch-purch-tab', this)" class="btn-ghost">سندات المشتريات</button>
+                <button onclick="app.switchTab('arch-quot-tab', this)" class="btn-ghost" style="color:#00cec9; border-color:#00cec9">عروض الأسعار</button>
             </div>
             <div id="arch-sales-tab" class="sub-tab"><div class="card"><div id="archive-list-sales"></div></div></div>
             <div id="arch-purch-tab" class="sub-tab" style="display:none"><div class="card"><div id="archive-list-purch"></div></div></div>
+            <div id="arch-quot-tab" class="sub-tab" style="display:none"><div class="card"><div id="archive-list-quot"></div></div></div>
         </section>
 
         <section id="tasks" class="section">
@@ -779,14 +815,24 @@
                 if(!this.data.secureMsgs) this.data.secureMsgs = [];
                 if(!this.data.passwords) this.data.passwords = { admin: '1234', sales: '1234', purchases: '1234', warehouse: '1234', logistics: '1234', accounting: '1234' };
                 document.getElementById('floating-inbox').classList.remove('open');
+                
+                // Auto-login logic
+                const cachedRole = localStorage.getItem('erp_last_role');
+                if(cachedRole) {
+                    this.login(cachedRole, true); // true = skip password
+                }
             },
 
-            login: function(role) {
-                const savedPass = (this.data.passwords && this.data.passwords[role]) ? this.data.passwords[role] : '1234';
-                const inputPass = prompt("🔒 هذا القسم محمي. أدخل كلمة المرور:");
-                if (inputPass !== savedPass) { alert("⛔ كلمة المرور خاطئة!"); return; }
+            login: function(role, skipPass = false) {
+                if (!skipPass) {
+                    const savedPass = (this.data.passwords && this.data.passwords[role]) ? this.data.passwords[role] : '1234';
+                    const inputPass = prompt("🔒 هذا القسم محمي. أدخل كلمة المرور:");
+                    if (inputPass !== savedPass) { alert("⛔ كلمة المرور خاطئة!"); return; }
+                }
 
                 this.currentRole = role;
+                localStorage.setItem('erp_last_role', role); // Save session
+
                 const overlay = document.getElementById('login-overlay');
                 overlay.style.opacity = '0';
                 overlay.style.transform = 'translateY(-100vh)';
@@ -812,6 +858,11 @@
                     if(role === 'sales') firstNav = 'sales'; else if(role === 'purchases') firstNav = 'purchases'; else if(role === 'warehouse') firstNav = 'warehouse'; else if(role === 'logistics') firstNav = 'logistics'; else if(role === 'accounting') firstNav = 'accounting';
                     if(firstNav) this.nav(firstNav, document.getElementById('nav-' + (firstNav==='sales'?'sales':(firstNav==='purchases'?'purch':(firstNav==='warehouse'?'wh':(firstNav==='logistics'?'logis':'acc'))))));
                 }
+            },
+
+            logout: function() {
+                localStorage.removeItem('erp_last_role');
+                location.reload();
             },
 
             savePasswords: function() {
@@ -843,7 +894,11 @@
                 const items = container.querySelectorAll(itemSelector);
                 items.forEach(item => { item.style.display = item.innerText.toLowerCase().includes(term) ? "" : "none"; });
             },
-            searchWh: function(val) { this.searchUI(val, 'list-wh-in', '.card'); this.searchUI(val, 'list-wh-out', '.card'); },
+            searchWh: function(val) { 
+                this.searchUI(val, 'list-wh-in', '.card'); 
+                this.searchUI(val, 'list-wh-out', '.card'); 
+                this.searchUI(val, 'list-wh-delivery', '.card'); 
+            },
             toggleInbox: function() { document.getElementById('floating-inbox').classList.toggle('open'); },
             formatDate: function(timestamp) {
                 if(!timestamp) return new Date().toLocaleDateString('en-GB');
@@ -853,6 +908,7 @@
             save: function() {
                 try {
                     localStorage.setItem('cozy_erp_v9', JSON.stringify(this.data));
+                    if(this.currentRole) localStorage.setItem('erp_last_role', this.currentRole);
                     if(this.currentRole === 'admin') { this.updateDashboard(); this.renderSettings(); }
                 } catch(e) { alert("خطأ في الحفظ: مساحة التخزين ممتلئة."); }
             },
@@ -874,6 +930,7 @@
                 if(pass === "20002000") {
                     if(confirm("تحذير نهائي: سيتم حذف كل البيانات!")) {
                         localStorage.removeItem('cozy_erp_v9');
+                        localStorage.removeItem('erp_last_role');
                         this.data = { clients: [], prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [], passwords: { admin: '1234', sales: '1234', purchases: '1234', warehouse: '1234', logistics: '1234', accounting: '1234' } };
                         this.save(); location.reload();
                     }
@@ -987,10 +1044,6 @@
                 };
                 if (fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processPO(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { processPO(''); }
             },
-            downloadPOExcel: function(poId) {
-                const po = this.data.pos.find(p=>p.id===poId); let csv = "\uFEFFCode,Name,Price,Qty\n"; po.items.forEach(i => csv += `${i.code},${i.name},${i.price},${i.req}\n`);
-                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'}); const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`PO_${po.id}.csv`; a.click();
-            },
             accRegisterPO: function(id) {
                 const smaccRef = document.getElementById(`smacc-${id}`).value, fileInput = document.getElementById(`acc-file-${id}`), accNotes = document.getElementById(`acc-n-${id}`).value;
                 if(!smaccRef) return alert("أدخل رقم القيد");
@@ -1012,14 +1065,112 @@
             whConfirmSO: function(id) {
                 let so = this.data.sos.find(s=>s.id===id), note = document.getElementById(`wh-so-note-${id}`).value;
                 so.items.forEach((item, idx) => { item.conf = parseInt(document.getElementById(`conf-${id}-${idx}`).value)||0; });
+                // Deduct from inventory (Initial)
                 so.items.forEach(item => this.data.prods.find(p=>p.id==item.id).qty -= item.conf);
-                so.status = 'Acc'; so.whNotes = note; this.addLog('warehouse', "صرف مخزني", `SO: ${so.ref}`); this.save(); this.renderAll();
+                so.status = 'AccQuot'; // Moved to Acc for Quotation
+                so.whNotes = note; 
+                this.addLog('warehouse', "صرف مبدئي", `SO: ${so.ref}`); 
+                this.save(); this.renderAll();
             },
-            whFinalizeDelivery: function(id) {
-                const fileInput = document.getElementById(`wh-del-file-${id}`);
-                const processDelivery = (fileData) => { if(!fileData) return alert("مطلوب الصورة"); const so = this.data.sos.find(s=>s.id===id); so.status = 'Done'; so.stampedInvoice = fileData; so.logisticsStatus = 'تم التسليم'; this.addLog('warehouse', "تسليم", so.ref); this.save(); this.renderAll(); };
-                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processDelivery(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { alert("اختر ملف"); }
+            // Acc Phase 1: Quotation
+            accIssueQuot: function(id) {
+                const quotRef = document.getElementById(`quot-ref-${id}`).value, fileInput = document.getElementById(`acc-file-quot-${id}`);
+                if(!quotRef) return alert("أدخل رقم عرض السعر");
+                const processQuot = (fileData) => { 
+                    const so = this.data.sos.find(s=>s.id===id); 
+                    so.status = 'WhDelivery'; // Back to WH for delivery
+                    so.quotRef = quotRef; 
+                    if(fileData) so.quotFile = fileData; 
+                    this.addLog('accounting', "إصدار عرض سعر", `Ref: ${quotRef}`); 
+                    this.save(); this.renderAll(); 
+                };
+                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processQuot(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { processQuot(null); }
             },
+            // Wh Phase 2: Delivery & Adjustment
+            whConfirmDelivery: function(id) {
+                const so = this.data.sos.find(s=>s.id===id);
+                // Loop through items to get actual delivered quantity
+                so.items.forEach((item, idx) => {
+                    const actualInput = document.getElementById(`actual-${id}-${idx}`);
+                    if(actualInput) {
+                        const actualQty = parseInt(actualInput.value) || 0;
+                        item.finalQty = actualQty;
+                        // Adjust inventory: If picked (conf) > delivered (finalQty), return diff to stock
+                        const diff = item.conf - actualQty;
+                        if(diff !== 0) {
+                            let prod = this.data.prods.find(p=>p.id==item.id);
+                            if(prod) prod.qty += diff;
+                        }
+                    } else {
+                        item.finalQty = item.conf; // Default to picked qty if no input
+                    }
+                });
+                so.status = 'AccFinal'; // Send to Acc for Final Invoice
+                this.addLog('warehouse', "تأكيد تسليم", `SO: ${so.ref}`);
+                this.save(); this.renderAll();
+            },
+            // Acc Phase 2: Final Invoice
+            accFinalizeInvoice: function(id) {
+                const inv = document.getElementById(`inv-${id}`).value, fileInput = document.getElementById(`acc-file-inv-${id}`);
+                if(!inv) return alert("مطلوب رقم الفاتورة");
+                const processFinal = (fileData) => { 
+                    const so = this.data.sos.find(s=>s.id===id); 
+                    so.status = 'WhStamp'; 
+                    so.inv = inv; 
+                    if(fileData) so.accFile = fileData; 
+                    this.addLog('accounting', "إصدار فاتورة نهائية", inv); 
+                    this.save(); this.renderAll(); 
+                };
+                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processFinal(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { processFinal(null); }
+            },
+            // Wh Phase 3: Stamp & Close
+            whFinalizeStamp: function(id) {
+                const fileInput = document.getElementById(`wh-stamp-file-${id}`);
+                const processStamp = (fileData) => { 
+                    if(!fileData) return alert("مطلوب صورة الفاتورة المختومة"); 
+                    const so = this.data.sos.find(s=>s.id===id); 
+                    so.status = 'Done'; 
+                    so.stampedInvoice = fileData; 
+                    so.logisticsStatus = 'تم التسليم'; 
+                    this.addLog('warehouse', "إغلاق الطلب (مختوم)", so.ref); 
+                    this.save(); this.renderAll(); 
+                };
+                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processStamp(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { alert("اختر ملف"); }
+            },
+
+            // --- EXCEL EXPORT FUNCTION (UPDATED v2.4) ---
+            downloadAccExcel: function(id, mode) {
+                const so = this.data.sos.find(s => s.id === id);
+                if (!so) return;
+
+                // Headers updated exactly as requested:
+                // Code - Name - SalesQty(Req) - WhQty(Conf) - DelivQty(Final) - Price - Total
+                let csvContent = "\uFEFFCode,Name,Sales Qty,WH Conf Qty,Delivered Qty,Unit Price,Total\n";
+
+                so.items.forEach(item => {
+                    // For Total calculation:
+                    // If Quotation (mode='quot'), use Confirmed Qty.
+                    // If Invoice (mode='inv'), use Delivered Qty.
+                    let calcQty = (mode === 'quot') ? item.conf : (item.finalQty || 0);
+                    let totalLine = item.price * calcQty; // No Tax calculation
+
+                    // Enforce 0 if finalQty is undefined
+                    let fQty = item.finalQty || 0;
+
+                    csvContent += `${item.code},"${item.name}",${item.req},${item.conf},${fQty},${item.price.toFixed(2)},${totalLine.toFixed(2)}\n`;
+                });
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `Acc_${mode}_${so.ref}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+
             renderSOGrid: function() {
                 const client = document.getElementById('so-client-select').value;
                 document.getElementById('grid-so-prods').innerHTML = this.data.prods.map(p => {
@@ -1029,21 +1180,10 @@
             },
             createSO: function() {
                 const client = document.getElementById('so-client-select').value, ref = document.getElementById('so-ref').value, notes = document.getElementById('so-notes').value;
-                let items = []; document.querySelectorAll('.so-qty').forEach(inp => { if(inp.value > 0) items.push({ id: parseInt(inp.dataset.id), ...this.data.prods.find(p=>p.id==inp.dataset.id), req: parseInt(inp.value), conf: 0, price: parseFloat(inp.dataset.price) }); });
+                let items = []; document.querySelectorAll('.so-qty').forEach(inp => { if(inp.value > 0) items.push({ id: parseInt(inp.dataset.id), ...this.data.prods.find(p=>p.id==inp.dataset.id), req: parseInt(inp.value), conf: 0, finalQty: 0, price: parseFloat(inp.dataset.price) }); });
                 if(items.length===0 || !client) return alert("بيانات ناقصة");
-                this.data.sos.push({ id: Date.now(), client, ref, items, status: 'Wh', logisticsStatus: 'تم الطلب', inv: '', notes, accFile: '', journalRef: '', accNotes: '', stampedInvoice: '' });
+                this.data.sos.push({ id: Date.now(), client, ref, items, status: 'Wh', logisticsStatus: 'تم الطلب', inv: '', notes, quotRef:'', quotFile:'', accFile: '', stampedInvoice: '' });
                 this.addLog('sales', "أمر بيع جديد", `Ref: ${ref}`); this.save(); this.nav('sales'); alert("تم");
-            },
-            downloadSOExcel: function(id) {
-                let so = this.data.sos.find(s=>s.id===id), csv = "\uFEFFCode,Name,Req,Conf,Price,Total\n";
-                so.items.forEach(i => { csv += `${i.code},${i.name},${i.req},${i.conf},${i.price},${(i.conf*i.price).toFixed(2)}\n`; });
-                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'}); const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`SO_${so.ref}.csv`; a.click();
-            },
-            accFinalizeSO: function(id) {
-                const inv = document.getElementById(`inv-${id}`).value, journal = document.getElementById(`acc-ref-${id}`).value, fileInput = document.getElementById(`acc-file-so-${id}`), accNotes = document.getElementById(`acc-note-so-${id}`).value;
-                if(!inv && !journal) return alert("مطلوب الفاتورة/القيد");
-                const processFinal = (fileData) => { const so = this.data.sos.find(s=>s.id===id); so.status='Delivery'; so.inv = inv; so.journalRef = journal; so.accNotes = accNotes; if(fileData) so.accFile = fileData; this.addLog('accounting', "إصدار فاتورة", inv); this.save(); this.renderAll(); };
-                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processFinal(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { processFinal(null); }
             },
             addTask: function() {
                 const from = document.getElementById('task-from').value, dept = document.getElementById('task-dept').value, title = document.getElementById('task-title').value, desc = document.getElementById('task-desc').value, fileObj = document.getElementById('task-file').files[0];
@@ -1066,8 +1206,14 @@
                 return { step, text: statusText };
             },
             getLogisticsStateSO: function(so) {
-                let step = 0, statusText = "تم الطلب";
-                if (so.status === 'Wh') { step = 1; statusText = "انتظار مخزن"; } else if (so.status === 'Acc') { step = 2; statusText = "انتظار فوترة"; } else if (so.status === 'Delivery') { step = 3; statusText = "انتظار تسليم"; } else if (so.status === 'Done') { step = 4; statusText = "تم التسليم"; }
+                // Flow: Wh -> AccQuot -> WhDelivery -> AccFinal -> WhStamp -> Done
+                let step = 0, statusText = "طلب جديد";
+                if (so.status === 'Wh') { step = 1; statusText = "تجهيز المخزن"; } 
+                else if (so.status === 'AccQuot') { step = 2; statusText = "إصدار عرض سعر"; }
+                else if (so.status === 'WhDelivery') { step = 3; statusText = "توصيل للعميل"; }
+                else if (so.status === 'AccFinal') { step = 4; statusText = "فاتورة نهائية"; }
+                else if (so.status === 'WhStamp') { step = 5; statusText = "ختم وإغلاق"; }
+                else if (so.status === 'Done') { step = 6; statusText = "مكتمل"; }
                 return { step, text: statusText };
             },
             renderAll: function() {
@@ -1081,7 +1227,7 @@
                     return `<div class="log-card" style="border-right:4px solid var(--secondary)"><div class="log-header"><div>PO: ${p.id}</div><span class="badge bg-blue">${state.text}</span></div><div class="log-progress">${progHtml}</div></div>`;
                 }).join('') || '<p style="text-align:center">لا طلبات</p>';
 
-                const soSteps = ['طلب', 'تأكيد', 'فوترة', 'توصيل', 'مكتمل'];
+                const soSteps = ['طلب', 'تجهيز', 'عرض سعر', 'توصيل', 'فاتورة', 'ختم', 'تم'];
                 document.getElementById('log-outbound-readonly').innerHTML = this.data.sos.slice().sort((a,b)=>b.id-a.id).map(s => {
                     const state = this.getLogisticsStateSO(s);
                     const progHtml = soSteps.map((lbl, idx) => `<div class="prog-step ${idx<state.step?'completed':(idx===state.step?'active':'')}"></div>`).join('');
@@ -1092,22 +1238,139 @@
 
                 document.getElementById('list-tasks-all').innerHTML = this.data.tasks.slice().sort((a,b)=>b.id-a.id).map(t => `<div class="card" style="border-right:4px solid ${t.done?'#00b894':'#fdcb6e'}"><h4>${t.title} [${t.from}->${t.dept}]</h4><p>${t.desc}</p>${t.reply?`<p style="color:green">تم: ${t.reply}</p>`:'<div style="color:orange">انتظار...</div>'}</div>`).join('');
 
-                const renderArch = (i, type) => `<div class="card" style="border-right:5px solid ${type=='sale'?'var(--secondary)':'var(--accent)'}"><h3>${type=='sale'?'بيع':'شراء'} (${type=='sale'?i.inv:i.smacc})</h3><div>${app.formatDate(type=='sale'?i.id:i.createdAt)}</div></div>`;
-                document.getElementById('archive-list-sales').innerHTML = this.data.sos.filter(s=>s.status==='Done').map(i=>renderArch(i,'sale')).join('');
-                document.getElementById('archive-list-purch').innerHTML = this.data.pos.filter(p=>p.smacc).map(i=>renderArch(i,'purch')).join('');
+                /* --- ARCHIVE SECTION --- */
+                // Helper to render card
+                const renderArchCard = (title, subtitle, date, file) => `
+                    <div class="card" style="border-right:5px solid var(--primary); display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h3>${title}</h3>
+                            <div>${date}</div>
+                            <small>${subtitle}</small>
+                        </div>
+                        ${file ? `<a href="${file}" download class="btn-ghost small active"><i class="fas fa-download"></i> تحميل</a>` : '<span style="color:#999; font-size:0.8rem">لا يوجد مرفق</span>'}
+                    </div>`;
+
+                // 1. Sales Invoices Archive (Prioritize Stamped Invoice, then Acc Invoice)
+                document.getElementById('archive-list-sales').innerHTML = this.data.sos.filter(s=>s.status==='Done' || s.status==='WhStamp').map(i => {
+                    const fileToDownload = i.stampedInvoice || i.accFile;
+                    return renderArchCard(`فاتورة مبيعات (${i.inv})`, `العميل: ${i.client}`, app.formatDate(i.id), fileToDownload);
+                }).join('') || '<p style="text-align:center;color:#ccc">لا توجد فواتير مبيعات مؤرشفة</p>';
+
+                // 2. Purchase Bonds Archive
+                document.getElementById('archive-list-purch').innerHTML = this.data.pos.filter(p=>p.smacc).map(i => {
+                    return renderArchCard(`سند مشتريات (${i.smacc})`, `المورد: ${i.vendor}`, app.formatDate(i.createdAt), i.accFile);
+                }).join('') || '<p style="text-align:center;color:#ccc">لا توجد سندات مشتريات مؤرشفة</p>';
+
+                // 3. Quotations Archive (New Tab)
+                document.getElementById('archive-list-quot').innerHTML = this.data.sos.filter(s=>s.quotRef).map(i => {
+                    return renderArchCard(`عرض سعر (${i.quotRef})`, `العميل: ${i.client}`, app.formatDate(i.id), i.quotFile);
+                }).join('') || '<p style="text-align:center;color:#ccc">لا توجد عروض أسعار</p>';
+
 
                 document.getElementById('po-list-container').innerHTML = this.data.pos.slice().sort((a,b)=>b.id-a.id).map(p=>`<div class="card" style="padding:15px">PO: ${p.id} (${p.smacc?'مسجل':'غير مسجل'})</div>`).join('');
-                document.getElementById('so-list-container').innerHTML = this.data.sos.slice().sort((a,b)=>b.id-a.id).map(s=>`<div class="card" style="padding:15px">Ref: ${s.ref} (${s.status==='Done'?'مكتمل':'معالج'})</div>`).join('');
+                
+                // SALES VIEW LIST (Updated to show Invoice & Download)
+                document.getElementById('so-list-container').innerHTML = this.data.sos.slice().sort((a,b)=>b.id-a.id).map(s => {
+                    let statusColor = '#95a5a6'; // gray
+                    let statusText = s.status;
+                    let extraAction = '';
+
+                    if(s.status === 'Done') { statusColor = '#00b894'; statusText = 'مكتمل'; }
+                    else if(s.status === 'WhStamp') { statusColor = '#00b894'; statusText = 'مكتمل (بانتظار الختم)'; }
+                    else if(s.status === 'AccFinal') { statusColor = '#e67e22'; statusText = 'صدرت الفاتورة'; }
+
+                    // If Invoice exists, show it to Sales
+                    if (s.inv) {
+                         const fileLink = s.stampedInvoice || s.accFile;
+                         extraAction = `<div style="margin-top:10px; padding-top:10px; border-top:1px dashed #eee;">
+                                        <strong>فاتورة رقم: ${s.inv}</strong>
+                                        ${fileLink ? `<br><a href="${fileLink}" download class="btn-ghost small active" style="margin-top:5px; display:inline-block"><i class="fas fa-file-invoice"></i> تحميل الفاتورة</a>` : ''}
+                                        </div>`;
+                    }
+
+                    return `
+                    <div class="card" style="border-right:5px solid ${statusColor}">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong>${s.client}</strong>
+                            <span class="badge" style="background:${statusColor}">${statusText}</span>
+                        </div>
+                        <div style="font-size:0.9rem; color:#666; margin-top:5px;">Ref: ${s.ref}</div>
+                        ${extraAction}
+                    </div>`;
+                }).join('');
+
 
                 document.getElementById('list-acc-reg').innerHTML = this.data.pos.filter(p=>!p.smacc).map(p=>`<div class="card"><h3>PO: ${p.id}</h3><p>قبل الضريبة: ${p.costs.before}</p>${p.file?`<a href="${p.file}" download>مرفق</a>`:''}<div class="form-row"><input id="smacc-${p.id}" placeholder="القيد"><input id="acc-n-${p.id}" placeholder="ملاحظة"><input type="file" id="acc-file-${p.id}"><button onclick="app.accRegisterPO('${p.id}')" class="btn-primary">تسجيل</button></div></div>`).join('');
 
                 document.getElementById('list-wh-in').innerHTML = this.data.pos.filter(p=>!p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').map(p=>`<div class="card"><h3>استلام PO: ${p.id}</h3>${p.items.map((i,idx)=>`<div class="wh-item-row">${i.name} (مطلوب:${i.req}) <input id="rec-${p.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${p.id}',${idx},'in')"><span id="stat-rec-${p.id}-${idx}"></span><input id="note-${p.id}-${idx}" placeholder="ملاحظة"></div>`).join('')}<div class="form-row"><input id="wh-po-note-${p.id}" placeholder="ملاحظات.."><button onclick="app.whConfirmPO('${p.id}')" class="btn-primary">تأكيد الاستلام</button></div></div>`).join('');
 
-                document.getElementById('list-wh-out').innerHTML = this.data.sos.filter(s=>s.status==='Wh').map(s=>`<div class="card"><h3>صرف SO: ${s.ref}</h3>${s.items.map((i,idx)=>`<div class="wh-item-row single-line">${i.name} (مطلوب:${i.req}) <input id="conf-${s.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${s.id}',${idx},'out')"><input id="out-note-${s.id}-${idx}" placeholder="ملاحظة"></div>`).join('')}<div class="form-row"><input id="wh-so-note-${s.id}" placeholder="ملاحظات.."><button onclick="app.whConfirmSO(${s.id})" class="btn-secondary">تأكيد الصرف</button></div></div>`).join('');
+                /* --- WAREHOUSE: Picking Phase (Modified View) --- */
+                document.getElementById('list-wh-out').innerHTML = this.data.sos.filter(s=>s.status==='Wh').map(s=>`
+                    <div class="card">
+                        <h3>صرف SO: ${s.ref}</h3>
+                        ${s.items.map((i,idx)=>`
+                            <div class="wh-item-row" style="align-items: center; justify-content: space-between;">
+                                <div style="display:flex; align-items:center; gap:15px; flex:2;">
+                                    <img src="${i.img || 'https://placehold.co/65'}" class="wh-img">
+                                    <div>
+                                        <div style="font-weight:bold">${i.name}</div>
+                                        <small style="color:#666">${i.code}</small>
+                                    </div>
+                                </div>
+                                <div class="wh-input-area">
+                                    <small style="display:block; margin-bottom:5px;">مطلوب</small>
+                                    <strong style="font-size:1.2rem">${i.req}</strong>
+                                </div>
+                                <div class="wh-input-area">
+                                    <small style="display:block; margin-bottom:5px;">متوفر (يصرف)</small>
+                                    <input id="conf-${s.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${s.id}',${idx},'out')" style="font-weight:bold; color:var(--primary)">
+                                </div>
+                            </div>
+                            <input id="wh-so-note-${s.id}" placeholder="ملاحظة خاصة بالصنف (اختياري)" style="width:100%; margin-top:-10px; margin-bottom:15px;">
+                        `).join('')}
+                        <div class="form-row"><button onclick="app.whConfirmSO(${s.id})" class="btn-secondary">تأكيد الصرف (طلب عرض سعر)</button></div>
+                    </div>
+                `).join('');
 
-                document.getElementById('list-wh-delivery').innerHTML = this.data.sos.filter(s=>s.status==='Delivery').map(s=>`<div class="card" style="border-right:4px solid red"><h3>توصيل: ${s.ref}</h3><p>فاتورة: ${s.inv}</p>${s.accFile?`<a href="${s.accFile}" download>تحميل الفاتورة</a>`:''}<input type="file" id="wh-del-file-${s.id}"><button onclick="app.whFinalizeDelivery(${s.id})" class="btn-danger">إغلاق الطلب</button></div>`).join('');
+                /* --- ACCOUNTING: Issue Quotation (With Excel) --- */
+                document.getElementById('list-acc-quot').innerHTML = this.data.sos.filter(s=>s.status==='AccQuot').map(s=>`
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between;">
+                            <h3>SO: ${s.ref}</h3>
+                            <button onclick="app.downloadAccExcel(${s.id}, 'quot')" class="btn-ghost small" style="color:green; border-color:green"><i class="fas fa-file-excel"></i> تنزيل Excel</button>
+                        </div>
+                        <p>تم تأكيد الصرف المخزني. يرجى إصدار عرض سعر.</p>
+                        <div class="form-row">
+                            <input id="quot-ref-${s.id}" placeholder="رقم عرض السعر">
+                            <input type="file" id="acc-file-quot-${s.id}">
+                            <button onclick="app.accIssueQuot(${s.id})" class="btn-secondary">إصدار وإرسال للمخزن</button>
+                        </div>
+                    </div>
+                `).join('');
 
-                document.getElementById('list-acc-inv').innerHTML = this.data.sos.filter(s=>s.status==='Acc').map(s=>`<div class="card"><h3>فوترة: ${s.ref}</h3><input type="file" id="acc-file-so-${s.id}"><div class="form-row"><input id="acc-ref-${s.id}" placeholder="القيد"><input id="acc-note-so-${s.id}" placeholder="ملاحظة"><button onclick="app.accFinalizeSO(${s.id})" class="btn-primary">إصدار</button></div><input type="hidden" id="inv-${s.id}" value="GEN"></div>`).join('');
+                /* --- WAREHOUSE: Final Delivery & Adjustment --- */
+                document.getElementById('list-wh-delivery').innerHTML = this.data.sos.filter(s=>s.status==='WhDelivery').map(s=>`<div class="card" style="border-right:4px solid #e67e22"><h3>توصيل SO: ${s.ref}</h3><p>عرض السعر: ${s.quotRef}</p>${s.quotFile?`<a href="${s.quotFile}" download class="attach-badge">تحميل عرض السعر</a>`:''}<hr>${s.items.map((i,idx)=>`<div class="wh-item-row single-line"><div class="wh-info-compact">${i.name} <small>(صرف: ${i.conf})</small></div><input id="actual-${s.id}-${idx}" value="${i.conf}" class="wh-input-compact" type="number" style="border-color:#e67e22"><div class="wh-note-compact" style="font-size:0.8rem; color:#e67e22">الكمية الفعلية المستلمة</div></div>`).join('')}<div class="form-row"><button onclick="app.whConfirmDelivery(${s.id})" class="btn-warning">تأكيد الاستلام الفعلي (طلب فاتورة)</button></div></div>`).join('');
+
+                /* --- ACCOUNTING: Final Invoice (With Excel) --- */
+                document.getElementById('list-acc-inv').innerHTML = this.data.sos.filter(s=>s.status==='AccFinal').map(s=>`
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between;">
+                            <h3>فوترة نهائية: ${s.ref}</h3>
+                            <button onclick="app.downloadAccExcel(${s.id}, 'inv')" class="btn-ghost small" style="color:green; border-color:green"><i class="fas fa-file-excel"></i> تنزيل Excel</button>
+                        </div>
+                        <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:10px;">
+                            ${s.items.map(i=>`<div>${i.name}: ${i.finalQty} * ${i.price} = ${(i.finalQty*i.price).toFixed(2)}</div>`).join('')}
+                        </div>
+                        <div class="form-row">
+                            <input id="inv-${s.id}" placeholder="رقم الفاتورة النهائية">
+                            <input type="file" id="acc-file-inv-${s.id}">
+                            <button onclick="app.accFinalizeInvoice(${s.id})" class="btn-primary">إصدار الفاتورة</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                /* --- WAREHOUSE: Final Stamp --- */
+                document.getElementById('list-wh-stamp').innerHTML = this.data.sos.filter(s=>s.status==='WhStamp').map(s=>`<div class="card" style="border-right:4px solid red"><h3>إغلاق: ${s.ref}</h3><p>فاتورة: ${s.inv}</p>${s.accFile?`<a href="${s.accFile}" download class="attach-badge">تحميل الفاتورة</a>`:''}<div class="form-row"><label>ارفع صورة الفاتورة المختومة من العميل:</label><input type="file" id="wh-stamp-file-${s.id}"><button onclick="app.whFinalizeStamp(${s.id})" class="btn-danger">إغلاق الطلب نهائياً</button></div></div>`).join('');
             },
 
             updateDashboard: function() {
@@ -1115,19 +1378,20 @@
                 document.getElementById('d-client-count').innerText = this.data.clients.length;
                 document.getElementById('d-msgs-all').innerText = this.data.secureMsgs.length;
                 const salesDone = this.data.sos.filter(s => s.status === 'Done');
-                document.getElementById('d-sales-val').innerText = salesDone.reduce((acc, so) => acc + so.items.reduce((sum, i) => sum + (i.conf * i.price), 0), 0).toLocaleString() + " SAR";
+                document.getElementById('d-sales-val').innerText = salesDone.reduce((acc, so) => acc + so.items.reduce((sum, i) => sum + (i.finalQty * i.price), 0), 0).toLocaleString() + " SAR";
                 document.getElementById('d-sales-done').innerText = salesDone.length;
                 document.getElementById('d-sales-pend').innerText = this.data.sos.filter(s => s.status !== 'Done').length;
                 const purDone = this.data.pos.filter(p => p.smacc);
                 document.getElementById('d-pur-val').innerText = purDone.reduce((acc, po) => acc + (po.costs ? po.costs.after : 0), 0).toLocaleString() + " SAR";
                 document.getElementById('d-pur-count').innerText = purDone.length;
                 
-                const whPend = this.data.sos.filter(s=>s.status==='Wh').length + this.data.pos.filter(p=>!p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').length + this.data.sos.filter(s=>s.status==='Delivery').length;
+                const whPend = this.data.sos.filter(s=>['Wh','WhDelivery','WhStamp'].includes(s.status)).length + this.data.pos.filter(p=>!p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').length;
                 document.getElementById('d-pend-wh').innerText = whPend; document.getElementById('badge-wh').style.display = whPend>0?'block':'none';
-                const accPend = this.data.sos.filter(s=>s.status==='Acc').length + this.data.pos.filter(p=>!p.smacc).length;
+                
+                const accPend = this.data.sos.filter(s=>['AccQuot','AccFinal'].includes(s.status)).length + this.data.pos.filter(p=>!p.smacc).length;
                 document.getElementById('d-pend-acc').innerText = accPend; document.getElementById('badge-acc').style.display = accPend>0?'block':'none';
 
-                let soldMap = {}; this.data.prods.forEach(p=>soldMap[p.id]=0); salesDone.forEach(so=>so.items.forEach(i=>{if(soldMap[i.id]!==undefined)soldMap[i.id]+=i.conf}));
+                let soldMap = {}; this.data.prods.forEach(p=>soldMap[p.id]=0); salesDone.forEach(so=>so.items.forEach(i=>{if(soldMap[i.id]!==undefined)soldMap[i.id]+=i.finalQty}));
                 let sorted = this.data.prods.map(p=>({...p, soldQty:soldMap[p.id]||0})).sort((a,b)=>b.soldQty-a.soldQty);
                 document.getElementById('top-10-list').innerHTML = sorted.slice(0,10).map(p=>`<div class="rank-item"><div class="rank-info"><img src="${p.img||'https://placehold.co/40'}" class="rank-img"><span>${p.name}</span></div><div class="rank-score rs-high">${p.soldQty}</div></div>`).join('');
                 document.getElementById('bot-10-list').innerHTML = sorted.slice().reverse().slice(0,10).map(p=>`<div class="rank-item"><div class="rank-info"><img src="${p.img||'https://placehold.co/40'}" class="rank-img"><span>${p.name}</span></div><div class="rank-score rs-low">${p.soldQty}</div></div>`).join('');
@@ -1146,7 +1410,12 @@
                 if (cloudData) { app.data = cloudData; } 
                 else { app.data = { clients:[], prods:[], pos:[], sos:[], tasks:[], logs:[], secureMsgs:[], passwords:{ admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' } }; }
                 if(!app.data.passwords) app.data.passwords = { admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' };
-                if(app.currentRole) app.renderAll(); console.log("Loaded");
+                // Ensure logs/msgs array exists
+                if(!app.data.logs) app.data.logs = [];
+                if(!app.data.secureMsgs) app.data.secureMsgs = [];
+                
+                if(app.currentRole) app.renderAll(); 
+                console.log("Loaded");
             });
         }
         app.save = function() { try { if(!this.data) return; set(ref(db, 'erp_data_final'), this.data); } catch(e) { console.error(e); } };
