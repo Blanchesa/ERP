@@ -358,7 +358,7 @@
         <div class="nav-item" id="nav-prod-m" onclick="app.nav('products-create', this)"><i class="fas fa-plus-circle"></i> إدارة المنتجات</div>
         <div class="nav-item" id="nav-prod-v" onclick="app.nav('products-view', this)"><i class="fas fa-box-open"></i> عرض المنتجات</div>
         
-        <div class="nav-item" id="nav-clients" onclick="app.nav('clients', this)"><i class="fas fa-users"></i> العملاء</div>
+        <div class="nav-item" id="nav-clients" onclick="app.nav('clients', this)"><i class="fas fa-users"></i> العملاء والخصومات</div>
         <div class="nav-item" id="nav-purch" onclick="app.nav('purchases', this)"><i class="fas fa-file-invoice-dollar"></i> أوامر الشراء</div>
         <div class="nav-item" id="nav-logis" onclick="app.nav('logistics', this)"><i class="fas fa-truck-fast"></i> اللوجستيات</div>
         <div class="nav-item" id="nav-wh" onclick="app.nav('warehouse', this)"><i class="fas fa-warehouse"></i> المخازن</div>
@@ -507,6 +507,7 @@
             
             <div id="special-price-box" class="card" style="border-right: 4px solid var(--accent);">
                 <h3>2. تخصيص سعر لعميل (يدوي)</h3>
+                <p style="color:#777; font-size:0.9rem">السعر اليدوي يغطي على نسبة الخصم العامة.</p>
                 <div class="form-row">
                     <div class="form-group"><label>المنتج</label><select id="price-prod-select"><option>اختر...</option></select></div>
                     <div class="form-group"><label>العميل</label><select id="price-client-select"><option>اختر...</option></select></div>
@@ -531,13 +532,31 @@
         </section>
 
         <section id="clients" class="section">
-            <h1>إدارة العملاء</h1>
+            <h1>إدارة العملاء والخصومات</h1>
             <div class="card">
-                <div class="form-row">
-                    <div class="form-group"><label>اسم العميل الجديد</label><input id="client-name"></div>
-                    <button onclick="app.addClient()" class="btn-primary" style="margin-bottom:0">إضافة</button>
+                <div class="form-row" style="align-items: flex-end;">
+                    <div class="form-group">
+                        <label>اسم العميل الجديد</label>
+                        <input id="client-name" placeholder="اسم العميل / الشركة">
+                    </div>
+                    <div class="form-group">
+                        <label>نسبة الخصم الافتراضية (%)</label>
+                        <input id="client-discount" type="number" placeholder="مثلاً: 20" style="width:120px">
+                    </div>
+                    <button onclick="app.addClient()" class="btn-primary" style="margin-bottom:0">إضافة عميل</button>
                 </div>
-                <div id="clients-list" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+                
+                <table style="margin-top:20px;">
+                    <thead>
+                        <tr>
+                            <th>اسم العميل</th>
+                            <th style="width:150px">نسبة الخصم (%)</th>
+                            <th style="width:100px">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clients-list-body">
+                        </tbody>
+                </table>
             </div>
         </section>
 
@@ -668,6 +687,15 @@
 			<div class="form-group"><label style="color:red">مرفق طلب العميل (PO)*</label><input type="file" id="so-file-upload"></div>
                         <div class="form-group full-width" style="flex:2"><label>ملاحظات</label><input id="so-notes"></div>
                     </div>
+                    
+                    <div style="margin: 10px 0; border: 2px dashed #b2bec3; padding: 15px; border-radius: 12px; background: #fdfdfd; display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+                        <div style="font-weight:bold; color:var(--text-gray); font-size:0.9rem;"><i class="fas fa-file-csv"></i> تحميل سريع للأصناف:</div>
+                        <input type="file" id="so-csv-import" style="display:none" onchange="app.importSalesCSV(this)">
+                        <button onclick="document.getElementById('so-csv-import').click()" class="btn-ghost active small">رفع ملف (Excel/CSV)</button>
+                        <a href="data:text/csv;charset=utf-8,Code,Qty%0AITEM001,5%0AITEM002,10" download="template_sales.csv" class="btn-ghost small" style="text-decoration:none">📥 تحميل نموذج</a>
+                        <small style="color:#888;">الصيغة: Code, Qty</small>
+                    </div>
+
                     <div class="search-wrapper">
                         <i class="fas fa-search"></i>
                         <input type="text" placeholder="بحث..." onkeyup="app.searchUI(this.value, 'grid-so-prods', '.prod-box')">
@@ -798,7 +826,7 @@
 
     <script>
         const app = {
-            data: { clients: [], prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [], passwords: {} },
+            data: { clients: [], prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [], passwords: {}, clientDiscounts: {} },
             editingProdId: null, currentRole: null,
             permissions: {
                 'admin': 'all',
@@ -812,9 +840,13 @@
             init: function() {
                 const saved = localStorage.getItem('cozy_erp_v9');
                 if(saved) this.data = JSON.parse(saved);
+                
+                // Initialize defaults
                 if(!this.data.logs) this.data.logs = [];
                 if(!this.data.secureMsgs) this.data.secureMsgs = [];
                 if(!this.data.passwords) this.data.passwords = { admin: '1234', sales: '1234', purchases: '1234', warehouse: '1234', logistics: '1234', accounting: '1234' };
+                if(!this.data.clientDiscounts) this.data.clientDiscounts = {}; // New: Store discount percentages
+
                 document.getElementById('floating-inbox').classList.remove('open');
                 
                 // Auto-login logic
@@ -937,7 +969,7 @@
                     if(confirm("تحذير نهائي: سيتم حذف كل البيانات!")) {
                         localStorage.removeItem('cozy_erp_v9');
                         localStorage.removeItem('erp_last_role');
-                        this.data = { clients: [], prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [], passwords: { admin: '1234', sales: '1234', purchases: '1234', warehouse: '1234', logistics: '1234', accounting: '1234' } };
+                        this.data = { clients: [], prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [], passwords: { admin: '1234', sales: '1234', purchases: '1234', warehouse: '1234', logistics: '1234', accounting: '1234' }, clientDiscounts: {} };
                         this.save(); location.reload();
                     }
                 } else { alert("كلمة المرور خاطئة!"); }
@@ -977,10 +1009,48 @@
                     document.getElementById('floating-inbox-body').innerHTML = this.data.secureMsgs.sort((a,b)=>b.id-a.id).map(m => `<div class="msg-box"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><strong><i class="fas fa-user-secret"></i> ${m.name}</strong><small style="font-size:0.7rem">${m.dept}</small></div><p style="margin:0; font-size:0.9rem;">${m.text}</p>${m.reply ? `<div class="msg-admin-reply"><strong>ردك:</strong> ${m.reply}</div>` : `<button onclick="app.replySecureMsg(${m.id})" class="small-btn btn-ghost" style="margin-top:5px;">رد</button>`}</div>`).join('') || '<p style="text-align:center; color:#ccc; font-size:0.9rem;">لا توجد رسائل</p>';
                 }
             },
+
+            // --- Client Management ---
             addClient: function() {
-                const name = document.getElementById('client-name').value;
-                if(name && !this.data.clients.includes(name)) { this.data.clients.push(name); this.addLog('general', "إضافة عميل", name); this.save(); document.getElementById('client-name').value = ''; this.renderClientsAndProds(); }
+                const name = document.getElementById('client-name').value.trim();
+                const disc = parseFloat(document.getElementById('client-discount').value) || 0;
+                
+                if(name && !this.data.clients.includes(name)) { 
+                    this.data.clients.push(name);
+                    // Save Discount
+                    if(!this.data.clientDiscounts) this.data.clientDiscounts = {};
+                    this.data.clientDiscounts[name] = disc;
+
+                    this.addLog('general', "إضافة عميل", `${name} (خصم ${disc}%)`); 
+                    this.save(); 
+                    document.getElementById('client-name').value = ''; 
+                    document.getElementById('client-discount').value = ''; 
+                    this.renderClientsAndProds(); 
+                } else {
+                    alert("الاسم موجود مسبقاً أو فارغ!");
+                }
             },
+            deleteClient: function(name) {
+                if(confirm(`هل أنت متأكد من حذف العميل "${name}"؟ سيتم حذف خصوماته أيضاً.`)) {
+                    this.data.clients = this.data.clients.filter(c => c !== name);
+                    if(this.data.clientDiscounts && this.data.clientDiscounts[name]) {
+                        delete this.data.clientDiscounts[name];
+                    }
+                    // Optional: Clean up specials
+                    this.data.prods.forEach(p => {
+                        if(p.specials && p.specials[name]) delete p.specials[name];
+                    });
+                    this.save();
+                    this.renderClientsAndProds();
+                    alert("تم الحذف بنجاح");
+                }
+            },
+            updateClientDisc: function(name, newDisc) {
+                if(!this.data.clientDiscounts) this.data.clientDiscounts = {};
+                this.data.clientDiscounts[name] = parseFloat(newDisc) || 0;
+                this.save();
+            },
+
             importCSV: function(input) {
                 const file = input.files[0]; if(!file) return; const reader = new FileReader();
                 reader.onload = function(e) {
@@ -999,6 +1069,68 @@
                     input.value = ''; 
                 }; reader.readAsText(file);
             },
+
+            // --- NEW: Import Sales Order CSV (With Error Reporting) ---
+            importSalesCSV: function(input) {
+                const file = input.files[0];
+                if(!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const rows = e.target.result.split('\n');
+                    let foundCount = 0;
+                    let invalidCodes = []; // Array for tracking errors
+
+                    // Clear previous selection
+                    document.querySelectorAll('.so-qty').forEach(i => i.value = '');
+                    document.querySelectorAll('.prod-box').forEach(b => b.classList.remove('selected'));
+
+                    rows.forEach((row) => {
+                        const cols = row.split(',');
+                        if (cols.length >= 2) {
+                            const code = cols[0].trim(); // Display version
+                            const qty = parseInt(cols[1].trim());
+
+                            if (code && qty > 0 && code.toLowerCase() !== 'code') {
+                                // Find product by code (Case Insensitive)
+                                const prod = app.data.prods.find(p => p.code.toLowerCase() === code.toLowerCase());
+                                
+                                if (prod) {
+                                    // Find input in DOM
+                                    const inputEl = document.querySelector(`.so-qty[data-id="${prod.id}"]`);
+                                    if(inputEl) {
+                                        inputEl.value = qty;
+                                        inputEl.parentElement.classList.add('selected');
+                                        foundCount++;
+                                    }
+                                } else {
+                                    // Code not found -> Add to error list
+                                    invalidCodes.push(code);
+                                }
+                            }
+                        }
+                    });
+
+                    // Build the alert message
+                    let msg = `✅ تم تحديد ${foundCount} منتج بنجاح.`;
+                    
+                    if (invalidCodes.length > 0) {
+                        msg += `\n\n⚠️ تم العثور على (${invalidCodes.length}) أكواد غير صحيحة:\n`;
+                        // Show first 15 codes to prevent massive alert
+                        const limit = 15;
+                        msg += invalidCodes.slice(0, limit).join(" - ");
+                        if(invalidCodes.length > limit) msg += `\n...و ${invalidCodes.length - limit} آخرين.`;
+                        msg += `\n\nيرجى تصحيح الملف وإعادة المحاولة.`;
+                    } else {
+                        msg += `\n✨ العملية تمت بنجاح كامل!`;
+                    }
+
+                    alert(msg);
+                    input.value = ''; // Reset input
+                };
+                reader.readAsText(file);
+            },
+
             saveProduct: function() {
                 const code = document.getElementById('p-code').value, name = document.getElementById('p-name').value, price = document.getElementById('p-price').value, img = document.getElementById('p-img').value;
                 if(!code || !name || !price) return alert("أكمل البيانات");
@@ -1025,11 +1157,36 @@
                 const prod = this.data.prods.find(p=>p.id==prodId); prod.specials[client] = parseFloat(price);
                 this.addLog('general', "تخصيص سعر", `منتج: ${prod.name} | عميل: ${client}`); this.save(); this.renderClientsAndProds(); alert("تم");
             },
+            
+            // --- RENDER CLIENTS (Table + Discount) ---
             renderClientsAndProds: function() {
                 if(!this.data.clients) this.data.clients = []; if(!this.data.prods) this.data.prods = [];
+                if(!this.data.clientDiscounts) this.data.clientDiscounts = {};
+
                 const clientOpts = `<option value="">اختر...</option>` + this.data.clients.map(c => `<option value="${c}">${c}</option>`).join('');
-                document.getElementById('clients-list').innerHTML = this.data.clients.map(c => `<span class="badge" style="background:var(--primary); padding:8px;">${c}</span>`).join('');
-                document.getElementById('price-client-select').innerHTML = clientOpts; document.getElementById('so-client-select').innerHTML = clientOpts;
+                document.getElementById('price-client-select').innerHTML = clientOpts; 
+                document.getElementById('so-client-select').innerHTML = clientOpts;
+
+                // Render Client Table
+                document.getElementById('clients-list-body').innerHTML = this.data.clients.map(c => {
+                    const disc = this.data.clientDiscounts[c] || 0;
+                    return `
+                        <tr>
+                            <td style="font-weight:bold; color:var(--primary);">${c}</td>
+                            <td>
+                                <input type="number" value="${disc}" 
+                                    onchange="app.updateClientDisc('${c}', this.value)" 
+                                    style="width:80px; text-align:center; border:1px solid #ddd; padding:5px; border-radius:5px;"> %
+                            </td>
+                            <td>
+                                <button onclick="app.deleteClient('${c}')" class="btn-ghost small" style="color:red; border-color:red">
+                                    <i class="fas fa-trash"></i> حذف
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
                 document.getElementById('tbl-products').innerHTML = this.data.prods.map(p => {
                     let specialsHtml = Object.keys(p.specials || {}).length > 0 ? Object.entries(p.specials).map(([c, pr]) => `<span class="special-tag">${c}: ${pr}</span>`).join(' ') : "-";
                     return `<tr><td style="position:relative"><img src="${p.img||'https://placehold.co/40x40'}" class="list-thumb"></td><td><b>${p.code}</b></td><td>${p.name}</td><td>${p.price} SAR</td><td>${specialsHtml}</td><td><button onclick="app.editProduct(${p.id})" class="btn-ghost small"><i class="fas fa-edit"></i></button><button onclick="app.navToSpecialPrice(${p.id})" class="btn-ghost small" style="color:var(--accent)"><i class="fas fa-tag"></i></button><button onclick="app.deleteProduct(${p.id})" class="btn-ghost small" style="color:red"><i class="fas fa-trash"></i></button></td></tr>`;
@@ -1226,11 +1383,48 @@
                 }
             },
 
+            // --- UPDATED SALES GRID (Includes Discount Logic) ---
             renderSOGrid: function() {
                 const client = document.getElementById('so-client-select').value;
+                
+                // Get general discount for client
+                let clientDiscountPercent = 0;
+                if (client && this.data.clientDiscounts && this.data.clientDiscounts[client]) {
+                    clientDiscountPercent = parseFloat(this.data.clientDiscounts[client]);
+                }
+
                 document.getElementById('grid-so-prods').innerHTML = this.data.prods.map(p => {
-                    const price = (client && p.specials && p.specials[client]) ? p.specials[client] : p.price;
-                    return `<div class="prod-box" onclick="this.classList.toggle('selected')"><img src="${p.img||'https://placehold.co/100x100'}" class="prod-thumb"><b>${p.name}</b><small>(${p.code})</small><br><small>${price} SAR</small><input type="number" class="so-qty" data-id="${p.id}" data-price="${price}" placeholder="الكمية" onclick="event.stopPropagation()"></div>`;
+                    let finalPrice = p.price;
+                    let priceNote = ""; // UI info
+
+                    // Priority 1: Special Price (Manual override)
+                    if (client && p.specials && p.specials[client] > 0) {
+                        finalPrice = parseFloat(p.specials[client]);
+                        priceNote = `<span style="color:#e67e22; font-size:0.7rem;">(سعر خاص)</span>`;
+                    } 
+                    // Priority 2: General Discount
+                    else if (clientDiscountPercent > 0) {
+                        finalPrice = p.price * (1 - (clientDiscountPercent / 100));
+                        finalPrice = parseFloat(finalPrice.toFixed(2));
+                        priceNote = `<span style="color:green; font-size:0.7rem;">(خصم ${clientDiscountPercent}%)</span>`;
+                    }
+
+                    return `
+                        <div class="prod-box" onclick="this.classList.toggle('selected')">
+                            <img src="${p.img||'https://placehold.co/100x100'}" class="prod-thumb">
+                            <b>${p.name}</b>
+                            <small>(${p.code})</small>
+                            <br>
+                            ${(finalPrice < p.price) ? `<small style="text-decoration:line-through; color:#999">${p.price}</small>` : ''}
+                            <div style="font-weight:bold; color:var(--primary)">${finalPrice} SAR</div>
+                            ${priceNote}
+                            <input type="number" class="so-qty" 
+                                   data-id="${p.id}" 
+                                   data-price="${finalPrice}" 
+                                   placeholder="الكمية" 
+                                   onclick="event.stopPropagation()">
+                        </div>
+                    `;
                 }).join('');
             },
             createSO: function() {
@@ -1509,11 +1703,12 @@
             onValue(ref(db, 'erp_data_final'), (snapshot) => {
                 const cloudData = snapshot.val();
                 if (cloudData) { app.checkNotifications(cloudData); app.data = cloudData; } 
-                else { app.data = { clients:[], prods:[], pos:[], sos:[], tasks:[], logs:[], secureMsgs:[], passwords:{ admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' } }; }
+                else { app.data = { clients:[], prods:[], pos:[], sos:[], tasks:[], logs:[], secureMsgs:[], passwords:{ admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' }, clientDiscounts:{} }; }
                 if(!app.data.passwords) app.data.passwords = { admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' };
                 // Ensure logs/msgs array exists
                 if(!app.data.logs) app.data.logs = [];
                 if(!app.data.secureMsgs) app.data.secureMsgs = [];
+                if(!app.data.clientDiscounts) app.data.clientDiscounts = {};
                 
                 if(app.currentRole) app.renderAll(); 
                 console.log("Loaded");
