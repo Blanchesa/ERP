@@ -665,6 +665,7 @@
                     <div class="form-row">
                         <div class="form-group"><label>العميل</label><select id="so-client-select" onchange="app.renderSOGrid()"><option value="">اختر...</option></select></div>
                         <div class="form-group"><label>Ref</label><input id="so-ref"></div>
+			<div class="form-group"><label style="color:red">مرفق طلب العميل (PO)*</label><input type="file" id="so-file-upload"></div>
                         <div class="form-group full-width" style="flex:2"><label>ملاحظات</label><input id="so-notes"></div>
                     </div>
                     <div class="search-wrapper">
@@ -1233,11 +1234,54 @@
                 }).join('');
             },
             createSO: function() {
-                const client = document.getElementById('so-client-select').value, ref = document.getElementById('so-ref').value, notes = document.getElementById('so-notes').value;
-                let items = []; document.querySelectorAll('.so-qty').forEach(inp => { if(inp.value > 0) items.push({ id: parseInt(inp.dataset.id), ...this.data.prods.find(p=>p.id==inp.dataset.id), req: parseInt(inp.value), conf: 0, finalQty: 0, price: parseFloat(inp.dataset.price) }); });
-                if(items.length===0 || !client) return alert("بيانات ناقصة");
-                this.data.sos.push({ id: Date.now(), client, ref, items, status: 'Wh', logisticsStatus: 'تم الطلب', inv: '', notes, quotRef:'', quotFile:'', accFile: '', stampedInvoice: '' });
-                this.addLog('sales', "أمر بيع جديد", `Ref: ${ref}`); this.save(); this.nav('sales'); alert("تم");
+                const client = document.getElementById('so-client-select').value;
+                const ref = document.getElementById('so-ref').value;
+                const notes = document.getElementById('so-notes').value;
+                const fileInput = document.getElementById('so-file-upload'); // العنصر الجديد
+
+                // تجميع المنتجات
+                let items = []; 
+                document.querySelectorAll('.so-qty').forEach(inp => { 
+                    if(inp.value > 0) items.push({ id: parseInt(inp.dataset.id), ...this.data.prods.find(p=>p.id==inp.dataset.id), req: parseInt(inp.value), conf: 0, finalQty: 0, price: parseFloat(inp.dataset.price) }); 
+                });
+
+                // التحقق من البيانات
+                if(items.length===0 || !client || !ref) return alert("بيانات ناقصة: تأكد من العميل، الرقم المرجعي، والمنتجات");
+                
+                // التحقق من إرفاق الملف (إلزامي)
+                if(fileInput.files.length === 0) return alert("⚠️ تنبيه: يجب إرفاق ملف (أمر الشراء الخاص بالعميل) لإتمام العملية.");
+
+                // دالة الحفظ التي ستعمل بعد قراءة الملف
+                const processSO = (fileData) => {
+                    this.data.sos.push({ 
+                        id: Date.now(), 
+                        client, 
+                        ref, 
+                        items, 
+                        status: 'Wh', 
+                        logisticsStatus: 'تم الطلب', 
+                        inv: '', 
+                        notes, 
+                        quotRef:'', 
+                        quotFile:'', 
+                        accFile: '', 
+                        stampedInvoice: '',
+                        clientPoFile: fileData // حفظ الملف هنا
+                    });
+                    this.addLog('sales', "أمر بيع جديد", `Ref: ${ref}`); 
+                    this.save(); 
+                    this.nav('sales'); 
+                    // تفريغ الحقول
+                    document.getElementById('so-ref').value = '';
+                    document.getElementById('so-notes').value = '';
+                    document.getElementById('so-file-upload').value = '';
+                    alert("تم حفظ أمر البيع مع المرفق ✅");
+                };
+
+                // قراءة الملف وتحويله لنص للحفظ
+                const reader = new FileReader();
+                reader.onload = function(e) { processSO(e.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
             },
             addTask: function() {
                 const from = document.getElementById('task-from').value, dept = document.getElementById('task-dept').value, title = document.getElementById('task-title').value, desc = document.getElementById('task-desc').value, fileObj = document.getElementById('task-file').files[0];
@@ -1348,7 +1392,10 @@
                             <strong>${s.client}</strong>
                             <span class="badge" style="background:${statusColor}">${statusText}</span>
                         </div>
-                        <div style="font-size:0.9rem; color:#666; margin-top:5px;">Ref: ${s.ref}</div>
+                        <div style="font-size:0.9rem; color:#666; margin-top:5px;">
+    Ref: ${s.ref} 
+    ${s.clientPoFile ? ` | <a href="${s.clientPoFile}" download style="color:var(--primary); font-weight:bold"><i class="fas fa-paperclip"></i> ملف العميل</a>` : ''}
+</div>
                         ${extraAction}
                     </div>`;
                 }).join('');
