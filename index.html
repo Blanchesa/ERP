@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlanChe Ops </title>
+    <title>BlanChe Ops - ERP</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -965,36 +965,86 @@
             importSalesCSV: function(input) {
                 const file = input.files[0]; if(!file) return;
                 const reader = new FileReader();
+                
                 reader.onload = function(e) {
-                    const rows = e.target.result.split('\n');
-                    let foundCount = 0; let invalidCodes = [];
+                    // 1. Prepare Content & Clean hidden chars
+                    let content = e.target.result;
+                    // Remove BOM if present (Common in Excel CSVs)
+                    if (content.charCodeAt(0) === 0xFEFF) { content = content.slice(1); }
+                    
+                    const rows = content.split(/\r\n|\n/); // Handle Windows/Unix line breaks
+                    let foundCount = 0; 
+                    let errorRows = [];
+
+                    // Reset Current UI
                     document.querySelectorAll('.so-qty').forEach(i => i.value = '');
                     document.querySelectorAll('.so-price').forEach(i => i.value = ''); 
                     document.querySelectorAll('.prod-box').forEach(b => b.classList.remove('selected'));
+
                     rows.forEach((row) => {
-                        const cols = row.split(',');
+                        if(!row.trim()) return; // Skip empty rows
+
+                        // Simple CSV Split (assuming no commas in values)
+                        const cols = row.split(',').map(c => c.trim());
+                        
                         if (cols.length >= 2) {
-                            const code = cols[0].trim();
-                            const qty = parseInt(cols[1].trim());
-                            const price = cols[2] ? parseFloat(cols[2].trim()) : null; 
-                            if (code && qty > 0 && code.toLowerCase() !== 'code') {
-                                const prod = app.data.prods.find(p => p.code.toLowerCase() === code.toLowerCase());
+                            const code = cols[0];
+                            const qty = parseInt(cols[1]);
+                            const price = cols[2] ? parseFloat(cols[2]) : null; 
+
+                            // Skip Header
+                            if (code.toLowerCase() === 'code') return;
+
+                            if (code) {
+                                // 2. Strict Exact Match (Case Insensitive + Trim)
+                                const prod = app.data.prods.find(p => p.code.toLowerCase().trim() === code.toLowerCase());
+                                
                                 if (prod) {
-                                    const inputQty = document.querySelector(`.so-qty[data-id="${prod.id}"]`);
-                                    const inputPrice = document.querySelector(`.so-price[data-id="${prod.id}"]`);
-                                    if(inputQty) {
-                                        inputQty.value = qty;
-                                        if (price !== null && !isNaN(price)) { inputPrice.value = price; } else { inputPrice.value = prod.price; }
-                                        inputQty.parentElement.classList.add('selected');
-                                        foundCount++;
+                                    if(!isNaN(qty) && qty > 0) {
+                                        const inputQty = document.querySelector(`.so-qty[data-id="${prod.id}"]`);
+                                        const inputPrice = document.querySelector(`.so-price[data-id="${prod.id}"]`);
+                                        
+                                        if(inputQty && inputPrice) {
+                                            inputQty.value = qty;
+                                            if (price !== null && !isNaN(price)) { inputPrice.value = price; } 
+                                            else { inputPrice.value = prod.price; }
+                                            inputQty.parentElement.classList.add('selected');
+                                            foundCount++;
+                                        } else {
+                                            // Product exists in data but not displayed (Search filter active?)
+                                            errorRows.push({ code: code, reason: 'المنتج موجود لكن غير معروض حالياً' });
+                                        }
+                                    } else {
+                                         errorRows.push({ code: code, reason: 'الكمية غير صحيحة' });
                                     }
-                                } else { invalidCodes.push(code); }
+                                } else { 
+                                    errorRows.push({ code: code, reason: 'الكود غير موجود في النظام' }); 
+                                }
                             }
                         }
                     });
-                    let msg = `✅ تم تحديد ${foundCount} منتج بنجاح.`;
-                    if (invalidCodes.length > 0) msg += `\n\n⚠️ أكواد غير موجودة: ${invalidCodes.slice(0, 15).join(" - ")}`;
-                    alert(msg);
+
+                    // 3. Handle Results & Errors
+                    if (errorRows.length > 0) {
+                        // Create Error CSV
+                        let csvContent = "\uFEFFCode,Reason\n"; // BOM for Arabic support
+                        errorRows.forEach(err => {
+                            csvContent += `${err.code},${err.reason}\n`;
+                        });
+
+                        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                        const link = document.createElement("a");
+                        link.href = URL.createObjectURL(blob);
+                        link.download = "Sales_Upload_Errors.csv";
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        alert(`⚠️ تم تحديد ${foundCount} صنف بنجاح.\n❌ يوجد ${errorRows.length} صنف به مشاكل (تم تنزيل ملف Excel بالأخطاء).`);
+                    } else {
+                        alert(`✅ تم مطابقة وتحديد جميع الأصناف (${foundCount}) بنجاح!`);
+                    }
+                    
                     input.value = '';
                 };
                 reader.readAsText(file);
