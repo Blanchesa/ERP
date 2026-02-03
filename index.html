@@ -3,1593 +3,791 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlanChe Ops </title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <title>Lola Logistics | System</title> <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-        /* --- CSS: تصميم Cozy Modern --- */
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
         :root {
-            --bg-body: #f4f7f6;
-            --sidebar-bg: #ffffff;
-            --primary: #6c5ce7;
-            --primary-dark: #5649c0;
-            --secondary: #00cec9;
-            --accent: #fd79a8;
-            --text-dark: #2d3436;
-            --text-gray: #636e72;
-            --border: #dfe6e9;
-            --shadow: 0 8px 24px rgba(0,0,0,0.05);
-            --radius: 16px;
+            /* Fun & Colorful Palette */
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --bg-body: #f3f4f6;
+            
+            --color-primary: #8B5CF6; /* Violet */
+            --color-secondary: #EC4899; /* Pink */
+            --color-accent: #F59E0B; /* Amber */
+            --color-success: #10B981; /* Emerald */
+            --color-text: #1f2937;
+            
+            --glass: rgba(255, 255, 255, 0.7);
+            --shadow-fun: 0 10px 25px -5px rgba(139, 92, 246, 0.15), 0 8px 10px -6px rgba(139, 92, 246, 0.1);
         }
 
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; outline: none; }
-        
-        html { height: 100%; margin: 0; padding: 0; }
 
         body { 
-            margin: 0; padding: 0; 
-            background-color: var(--bg-body); 
-            color: var(--text-dark); 
-            display: flex; 
-            width: 100vw;
-            height: 100vh; 
-            height: -webkit-fill-available;
-            overflow: hidden;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            margin: 0; 
+            background-image: linear-gradient( 109.6deg,  rgba(255,238,221,1) 11.2%, rgba(230,240,255,1) 91.1% );
+            color: var(--color-text); height: 100vh; display: flex; overflow: hidden; 
         }
 
-        /* --- LOGIN SCREEN STYLES --- */
-        #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            z-index: 99999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch;
+        /* --- Animations --- */
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 290px; background: rgba(255,255,255,0.6); backdrop-filter: blur(20px);
+            border-right: 1px solid white; margin: 20px; border-radius: 30px;
+            display: flex; flex-direction: column; padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05); z-index: 10;
+        }
+        .logo-area { 
+            margin-bottom: 40px; display: flex; align-items: center; gap: 15px; 
+            font-size: 1.6rem; font-weight: 900; color: #4c1d95; 
+        }
+        .logo-icon {
+            width: 50px; height: 50px; background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            border-radius: 18px; display: flex; align-items: center; justify-content: center;
+            color: white; box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); transform: rotate(-5deg);
+        }
+        .nav-menu { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .nav-btn {
+            background: transparent; border: none; color: #6b7280;
+            padding: 15px 20px; border-radius: 20px; cursor: pointer;
+            text-align: right; font-size: 1.1rem; font-weight: 700;
+            display: flex; align-items: center; gap: 15px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .nav-btn:hover { background: white; color: var(--color-primary); transform: translateX(-5px) scale(1.02); }
+        .nav-btn.active { 
+            background: white; color: var(--color-primary); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
+        }
+        .nav-btn i { font-size: 1.3rem; }
+
+        /* --- Main Content --- */
+        .main-content { flex: 1; display: flex; flex-direction: column; padding: 20px 20px 20px 0; }
+        .top-bar { 
+            height: 90px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; 
+            background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); border-radius: 25px; margin-bottom: 20px;
         }
         
-        .login-container { text-align: center; animation: fadeIn 0.8s ease-out; margin: auto; padding: 20px; }
-        .login-title { color: white; font-size: 2.5rem; font-weight: 800; margin-bottom: 40px; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-
-        .roles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; max-width: 900px; padding: 20px; }
-        .role-card {
-            background: rgba(255, 255, 255, 0.95); padding: 30px 20px; border-radius: 20px; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: flex; flex-direction: column; align-items: center; gap: 15px; border: 3px solid transparent;
+        .search-box { position: relative; width: 380px; }
+        .search-box input {
+            width: 100%; padding: 15px 20px 15px 55px; border-radius: 25px; border: 2px solid transparent;
+            background: white; font-size: 1rem; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            font-weight: 600; color: #4b5563;
         }
-        .role-card:hover { transform: translateY(-10px) scale(1.05); background: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .role-card i { font-size: 3rem; color: var(--primary); margin-bottom: 10px; transition: 0.3s; }
-        .role-card h3 { margin: 0; color: var(--text-dark); font-size: 1.2rem; }
-        .role-card p { margin: 0; color: var(--text-gray); font-size: 0.85rem; }
+        .search-box input:focus { border-color: #c4b5fd; box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1); }
+        .search-box i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #a78bfa; font-size: 1.2rem; }
 
-        .role-card.admin:hover { border-color: #2d3436; } .role-card.admin:hover i { color: #2d3436; }
-        .role-card.sales:hover { border-color: #00cec9; } .role-card.sales:hover i { color: #00cec9; }
-        .role-card.purch:hover { border-color: #fdcb6e; } .role-card.purch:hover i { color: #fdcb6e; }
-        .role-card.wh:hover { border-color: #6c5ce7; } .role-card.wh:hover i { color: #6c5ce7; }
-        .role-card.acc:hover { border-color: #ff7675; } .role-card.acc:hover i { color: #ff7675; }
-        .role-card.logis:hover { border-color: #0984e3; } .role-card.logis:hover i { color: #0984e3; }
-
-        @media (max-width: 768px) { .roles-grid { grid-template-columns: 1fr; gap: 15px; } .login-title { font-size: 1.8rem; } }
-
-        /* Sidebar */
-        .sidebar { 
-            width: 270px; background-color: var(--sidebar-bg); padding: 20px 15px; 
-            display: flex; flex-direction: column; gap: 6px; border-left: 1px solid var(--border);
-            flex-shrink: 0; overflow-y: auto; z-index: 100;
-            -webkit-overflow-scrolling: touch;
+        .btn-base {
+            padding: 12px 25px; border-radius: 25px; font-weight: 800; cursor: pointer; border: none;
+            display: flex; align-items: center; gap: 10px; font-size: 1rem; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-align: center; margin-bottom: 25px; letter-spacing: -1px; }
-        .nav-item { 
-            padding: 10px 15px; border-radius: 12px; cursor: pointer; color: var(--text-gray); font-weight: 600; 
-            display: flex; align-items: center; gap: 10px; transition: all 0.2s ease; font-size: 0.9rem;
+        .btn-base:hover { transform: translateY(-3px); }
+        .btn-add {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white;
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
         }
-        .nav-item:hover { background: #f8f9fa; color: var(--primary); transform: translateX(-3px); }
-        .nav-item.active { background: var(--primary); color: white !important; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
-        .nav-item.active i { color: white !important; }
-
-        /* Main Content */
-        .main-content { 
-            flex: 1; padding: 30px; overflow-y: auto; position: relative; 
-            height: 100%; 
-            -webkit-overflow-scrolling: touch;
+        .btn-sheet {
+            background: linear-gradient(135deg, #10b981, #059669); color: white;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
         }
-        .section { display: none; animation: fadeIn 0.4s ease; padding-bottom: 50px; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* UI Elements */
-        h1 { margin-top: 0; margin-bottom: 25px; font-size: 1.8rem; color: var(--text-dark); font-weight: 800; letter-spacing: -0.5px; }
-        .card { background: #fff; padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 25px; border: 1px solid white; position: relative; }
-        .form-row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end; }
-        .form-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
-        .form-group label { display: block; font-size: 0.85rem; color: var(--text-gray); margin-bottom: 6px; font-weight: bold; }
+        .list-container { flex: 1; overflow-y: auto; padding-right: 10px; }
+        .list-container::-webkit-scrollbar { width: 8px; }
+        .list-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* --- Order Row (Card) --- */
+        .order-row {
+            background: rgba(255,255,255,0.85); border: 3px solid white; border-radius: 30px;
+            box-shadow: var(--shadow-fun); margin-bottom: 25px; transition: 0.4s; overflow: hidden;
+            animation: bounceIn 0.5s ease forwards;
+        }
+        .order-row:hover { transform: scale(1.01); box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15); border-color: #e9d5ff; }
+
+        .row-header {
+            padding: 25px 35px; display: grid; grid-template-columns: 1.5fr 1fr 1.2fr 1.5fr 50px;
+            align-items: center; cursor: pointer; gap: 15px;
+        }
+        .client-txt { font-weight: 900; font-size: 1.2rem; color: #4c1d95; display: block; margin-bottom: 5px; }
+        .ref-txt { 
+            font-size: 0.85rem; color: #db2777; background: #fce7f3; 
+            padding: 5px 12px; border-radius: 12px; font-weight: 800; display: inline-block;
+        }
         
-        input:not([type="file"]), select, textarea { 
-            width: 100%; max-width: 320px; padding: 10px 14px; border: 1px solid #b2bec3; border-radius: 8px;        
-            background: #ffffff; font-size: 0.95rem; color: #2d3436; transition: 0.2s; box-shadow: none;          
+        .status-badge {
+            padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; text-align: center;
+            display: inline-flex; align-items: center; gap: 6px; width: fit-content;
         }
-        .form-group.full-width input, .form-group input[id*="note"], .form-group input[id*="desc"] { max-width: 100%; }
-        .wh-input-area input, .prod-box input { max-width: 100%; }
-        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1); }
+        .badge-active { background: #fffbeb; color: #d97706; border: 2px solid #fcd34d; }
+        .badge-done { background: #ecfdf5; color: #059669; border: 2px solid #6ee7b7; }
+
+        /* New Badges for Date & Role */
+        .info-badge {
+            display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 700; color: #4b5563;
+            background: #f3f4f6; padding: 6px 12px; border-radius: 15px; margin-top: 5px; width: fit-content;
+        }
+        .info-badge i { color: #8b5cf6; }
+
+        .role-badge {
+            background: #e0e7ff; color: #4338ca; padding: 6px 12px; border-radius: 15px;
+            font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;
+            border: 1px solid #c7d2fe;
+        }
+        .role-badge i { color: #4338ca; }
         
-        button { 
-            padding: 10px 24px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; color: white; 
-            display: inline-flex; align-items: center; gap: 8px; justify-content: center; transition: 0.2s; font-size: 0.95rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        .archive-badge {
+            background: #f0fdf4; color: #15803d; padding: 6px 12px; border-radius: 15px;
+            font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;
+            border: 1px solid #bbf7d0;
         }
-        button:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
-        .btn-secondary { background: linear-gradient(135deg, var(--secondary), #0984e3); }
-        .btn-danger { background: #ff7675; }
-        .btn-warning { background: #fdcb6e; color: #444; }
-        .btn-ghost { background: #fff; color: var(--text-gray); border: 1px solid var(--border); box-shadow: none; }
-        .btn-ghost:hover { background: #f1f2f6; }
-        .btn-ghost.active { background: var(--primary); color: white !important; border-color: var(--primary) !important; }
-        .small-btn { padding: 5px 12px; font-size: 0.8rem; margin-left: 5px; }
 
-        /* Fancy Download Button */
-        .btn-download-fancy {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: #fff; border: 2px solid #e74c3c; color: #e74c3c;
-            padding: 10px 18px; border-radius: 10px; font-weight: 800;
-            text-decoration: none; transition: all 0.2s ease; margin-top: 8px; 
-            font-size: 0.9rem; box-shadow: 0 4px 10px rgba(231, 76, 60, 0.1);
+        .countdown-badge {
+            display: inline-block; padding: 4px 10px; border-radius: 10px; font-size: 0.8rem; font-weight: 800;
         }
-        .btn-download-fancy:hover { background: #e74c3c; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(231, 76, 60, 0.2); }
-        .btn-download-fancy.blue { border-color: #0984e3; color: #0984e3; box-shadow: 0 4px 10px rgba(9, 132, 227, 0.1); }
-        .btn-download-fancy.blue:hover { background: #0984e3; color: white; box-shadow: 0 8px 15px rgba(9, 132, 227, 0.2); }
+        .count-late { background: #ffe4e6; color: #be123c; }
+        .count-normal { background: #eff6ff; color: #2563eb; }
 
-        /* Tables & Lists */
-        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: 10px; }
-        th { text-align: right; color: var(--text-gray); padding: 12px 15px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        td { padding: 15px; background: #fff; border-top: 1px solid #f8f9fa; border-bottom: 1px solid #f8f9fa; vertical-align: middle; box-shadow: 0 2px 5px rgba(0,0,0,0.01); }
-        td:first-child { border-radius: 0 10px 10px 0; border-right: 4px solid var(--primary); }
-        td:last-child { border-radius: 10px 0 0 10px; border-left: 1px solid #f8f9fa; }
-        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; color: white; background: #b2bec3; font-weight: bold; display: inline-block;}
-        .bg-green { background: #00b894; } .bg-orange { background: #fdcb6e; color: #444; } .bg-blue { background: var(--secondary); } .bg-red { background: #ff7675; }
+        .row-details { max-height: 0; overflow: hidden; transition: max-height 0.6s ease; background: #f8fafc; }
+        .order-row.expanded .row-details { max-height: 1000px; }
+        .details-content { padding: 30px 40px; }
 
-        /* Product Grid & Thumbnails */
-        .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 15px; max-height: 400px; overflow-y: auto; padding: 5px; }
-        .prod-box { border: 1px solid #eee; padding: 15px; border-radius: 16px; cursor: pointer; background: #fff; transition: 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .prod-box:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .prod-box.selected { border-color: var(--primary); background: #f0f3ff; box-shadow: 0 0 0 2px var(--primary); }
-        .prod-box input { margin-top: 5px; width: 100%; display: none; padding: 8px; font-size: 0.9rem; text-align: center; border: 1px solid #ccc; border-radius: 6px; }
-        .prod-box label { font-size: 0.75rem; color: #888; margin-top: 8px; width: 100%; text-align: right; display: none; }
-        .prod-box.selected input, .prod-box.selected label { display: block; }
-        .prod-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; background: #f8f9fa; }
-        .list-thumb, .wh-img { 
-            width: 45px; height: 45px; object-fit: cover; border-radius: 8px; 
-            border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-            vertical-align: middle; margin-left: 10px; 
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), z-index 0s;
-            cursor: zoom-in; position: relative; z-index: 1;
+        .h-timeline {
+            display: flex; justify-content: space-between; position: relative; margin: 40px 0;
         }
-        .list-thumb:hover, .wh-img:hover { transform: scale(3.5); z-index: 9999; box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--primary); }
-
-        /* Dash & Stats */
-        .dash-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px; }
-        .d-card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid #f0f0f0; position: relative; overflow: hidden; }
-        .d-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
-        .d-card-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
-        .d-card-title { font-size: 0.9rem; color: #636e72; font-weight: bold; margin-bottom: 5px; }
-        .d-card-val { font-size: 1.8rem; font-weight: 800; color: #2d3436; margin-bottom: 5px; }
-        .d-card-sub { font-size: 0.8rem; color: #b2bec3; display: flex; gap: 10px; }
-        .dc-purple .d-card-icon { background: #e0dcfc; color: #6c5ce7; }
-        .dc-blue .d-card-icon { background: #dff9fb; color: #00cec9; }
-        .dc-green .d-card-icon { background: #dafbe3; color: #00b894; }
-        .dc-orange .d-card-icon { background: #ffeaa7; color: #fdcb6e; }
-        .dc-red .d-card-icon { background: #ffcccc; color: #ff7675; }
-
-        /* Logistics UI */
-        .log-split-view { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .log-col { background: transparent; }
-        .log-col h3 { margin-top: 0; font-size: 1.1rem; margin-bottom: 15px; display:flex; align-items:center; gap:8px;}
-        .log-card { background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #eef2f3; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.2s; position: relative; overflow: hidden; }
-        .log-card:hover { box-shadow: 0 10px 25px rgba(0,0,0,0.06); transform: translateY(-2px); }
-        .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
-        .log-progress { display: flex; justify-content: space-between; position: relative; margin: 20px 0 10px 0; }
-        .log-progress::before { content: ''; position: absolute; top: 7px; left: 0; right: 0; height: 3px; background: #f0f0f0; z-index: 0; border-radius: 3px; }
-        .prog-step { position: relative; z-index: 1; width: 15px; height: 15px; border-radius: 50%; background: #f0f0f0; border: 2px solid #fff; transition: 0.3s; }
-        .prog-step.active { background: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2); }
-        .prog-step.completed { background: var(--secondary); }
-        .attach-badge { font-size: 0.75rem; background: #f1f1f6; padding: 5px 10px; border-radius: 6px; color: var(--text-gray); text-decoration: none; border: 1px solid #dfe6e9; display: flex; align-items: center; gap: 5px; transition: 0.2s; margin-top:5px; margin-left: 5px;}
-        .attach-badge:hover { border-color: var(--primary); color: var(--primary); background: #fff; }
-        .log-attachments { margin-top: 15px; padding-top: 10px; border-top: 1px solid #f0f0f0; display:flex; flex-wrap:wrap; gap:5px; }
-
-        /* Secure Messages & Inbox */
-        .msg-box { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 12px; background: #fff; border-right: 4px solid var(--border); transition: 0.3s; }
-        .msg-box:hover { border-right-color: var(--primary); background: #fafafa; }
-        .msg-admin-reply { border-right: 3px solid var(--secondary); padding: 10px; margin-top: 10px; background: #e0f7fa; font-size: 0.9em; border-radius: 6px; }
-        .inbox-wrapper { position: fixed; bottom: 30px; left: 30px; z-index: 9999; display: none; flex-direction: column; align-items: flex-start; }
-        .inbox-toggle-btn { width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; box-shadow: 0 10px 25px rgba(108, 92, 231, 0.4); cursor: pointer; transition: 0.3s; border: 2px solid white; }
-        .inbox-toggle-btn:hover { transform: scale(1.1); box-shadow: 0 15px 35px rgba(108, 92, 231, 0.5); }
-        .floating-inbox { width: 340px; background: #fff; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); border: 1px solid rgba(0,0,0,0.05); overflow: hidden; display: none; flex-direction: column; animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-bottom: 15px; }
-        .floating-inbox.open { display: flex; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .inbox-header { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 15px 20px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .inbox-body { max-height: 350px; overflow-y: auto; padding: 15px; background: #fdfdfd; }
-
-        /* Modal & WH UI */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
-        .modal-content { background-color: #fff; margin: 5% auto; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 700px; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
-        .close-modal { position: absolute; left: 25px; top: 25px; font-size: 1.5rem; cursor: pointer; color: #aaa; }
-        .log-item { border-bottom: 1px solid #f1f1f1; padding: 15px 0; font-size: 0.95rem; }
-        .log-date { color: var(--primary); font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display:block;}
-        .wh-item-row { display: flex; align-items: center; gap: 20px; padding: 15px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 12px; background: #fff; }
+        .h-timeline::before {
+            content: ''; position: absolute; top: 30px; left: 40px; right: 40px; height: 6px; 
+            background: #e2e8f0; border-radius: 10px; z-index: 0;
+        }
         
-        .wh-img { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; flex-shrink: 0; cursor: zoom-in; transition: 0.2s; position:relative; z-index:1; }
-        .wh-img:hover { transform: scale(3.5); z-index: 9999; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
-
-        .wh-info { flex: 1; }
-        .wh-input-area { width: 130px; text-align: center; }
-        .wh-input-area input { font-weight: bold; text-align: center; font-size: 1.1rem; border: 2px solid #eee; }
-        .wh-status { font-size: 0.8rem; margin-top: 5px; font-weight: bold; }
-        .wh-item-row.single-line { flex-direction: row; flex-wrap: nowrap; align-items: center; padding: 10px 20px; gap: 20px; }
-        .wh-item-row.single-line .wh-info-compact { display: flex; align-items: center; gap: 20px; flex: 2; }
-        .wh-item-row.single-line .wh-input-compact { width: 110px; }
-        .wh-item-row.single-line .wh-note-compact { flex: 2; }
-        
-        .order-detail-header { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #dfe6e9; font-size: 0.9rem; }
-        .order-detail-header strong { color: var(--primary); }
-        .date-badge { font-size: 0.75rem; color: #888; display: inline-flex; align-items: center; gap: 4px; margin-left: 10px; background: #f0f0f0; padding: 2px 8px; border-radius: 6px; }
-
-        @media (max-width: 768px) {
-            body { flex-direction: column; height: auto; overflow: hidden; position: fixed; }
-            .sidebar { 
-                width: 100%; overflow-x: auto; flex-direction: row; padding: 10px; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-                flex-shrink: 0; min-height: 70px;
-            }
-            .nav-item { white-space: nowrap; margin: 0; padding: 8px 12px; }
-            .main-content { padding: 20px; flex:1; height: calc(100% - 70px); }
-            .form-row { flex-direction: column; gap: 15px; }
-            .wh-item-row { flex-direction: column; text-align: center; }
-            .wh-item-row.single-line { flex-wrap: wrap; }
-            .inbox-wrapper { width: auto; left: 20px; bottom: 20px; }
-            .floating-inbox { width: 300px; }
-            .log-split-view { grid-template-columns: 1fr; }
-            input, select, textarea { max-width: 100%; }
+        .h-step { position: relative; z-index: 1; text-align: center; width: 14%; display: flex; flex-direction: column; align-items: center; }
+        .icon-circle {
+            width: 60px; height: 60px; border-radius: 50%; background: white; border: 4px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #cbd5e1;
+            transition: 0.4s; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
+        .h-step.completed .icon-circle { 
+            background: #10b981; border-color: #10b981; color: white; transform: scale(1.1); 
+            animation: bounceIn 0.4s;
+        }
+        .h-step.current .icon-circle { 
+            background: white; border-color: #f59e0b; color: #f59e0b; transform: scale(1.2); 
+            box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.2);
+        }
+        .h-title { font-weight: 800; color: #64748b; font-size: 0.9rem; }
+        .h-role { background: #e0e7ff; color: #4338ca; padding: 3px 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; margin-top: 5px; }
 
-        .search-wrapper { position: relative; margin-bottom: 15px; width: 100%; }
-        .search-wrapper input { width: 100%; padding: 12px 40px 12px 15px; border: 2px solid #dfe6e9; border-radius: 12px; font-size: 1rem; transition: all 0.3s; }
-        .search-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(108, 92, 231, 0.1); }
-        .search-wrapper i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #b2bec3; }
+        .file-link {
+            background: #fdf2f8; color: #db2777; padding: 4px 10px; border-radius: 8px;
+            font-size: 0.75rem; font-weight: 700; margin-top: 4px; cursor: pointer; text-decoration: none;
+            display: flex; align-items: center; gap: 5px; transition: 0.2s; border: 1px solid #fce7f3;
+        }
+        .file-link:hover { background: #db2777; color: white; }
 
-        @media print {
-            body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area { position: absolute; left: 0; top: 0; width: 100%; background: white; padding: 20px; direction: rtl; }
-            @page { margin: 0; }
+        .action-bar { display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px; padding-top: 20px; border-top: 2px dashed #e2e8f0; }
+        .btn-action-do {
+            background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border:none;
+            padding: 12px 30px; border-radius: 20px; font-weight: 800; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); transition: 0.3s;
+        }
+        .btn-action-do:hover { transform: translateY(-3px) scale(1.05); }
+
+        /* Spreadsheet */
+        .spreadsheet-overlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 200; display: none;
+            flex-direction: column; backdrop-filter: blur(10px); animation: bounceIn 0.3s ease;
+        }
+        .sheet-header {
+            padding: 20px 40px; background: white; border-bottom: 2px solid #f3f4f6;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .custom-table {
+            width: 100%; border-collapse: separate; border-spacing: 0; background: white;
+            border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+            border: 2px solid #f3f4f6;
+        }
+        .custom-table th {
+            padding: 20px; text-align: right; color: #4c1d95; background: #f5f3ff;
+            font-weight: 900; border-bottom: 2px solid #ddd6fe;
+        }
+        .custom-table td { padding: 15px 20px; border-bottom: 1px solid #f3f4f6; color: #374151; font-weight: 600; }
+        .custom-table tr:hover td { background: #fffbe7; }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(76, 29, 149, 0.4); backdrop-filter: blur(5px);
+            z-index: 300; display: none; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: white; width: 550px; border-radius: 35px; overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2); animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-head {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed); padding: 25px;
+            display: flex; justify-content: space-between; align-items: center; color: white;
+        }
+        .modal-body { padding: 35px; }
+        .inp-field {
+            width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 18px;
+            margin-bottom: 20px; font-size: 1rem; transition: 0.3s; background: #f9fafb;
+        }
+        .inp-field:focus { border-color: #8b5cf6; background: white; box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1); }
+        .btn-save {
+            width: 100%; padding: 18px; background: #111827; color: white; border:none;
+            border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-save:hover { background: #4c1d95; transform: translateY(-3px); }
+
+        .btn-xls {
+            background: #d1fae5; color: #065f46; border: 2px solid #34d399;
+            padding: 10px 20px; border-radius: 15px; font-weight: 800; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        }
+        .btn-xls:hover { background: #34d399; color: white; }
+
+        @media(max-width:768px){
+            body { flex-direction: column; overflow: auto; }
+            .sidebar { width: auto; margin: 10px; height: auto; flex-direction: row; align-items: center; }
+            .nav-menu { flex-direction: row; } .nav-btn span { display: none; }
+            .top-bar { margin: 10px; flex-wrap: wrap; height: auto; padding: 15px; }
+            .search-box { width: 100%; margin-bottom: 10px; }
+            .h-timeline { overflow-x: auto; padding-bottom: 20px; justify-content: start; gap: 20px; }
+            .h-step { min-width: 100px; }
+            .h-timeline::before { width: 600px; }
+            .row-header { grid-template-columns: 1fr; gap: 10px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="login-overlay">
-        <div class="login-container">
-            <div class="login-title"><i class="fas fa-cubes"></i>BlanChe Ops</div>
-            <p style="color:white; margin-bottom:30px; font-size:1.1rem; opacity:0.9;">أهلاً بك، الرجاء اختيار القسم للدخول</p>
-            
-            <div class="roles-grid">
-                <div class="role-card sales" onclick="app.login('sales')">
-                    <i class="fas fa-shopping-cart"></i><h3>المبيعات</h3><p>أوامر البيع</p>
-                </div>
-                <div class="role-card purch" onclick="app.login('purchases')">
-                    <i class="fas fa-shopping-bag"></i><h3>المشتريات</h3><p>طلبات الشراء والموردين</p>
-                </div>
-                <div class="role-card admin" onclick="app.login('admin')">
-                    <i class="fas fa-user-tie"></i><h3>الإدارة العامة</h3><p>صلاحيات كاملة</p>
-                </div>
-                <div class="role-card acc" onclick="app.login('accounting')">
-                    <i class="fas fa-calculator"></i><h3>المحاسبة</h3><p>الفواتير والقيود</p>
-                </div>
-                <div class="role-card logis" onclick="app.login('logistics')">
-                    <i class="fas fa-truck-fast"></i><h3>اللوجستيات</h3><p>الشحن والتتبع</p>
-                </div>
-                <div class="role-card wh" onclick="app.login('warehouse')">
-                    <i class="fas fa-warehouse"></i><h3>المخازن</h3><p>الاستلام والصرف</p>
-                </div>
-            </div>
+    <aside class="sidebar">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fas fa-cubes"></i></div>
+            <span>Lola <span style="color:#d946ef">Logistics</span></span>
         </div>
-    </div>
-
-    <aside class="sidebar" style="display:none">
-        <div class="logo"><i class="fas fa-cubes"></i>BlanChe Ops</div>
-        <div class="nav-item active" id="nav-dash" onclick="app.nav('dashboard', this)"><i class="fas fa-chart-pie"></i> الرئيسية</div>
-        <div class="nav-item" id="nav-msg" onclick="app.nav('secure-msg', this)"><i class="fas fa-envelope-open-text"></i> إرسال رسالة</div>
         
-        <div class="nav-item" id="nav-prod-m" onclick="app.nav('products-create', this)"><i class="fas fa-plus-circle"></i> إدارة المنتجات</div>
-        <div class="nav-item" id="nav-prod-v" onclick="app.nav('products-view', this)"><i class="fas fa-box-open"></i> عرض المنتجات</div>
-        
-        <div class="nav-item" id="nav-purch" onclick="app.nav('purchases', this)"><i class="fas fa-file-invoice-dollar"></i> أوامر الشراء</div>
-        <div class="nav-item" id="nav-logis" onclick="app.nav('logistics', this)"><i class="fas fa-truck-fast"></i> اللوجستيات</div>
-        <div class="nav-item" id="nav-wh" onclick="app.nav('warehouse', this)"><i class="fas fa-warehouse"></i> المخازن</div>
-        <div class="nav-item" id="nav-sales" onclick="app.nav('sales', this)"><i class="fas fa-shopping-cart"></i> المبيعات</div>
-        <div class="nav-item" id="nav-acc" onclick="app.nav('accounting', this)"><i class="fas fa-calculator"></i> المحاسبة</div>
-        <div class="nav-item" id="nav-arch" onclick="app.nav('invoices-archive', this)"><i class="fas fa-archive"></i> أرشيف الفواتير</div>
-        <div class="nav-item" id="nav-tasks" onclick="app.nav('tasks', this)"><i class="fas fa-tasks"></i> إدارة المهام</div>
-        
-        <div class="nav-item" id="nav-settings" onclick="app.nav('settings', this)" style="display:none; color:var(--text-dark); margin-top:10px; border-top:1px dashed #ccc;"><i class="fas fa-cogs"></i> كلمات المرور</div>
-
-        <div style="margin-top:auto;">
-            <button onclick="app.logout()" class="btn-ghost" style="width:100%; margin-bottom:10px;"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
-            <button onclick="app.reset()" class="btn-danger" style="width:100%; font-size:0.8rem; border-radius: 8px;"><i class="fas fa-lock"></i> تصفير النظام (محمي)</button>
-        </div>
+        <nav class="nav-menu">
+            <button class="nav-btn active" id="btn-active" onclick="sys.setFilter('active')">
+                <i class="fas fa-rocket"></i> <span>جاري العمل</span>
+            </button>
+            <button class="nav-btn" id="btn-done" onclick="sys.setFilter('done')">
+                <i class="fas fa-check-circle"></i> <span>الأرشيف</span>
+            </button>
+            <button class="nav-btn" onclick="sys.openSettings()">
+                <i class="fas fa-sliders-h"></i> <span>الإعدادات</span>
+            </button>
+        </nav>
     </aside>
 
-    <main class="main-content" style="display:none">
-
-        <section id="dashboard" class="section active">
-            <h1>لوحة المعلومات والملخص العام</h1>
-            <div class="dash-stats-grid">
-                <div class="d-card dc-purple" onclick="app.nav('products-view', document.getElementById('nav-prod-v'))" style="cursor:pointer">
-                    <div class="d-card-icon"><i class="fas fa-boxes"></i></div>
-                    <div class="d-card-title">إجمالي المنتجات</div>
-                    <div class="d-card-val" id="d-prod-count">0</div>
-                    <div class="d-card-sub">مسجلة في النظام</div>
-                </div>
-                <div class="d-card dc-green">
-                    <div class="d-card-icon"><i class="fas fa-chart-line"></i></div>
-                    <div class="d-card-title">المبيعات (القيمة)</div>
-                    <div class="d-card-val" id="d-sales-val">0 SAR</div>
-                    <div class="d-card-sub">
-                        <span style="color:green"><i class="fas fa-check"></i> <span id="d-sales-done">0</span> مكتملة</span>
-                        <span style="color:orange; margin-right:10px;"><i class="fas fa-clock"></i> <span id="d-sales-pend">0</span> معلقة</span>
-                    </div>
-                </div>
-                <div class="d-card dc-orange">
-                    <div class="d-card-icon"><i class="fas fa-shopping-bag"></i></div>
-                    <div class="d-card-title">المشتريات (التكلفة)</div>
-                    <div class="d-card-val" id="d-pur-val">0 SAR</div>
-                    <div class="d-card-sub">
-                        <span><i class="fas fa-check-double"></i> <span id="d-pur-count">0</span> عملية شراء ناجحة</span>
-                    </div>
-                </div>
-            </div>
-
-            <h3 style="color:var(--text-gray); margin-bottom:15px;">🚧 المهام المعلقة والتنبيهات</h3>
-            <div class="dash-stats-grid">
-                <div class="d-card dc-red" onclick="app.nav('warehouse', document.getElementById('nav-wh'))" style="cursor:pointer">
-                    <div class="d-card-icon" style="background:#fff0f0; color:#d63031"><i class="fas fa-warehouse"></i></div>
-                    <div class="d-card-title">معلق في المخازن</div>
-                    <div class="d-card-val" id="d-pend-wh">0</div>
-                    <div class="d-card-sub">شحنات واردة + طلبات صرف</div>
-                    <div id="badge-wh" class="pending-alert" style="display:none">انتباه</div>
-                </div>
-
-                <div class="d-card dc-red" onclick="app.nav('accounting', document.getElementById('nav-acc'))" style="cursor:pointer">
-                    <div class="d-card-icon" style="background:#fff0f0; color:#d63031"><i class="fas fa-calculator"></i></div>
-                    <div class="d-card-title">معلق في المحاسبة</div>
-                    <div class="d-card-val" id="d-pend-acc">0</div>
-                    <div class="d-card-sub">عروض أسعار + فواتير</div>
-                    <div id="badge-acc" class="pending-alert" style="display:none">انتباه</div>
-                </div>
-
-                <div class="d-card" style="border-color:#74b9ff" onclick="app.nav('secure-msg', document.getElementById('nav-msg'))">
-                    <div class="d-card-icon" style="background:#e0f7fa; color:#0984e3"><i class="fas fa-envelope"></i></div>
-                    <div class="d-card-title">الرسائل الواردة</div>
-                    <div class="d-card-val" id="d-msgs-all">0</div>
-                    <div class="d-card-sub">رسائل مشفرة للإدارة</div>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top:20px;">
-                <h3 style="color:var(--primary); margin-top:0"><i class="fas fa-cash-register"></i> تقرير المبيعات التفصيلي (الطلبات المكتملة)</h3>
-                <div style="overflow-x:auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>الصورة</th>
-                                <th>اسم المنتج</th>
-                                <th>الكود</th>
-                                <th>إجمالي الكمية المباعة</th>
-                                <th>إجمالي قيمة المبيعات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sales-report-body">
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="secure-msg" class="section">
-            <h1>إرسال رسالة مشفرة للإدارة</h1>
-            <div class="card">
-                <p style="color: var(--text-gray); font-size: 0.9rem;"><i class="fas fa-lock"></i> الرسالة ستكون محمية برقم سري (PIN).</p>
-                <div class="form-row">
-                    <div class="form-group"><label>الاسم</label><input id="sec-name"></div>
-                    <div class="form-group"><label>القسم</label>
-                        <select id="sec-dept"><option>المبيعات</option><option>المشتريات</option><option>المخازن</option><option>المحاسبة</option><option>أخرى</option></select>
-                    </div>
-                    <div class="form-group"><label style="color:red">رقم سري (PIN)</label><input id="sec-pin" type="password" placeholder="****"></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group full-width" style="flex:3"><label>الرسالة</label><input id="sec-text" placeholder="اكتب رسالتك السرية هنا..."></div>
-                    <button onclick="app.sendSecureMsg()" class="btn-primary">تشفير وإرسال</button>
-                </div>
-            </div>
-            
-            <div class="card" style="background: #f8f9fa;">
-                <h3><i class="fas fa-key"></i> التحقق من الردود</h3>
-                <div class="form-row" style="align-items: center;">
-                    <label>أدخل الـ PIN الخاص بك لعرض رسائلك:</label>
-                    <input id="check-pin" type="password" placeholder="****" style="width: 150px;">
-                    <button onclick="app.checkMyMsgs()" class="btn-secondary">عرض رسائلي</button>
-                </div>
-                <div id="my-msgs-status" style="margin-top:15px;"></div>
-            </div>
-        </section>
-
-        <section id="products-create" class="section">
-            <h1>إنشاء وإدارة المنتجات</h1>
-            <div class="card">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                    <h3 id="form-title" style="margin:0">1. إضافة منتج جديد</h3>
-                    <div style="display:flex; gap:10px;">
-                         <input type="file" id="import-csv" style="display:none" accept=".csv" onchange="app.importCSV(this)">
-                        <button onclick="document.getElementById('import-csv').click()" class="btn-ghost active" title="CSV: code,name,price,img"><i class="fas fa-file-csv"></i> استيراد (CSV)</button>
-                    </div>
-                </div>
-                <hr style="margin:15px 0; border-top:1px solid #eee;">
-                <div class="form-row">
-                    <div class="form-group"><label>الكود</label><input id="p-code"></div>
-                    <div class="form-group"><label>الاسم</label><input id="p-name"></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>سعر التجزئة (SAR)</label><input id="p-price" type="number"></div>
-                    <div class="form-group full-width"><label>رابط الصورة (URL)</label><input id="p-img" placeholder="https://example.com/image.jpg"></div>
-                </div>
-                <div class="form-row">
-                    <button onclick="app.saveProduct()" id="btn-save-prod" class="btn-primary">حفظ المنتج</button>
-                    <button onclick="app.cancelEdit()" id="btn-cancel-edit" class="btn-danger" style="display:none;">إلغاء التعديل</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="products-view" class="section">
-            <h1>عرض المنتجات (Catalog)</h1>
-            <div class="search-wrapper">
+    <main class="main-content">
+        <div class="top-bar">
+            <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="ابحث عن منتج..." onkeyup="app.searchUI(this.value, 'tbl-products', 'tr')">
-            </div>
-            <div class="card">
-                <table>
-                    <thead><tr><th>صورة</th><th>كود</th><th>اسم</th><th>سعر أساسي</th><th>إجراء</th></tr></thead>
-                    <tbody id="tbl-products"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <section id="purchases" class="section">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h1>أوامر الشراء</h1>
-                <button onclick="app.showDeptHistory('purchases')" class="btn-ghost small"><i class="fas fa-history"></i> سجل المشتريات</button>
-            </div>
-            <div class="form-row">
-                <button onclick="app.switchTab('pur-main', this)" class="btn-ghost active">📝 طلب جديد</button>
-                <button onclick="app.switchTab('pur-tasks', this)" class="btn-ghost">🔔 مهام المشتريات</button>
-                <button onclick="app.switchTab('pur-list', this)" class="btn-ghost">📋 قائمة الطلبات</button>
-            </div>
-
-            <div id="pur-main" class="sub-tab">
-                <div class="card">
-                    <div class="form-row">
-                        <div class="form-group"><label>رقم PO</label><input id="po-ref"></div>
-                        <div class="form-group"><label>المورد</label><input id="po-vnd"></div>
-                        <div class="form-group"><label>الدولة</label><input id="po-country"></div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>موقع المورد (للضريبة)</label>
-                            <select id="po-loc" onchange="app.calcVat(document.getElementById('po-cost-before').value)">
-                                <option value="ksa">داخل السعودية (15% VAT)</option>
-                                <option value="int">خارج السعودية (0% VAT)</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>تاريخ التوصيل المتوقع</label><input type="date" id="po-date-delivery"></div>
-                    </div>
-                    <div class="form-row" style="background:#f9f9f9; padding:15px; border-radius:10px;">
-                        <div class="form-group"><label>التكلفة (قبل الضريبة)</label><input id="po-cost-before" type="number" oninput="app.calcVat(this.value)"></div>
-                        <div class="form-group"><label>التكلفة (بعد الضريبة)</label><div id="po-cost-after-display" style="padding:10px; font-weight:bold; color:var(--primary);">0.00</div></div>
-                        <div class="form-group full-width" style="flex:2"><label>ملاحظات</label><input id="po-notes"></div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group full-width">
-                            <label><i class="fas fa-paperclip"></i> إرفاق ملفات (يمكنك اختيار أكثر من ملف)</label>
-                            <input type="file" id="po-file" multiple style="max-width:100%">
-                        </div>
-                    </div>
-                    <div class="search-wrapper">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="ابحث لإضافة منتج..." onkeyup="app.searchUI(this.value, 'grid-po-prods', '.prod-box')">
-                    </div>
-                    <h4 style="margin:15px 0 5px;">اختر الأصناف:</h4>
-                    <div id="grid-po-prods" class="prod-grid"></div>
-                    <br>
-                    <button onclick="app.createPO()" class="btn-primary">إنشاء الطلب</button>
-                </div>
-            </div>
-            <div id="pur-tasks" class="sub-tab" style="display:none"><div id="list-pur-tasks"></div></div>
-            <div id="pur-list" class="sub-tab" style="display:none">
-                <div class="card"><h3>متابعة أوامر الشراء</h3><div id="po-list-container"></div></div>
-            </div>
-        </section>
-
-        <section id="logistics" class="section">
-            <h1>اللوجستيات والشحن (حالات وروابط)</h1>
-            <div class="form-row">
-                <button onclick="app.switchTab('log-dashboard', this)" class="btn-ghost active">📊 تتبع الحالات</button>
-                <button onclick="app.switchTab('log-tasks', this)" class="btn-ghost">🔔 مهام اللوجستيات</button>
-            </div>
-            <div id="log-dashboard" class="sub-tab">
-                <div class="log-split-view">
-                    <div class="log-col">
-                        <h3 style="color:var(--secondary)"><i class="fas fa-arrow-down"></i> الوارد</h3>
-                        <div id="log-inbound-readonly"></div>
-                    </div>
-                    <div class="log-col">
-                        <h3 style="color:var(--accent)"><i class="fas fa-arrow-up"></i> الصادر</h3>
-                        <div id="log-outbound-readonly"></div>
-                    </div>
-                </div>
-            </div>
-             <div id="log-tasks" class="sub-tab" style="display:none"><div id="list-log-tasks"></div></div>
-        </section>
-
-        <section id="warehouse" class="section">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h1>المخازن</h1>
-                <button onclick="app.showDeptHistory('warehouse')" class="btn-ghost small"><i class="fas fa-history"></i> سجل المخازن</button>
-            </div>
-            <div class="form-row">
-                <button onclick="app.switchTab('wh-in', this)" class="btn-ghost active">📥 استلام مشتريات</button>
-                <button onclick="app.switchTab('wh-out', this)" class="btn-ghost">📤 صرف مبدئي</button>
-                <button onclick="app.switchTab('wh-delivery', this)" class="btn-ghost" style="color:#e67e22;border-color:#e67e22"><i class="fas fa-truck"></i> تسليم العميل</button>
-                <button onclick="app.switchTab('wh-stamp', this)" class="btn-ghost" style="color:#d63031;border-color:#d63031"><i class="fas fa-stamp"></i> ختم وإغلاق</button>
-                <button onclick="app.switchTab('wh-tasks', this)" class="btn-ghost">🔔 المهام</button>
-            </div>
-            <div class="search-wrapper" style="margin-top:10px;">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="بحث..." onkeyup="app.searchWh(this.value)">
+                <input type="text" id="search-inp" onkeyup="sys.search()" placeholder="بحث سريع عن طلب...">
             </div>
             
-            <div id="wh-in" class="sub-tab"><div id="list-wh-in"></div></div>
-            
-            <div id="wh-out" class="sub-tab" style="display:none">
-                 <p style="color:#666">تأكيد توفر البضاعة وصرفها ليقوم المحاسب بإصدار عرض السعر.</p>
-                 <div id="list-wh-out"></div>
+            <div style="display:flex; gap:10px">
+                <button class="btn-base btn-sheet" onclick="sys.openSpreadsheet()">
+                    <i class="fas fa-table"></i> الجدول
+                </button>
+                
+                <button class="btn-base btn-add" onclick="sys.openNew()">
+                    <i class="fas fa-plus"></i> طلب جديد
+                </button>
             </div>
+        </div>
 
-            <div id="wh-delivery" class="sub-tab" style="display:none">
-                <div class="card" style="background:#fffaf0; border:1px solid #ffeaa7">
-                    <h3><i class="fas fa-truck-loading"></i> تأكيد الاستلام الفعلي للعميل</h3>
-                    <p style="color:#666; font-size:0.9rem;">الرجاء إدخال الكميات التي استلمها العميل فعلياً. سيقوم النظام بإرجاع الفوارق للمخزون وتحويل الطلب للمحاسب لإصدار الفاتورة النهائية.</p>
-                </div>
-                <div id="list-wh-delivery"></div>
-            </div>
-
-            <div id="wh-stamp" class="sub-tab" style="display:none">
-                 <div class="card" style="background:#fff5f5; border:1px solid #ffcccc">
-                    <h3><i class="fas fa-file-signature"></i> رفع الفاتورة المختومة</h3>
-                    <p style="color:#666; font-size:0.9rem;">بعد صدور الفاتورة النهائية، قم بطباعتها وختمها من العميل وارفع الصورة هنا للإغلاق.</p>
-                </div>
-                <div id="list-wh-stamp"></div>
-            </div>
-
-            <div id="wh-tasks" class="sub-tab" style="display:none"><div id="list-wh-tasks"></div></div>
-        </section>
-
-        <section id="sales" class="section">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h1>المبيعات</h1>
-                <button onclick="app.showDeptHistory('sales')" class="btn-ghost small"><i class="fas fa-history"></i> سجل المبيعات</button>
-            </div>
-            <div class="form-row">
-                <button onclick="app.switchTab('sales-main', this)" class="btn-ghost active">🛒 أمر بيع</button>
-                <button onclick="app.switchTab('sales-tasks', this)" class="btn-ghost">🔔 مهام المبيعات</button>
-                <button onclick="app.switchTab('sales-list', this)" class="btn-ghost">📋 القائمة</button>
-            </div>
-            <div id="sales-main" class="sub-tab">
-                <div class="card">
-                    <div class="form-row">
-                        <div class="form-group"><label>اسم العميل</label><input id="so-client-name" placeholder="اكتب اسم العميل يدوياً"></div>
-                        <div class="form-group"><label>PO Number</label><input id="so-ref"></div>
-                        <div class="form-group"><label style="color:red">مرفقات طلب العميل (PO)*</label><input type="file" id="so-file-upload" multiple></div>
-                        <div class="form-group full-width" style="flex:2"><label>ملاحظات (تظهر للمخازن)</label><input id="so-notes"></div>
-                    </div>
-                    
-                    <div style="margin: 10px 0; border: 2px dashed #b2bec3; padding: 15px; border-radius: 12px; background: #fdfdfd; display:flex; gap:10px; align-items:center; flex-wrap:wrap">
-                        <div style="font-weight:bold; color:var(--text-gray); font-size:0.9rem;"><i class="fas fa-file-csv"></i> تحميل سريع للأصناف:</div>
-                        <input type="file" id="so-csv-import" style="display:none" onchange="app.importSalesCSV(this)">
-                        <button onclick="document.getElementById('so-csv-import').click()" class="btn-ghost active small">رفع ملف (Excel/CSV)</button>
-                        <a href="data:text/csv;charset=utf-8,Code,Qty,Price%0AITEM001,5,100%0AITEM002,10,50" download="template_sales.csv" class="btn-ghost small" style="text-decoration:none">📥 تحميل نموذج</a>
-                        <small style="color:#888;">الصيغة: Code, Qty, Price</small>
-                    </div>
-
-                    <div class="search-wrapper">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="بحث..." onkeyup="app.searchUI(this.value, 'grid-so-prods', '.prod-box')">
-                    </div>
-                    <h4 style="margin:15px 0 5px;">المنتجات (حدد السعر لكل منتج):</h4>
-                    <div id="grid-so-prods" class="prod-grid"></div>
-                    <br>
-                    <button onclick="app.createSO()" class="btn-secondary">إرسال للمخازن</button>
-                </div>
-            </div>
-            <div id="sales-tasks" class="sub-tab" style="display:none"><div id="list-sales-tasks"></div></div>
-            <div id="sales-list" class="sub-tab" style="display:none">
-                <div class="card"><h3>متابعة المبيعات</h3><div id="so-list-container"></div></div>
-            </div>
-        </section>
-
-        <section id="accounting" class="section">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h1>المحاسبة</h1>
-                <button onclick="app.showDeptHistory('accounting')" class="btn-ghost small"><i class="fas fa-history"></i> سجل المحاسبة</button>
-            </div>
-            <div class="form-row">
-                <button onclick="app.switchTab('acc-reg', this)" class="btn-ghost active">تسجيل PO</button>
-                <button id="nav-acc-quot-btn" onclick="app.switchTab('acc-quot', this)" class="btn-ghost" style="color:var(--secondary); border-color:var(--secondary)">📜 إصدار عروض الأسعار</button>
-                <button onclick="app.switchTab('acc-inv', this)" class="btn-ghost" style="color:var(--primary); border-color:var(--primary)">🧾 الفواتير النهائية</button>
-                <button onclick="app.switchTab('acc-tasks', this)" class="btn-ghost">🔔 المهام</button>
-            </div>
-            <div id="acc-reg" class="sub-tab"><div id="list-acc-reg"></div></div>
-            
-            <div id="acc-quot" class="sub-tab" style="display:none">
-                <div class="card" style="background:#f0faff; border:1px solid #cceeff">
-                    <h3>إصدار عرض السعر (Quotation)</h3>
-                    <p style="color:#666">الخطوة الأولى: إصدار عرض سعر بناءً على توفر المخزن ليقوم المخزن بالتوصيل.</p>
-                </div>
-                <div id="list-acc-quot"></div>
-            </div>
-
-            <div id="acc-inv" class="sub-tab" style="display:none">
-                <div class="card" style="background:#fff0f6; border:1px solid #ffadd2">
-                    <h3>إصدار الفاتورة النهائية</h3>
-                    <p style="color:#666">الخطوة الأخيرة: إصدار الفاتورة بناءً على الكميات الفعلية التي تم تسليمها.</p>
-                </div>
-                <div id="list-acc-inv"></div>
-            </div>
-            
-            <div id="acc-tasks" class="sub-tab" style="display:none"><div id="list-acc-tasks"></div></div>
-        </section>
-
-        <section id="invoices-archive" class="section">
-            <h1>أرشيف الفواتير والملفات</h1>
-            <div class="form-row">
-                <button onclick="app.switchTab('arch-quot-tab', this)" class="btn-ghost active" style="color:#00cec9; border-color:#00cec9">عروض الأسعار</button>
-                <button onclick="app.switchTab('arch-final-tab', this)" class="btn-ghost">فواتير نهائية</button>
-                <button onclick="app.switchTab('arch-stamped-tab', this)" class="btn-ghost" style="color:red; border-color:red">فواتير مختومة</button>
-                <button onclick="app.switchTab('arch-purch-tab', this)" class="btn-ghost">سندات المشتريات</button>
-                <button onclick="app.switchTab('arch-clients-tab', this)" class="btn-ghost" style="color:var(--primary); border-color:var(--primary)">ملفات العملاء</button>
-            </div>
-            <div id="arch-quot-tab" class="sub-tab"><div class="card"><div id="archive-list-quot"></div></div></div>
-            <div id="arch-final-tab" class="sub-tab" style="display:none"><div class="card"><div id="archive-list-final"></div></div></div>
-            <div id="arch-stamped-tab" class="sub-tab" style="display:none"><div class="card"><div id="archive-list-stamped"></div></div></div>
-            <div id="arch-purch-tab" class="sub-tab" style="display:none"><div class="card"><div id="archive-list-purch"></div></div></div>
-            <div id="arch-clients-tab" class="sub-tab" style="display:none"><div class="card"><div id="archive-list-clients"></div></div></div>
-        </section>
-
-        <section id="tasks" class="section">
-            <h1>إدارة المهام (عام)</h1>
-            <div class="card">
-                <h3>إرسال مهمة جديدة</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>من</label>
-                        <select id="task-from"><option value="General">الإدارة العامة</option><option value="Sales">المبيعات</option><option value="Purchases">المشتريات</option><option value="Warehouse">المخازن</option><option value="Accounting">المحاسبة</option><option value="Logistics">اللوجستيات</option></select>
-                    </div>
-                    <div class="form-group">
-                        <label>إلى</label>
-                        <select id="task-dept"><option value="General">عام</option><option value="Sales">المبيعات</option><option value="Purchases">المشتريات</option><option value="Warehouse">المخازن</option><option value="Accounting">المحاسبة</option><option value="Logistics">اللوجستيات</option></select>
-                    </div>
-                </div>
-                <div class="form-group full-width"><label>عنوان المهمة</label><input id="task-title"></div>
-                <div class="form-row">
-                    <div class="form-group full-width" style="flex:2"><label>التفاصيل</label><input id="task-desc"></div>
-                    <div class="form-group"><label>إرفاق ملف</label><input type="file" id="task-file"></div>
-                </div>
-                <button onclick="app.addTask()" class="btn-primary">إرسال المهمة</button>
-            </div>
-            <h3>كل المهام المرسلة</h3>
-            <div id="list-tasks-all"></div>
-        </section>
-
-        <section id="settings" class="section">
-            <h1><i class="fas fa-cogs"></i> إعدادات النظام وكلمات المرور</h1>
-            <div class="card" style="border-right: 5px solid #2d3436;">
-                <div style="background:#f8f9fa; padding:15px; border-radius:10px; margin-bottom:20px;">
-                    <h3 style="margin-top:0"><i class="fas fa-user-shield"></i> لوحة التحكم في كلمات المرور</h3>
-                    <p style="color:#666; font-size:0.9rem;">يمكنك من هنا تغيير كلمة المرور الخاصة بكل قسم. <br><strong>تنبيه:</strong> كلمة المرور الافتراضية لجميع الأقسام حالياً هي <code>1234</code></p>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>الإدارة العامة (Admin)</label><input type="text" id="pass-admin" placeholder="كلمة المرور الجديدة" style="border-color:#2d3436"></div>
-                    <div class="form-group"><label>المبيعات (Sales)</label><input type="text" id="pass-sales" placeholder="كلمة المرور الجديدة"></div>
-                    <div class="form-group"><label>المشتريات (Purchases)</label><input type="text" id="pass-purchases" placeholder="كلمة المرور الجديدة"></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>المخازن (Warehouse)</label><input type="text" id="pass-warehouse" placeholder="كلمة المرور الجديدة"></div>
-                    <div class="form-group"><label>اللوجستيات (Logistics)</label><input type="text" id="pass-logistics" placeholder="كلمة المرور الجديدة"></div>
-                    <div class="form-group"><label>المحاسبة (Accounting)</label><input type="text" id="pass-accounting" placeholder="كلمة المرور الجديدة"></div>
-                </div>
-                <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
-                <button onclick="app.savePasswords()" class="btn-primary" style="background:#2d3436; width:100%; justify-content:center; padding:15px;"><i class="fas fa-save"></i> حفظ جميع كلمات المرور</button>
-            </div>
-        </section>
-
+        <div class="list-container">
+            <div id="orders-list" style="display:flex; flex-direction:column;"></div>
+        </div>
     </main>
-<div class="inbox-wrapper">
-        <div id="floating-inbox" class="floating-inbox">
-            <div class="inbox-header">
-                <div style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-inbox"></i> البريد السري<small>الإدارة</small></div>
-                <i class="fas fa-times" style="cursor: pointer;" onclick="app.toggleInbox()"></i>
+
+    <div id="spreadsheet-view" class="spreadsheet-overlay">
+        <div class="sheet-header">
+            <h2 style="color:#4c1d95; margin:0"><i class="fas fa-table" style="color:#d946ef"></i> سجل الطلبات الملون</h2>
+            
+            <div style="display:flex; gap:15px; align-items:center;">
+                <input type="text" id="sheet-search-inp" onkeyup="sys.filterSheet()" placeholder="بحث في الجدول..." style="padding:10px 20px; border-radius:15px; border:2px solid #ddd; width:250px;">
+                
+                <button onclick="sys.exportExcel()" class="btn-xls">
+                    <i class="fas fa-file-excel"></i> تحميل Excel
+                </button>
+
+                <button onclick="sys.closeSpreadsheet()" style="background:#fce7f3; color:#be185d; border:none; padding:10px 20px; border-radius:15px; font-weight:800; cursor:pointer;">
+                    إغلاق
+                </button>
             </div>
-            <div id="floating-inbox-body" class="inbox-body"><p style="color:#aaa; text-align:center;">لا توجد رسائل جديدة</p></div>
         </div>
-        <div class="inbox-toggle-btn" onclick="app.toggleInbox()" title="الرسائل"><i class="fas fa-comment-dots"></i></div>
+        <div style="flex:1; overflow:auto; padding:30px;">
+            <table class="custom-table" id="export-table">
+                <thead>
+                    <tr>
+                        <th width="50">#</th>
+                        <th>العميل</th>
+                        <th>رقم PO</th>
+                        <th>الموقع</th>
+                        <th>التسليم</th>
+                        <th>تاريخ الأرشفة</th>
+                        <th>الحالة</th>
+                        <th>المسؤول</th>
+                    </tr>
+                </thead>
+                <tbody id="sheet-rows"></tbody>
+            </table>
+        </div>
     </div>
 
-    <div id="history-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="document.getElementById('history-modal').style.display='none'">&times;</span>
-            <h2 id="modal-title">سجل القسم</h2>
-            <div id="modal-body"></div>
+    <div id="modal-order" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="modal-title" style="margin:0; font-size:1.5rem">بيانات الطلب</h3>
+                <i class="fas fa-times" onclick="sys.closeModal('modal-order')" style="cursor:pointer; font-size:1.5rem"></i>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="o-id">
+                <label style="display:block; font-weight:700; margin-bottom:8px; color:#4b5563">اسم العميل</label>
+                <input id="o-client" class="inp-field" placeholder="مثال: شركة النور">
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div><label style="display:block; font-weight:700; margin-bottom:8px; color:#4b5563">رقم الـ PO</label><input id="o-ref" class="inp-field" placeholder="PO-XXXX"></div>
+                    <div><label style="display:block; font-weight:700; margin-bottom:8px; color:#4b5563">تاريخ التسليم</label><input type="date" id="o-date" class="inp-field"></div>
+                </div>
+
+                <label style="display:block; font-weight:700; margin-bottom:8px; color:#4b5563">الموقع</label>
+                <input id="o-loc" class="inp-field" placeholder="المدينة - الحي">
+
+                <div id="new-file-sec">
+                    <label style="display:block; font-weight:700; margin-bottom:8px; color:#d946ef">📄 ملفات الـ PO (احتفظ بها هنا)</label>
+                    <input type="file" id="o-file" class="inp-field" multiple style="border-style:dashed; border-color:#d946ef; background:#fdf2f8">
+                </div>
+                <button id="btn-save-order" class="btn-save" onclick="sys.saveOrder()">حفظ وانطلاق 🚀</button>
+            </div>
         </div>
     </div>
 
-    <script>
-        const app = {
-            data: { prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [], passwords: {} },
-            editingProdId: null, currentRole: null,
-            permissions: {
-                'admin': 'all',
-                'sales': ['nav-sales', 'nav-prod-v', 'nav-msg', 'nav-tasks', 'nav-arch'], 
-                'purchases': ['nav-purch', 'nav-msg', 'nav-tasks', 'nav-arch'],
-                'warehouse': ['nav-wh', 'nav-msg', 'nav-tasks', 'nav-arch'],
-                'logistics': ['nav-logis', 'nav-msg', 'nav-tasks', 'nav-arch'],
-                'accounting': ['nav-acc', 'nav-arch', 'nav-msg', 'nav-tasks', 'nav-prod-m', 'nav-prod-v']
-            },
+    <div id="modal-act" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-head" style="background:linear-gradient(135deg, #f59e0b, #d97706)">
+                <h3 id="act-title" style="margin:0">تنفيذ المرحلة</h3>
+                <i class="fas fa-times" onclick="sys.closeModal('modal-act')" style="cursor:pointer; font-size:1.5rem"></i>
+            </div>
+            <div class="modal-body">
+                <div style="background:#fffbeb; padding:20px; border-radius:15px; margin-bottom:20px; border:2px dashed #fcd34d; color:#92400e;">
+                    <strong id="act-role" style="display:block; margin-bottom:5px"></strong>
+                    <span id="act-desc"></span>
+                </div>
 
-            init: function() {
-                const saved = localStorage.getItem('cozy_erp_v11');
-                if(saved) this.data = JSON.parse(saved);
-                
-                // Initialize defaults
-                if(!this.data.logs) this.data.logs = [];
-                if(!this.data.secureMsgs) this.data.secureMsgs = [];
-                if(!this.data.passwords) this.data.passwords = { admin: '1234', sales: '1234', purchases: '1234', warehouse: '1234', logistics: '1234', accounting: '1234' };
-
-                // FORCE STRING FIX
-                if(this.data.prods && this.data.prods.length > 0) {
-                    this.data.prods.forEach(p => {
-                        if (p.code) p.code = String(p.code).trim();
-                    });
-                }
-
-                document.getElementById('floating-inbox').classList.remove('open');
-                
-                // Auto-login logic
-                const cachedRole = localStorage.getItem('erp_last_role');
-                if(cachedRole) {
-                    this.login(cachedRole, true);
-                }
-            },
-
-            login: function(role, skipPass = false) {
-                if (!skipPass) {
-                    const savedPass = (this.data.passwords && this.data.passwords[role]) ? this.data.passwords[role] : '1234';
-                    const inputPass = prompt("🔒 هذا القسم محمي. أدخل كلمة المرور:");
-                    if (inputPass !== savedPass) { alert("⛔ كلمة المرور خاطئة!"); return; }
-                }
-
-                this.currentRole = role;
-                localStorage.setItem('erp_last_role', role); // Save session
-                
-                if("Notification" in window) { Notification.requestPermission(); }
-
-                const overlay = document.getElementById('login-overlay');
-                overlay.style.opacity = '0';
-                overlay.style.transform = 'translateY(-100vh)';
-                setTimeout(() => { overlay.style.display = 'none'; }, 600);
-                document.querySelector('.sidebar').style.display = 'flex';
-                document.querySelector('.main-content').style.display = 'block';
-
-                document.getElementById('nav-settings').style.display = (role === 'admin') ? 'flex' : 'none';
-
-                const allNavs = document.querySelectorAll('.nav-item');
-                if (this.permissions[role] !== 'all') {
-                    allNavs.forEach(nav => { if (nav.id && !this.permissions[role].includes(nav.id)) nav.style.display = 'none'; });
-                }
-
-                if (role === 'admin') {
-                    document.querySelector('.inbox-wrapper').style.display = 'flex';
-                    this.renderAll();
-                } else {
-                    document.querySelector('.inbox-wrapper').style.display = 'none';
-                    document.getElementById('nav-dash').style.display = 'none'; 
-                    document.getElementById('dashboard').classList.remove('active');
-                    let firstNav = '';
-                    if(role === 'sales') firstNav = 'sales'; else if(role === 'purchases') firstNav = 'purchases'; else if(role === 'warehouse') firstNav = 'warehouse'; else if(role === 'logistics') firstNav = 'logistics'; else if(role === 'accounting') firstNav = 'accounting';
-                    if(firstNav) this.nav(firstNav, document.getElementById('nav-' + (firstNav==='sales'?'sales':(firstNav==='purchases'?'purch':(firstNav==='warehouse'?'wh':(firstNav==='logistics'?'logis':'acc'))))));
-                }
-            },
-
-            logout: function() { localStorage.removeItem('erp_last_role'); location.reload(); },
-
-            savePasswords: function() {
-                if(!this.data.passwords) this.data.passwords = {};
-                this.data.passwords.admin = document.getElementById('pass-admin').value;
-                this.data.passwords.sales = document.getElementById('pass-sales').value;
-                this.data.passwords.purchases = document.getElementById('pass-purchases').value;
-                this.data.passwords.warehouse = document.getElementById('pass-warehouse').value;
-                this.data.passwords.logistics = document.getElementById('pass-logistics').value;
-                this.data.passwords.accounting = document.getElementById('pass-accounting').value;
-                this.save(); alert("تم تحديث كلمات المرور بنجاح ✅");
-            },
-
-            renderSettings: function() {
-                const p = this.data.passwords || {};
-                document.getElementById('pass-admin').value = p.admin || '1234';
-                document.getElementById('pass-sales').value = p.sales || '1234';
-                document.getElementById('pass-purchases').value = p.purchases || '1234';
-                document.getElementById('pass-warehouse').value = p.warehouse || '1234';
-                document.getElementById('pass-logistics').value = p.logistics || '1234';
-                document.getElementById('pass-accounting').value = p.accounting || '1234';
-            },
-
-            searchUI: function(val, containerId, itemSelector) {
-                const term = val.toLowerCase();
-                const container = document.getElementById(containerId);
-                if(!container) return;
-                const items = container.querySelectorAll(itemSelector);
-                items.forEach(item => { item.style.display = item.innerText.toLowerCase().includes(term) ? "" : "none"; });
-            },
-            searchWh: function(val) { 
-                this.searchUI(val, 'list-wh-in', '.card'); 
-                this.searchUI(val, 'list-wh-out', '.card'); 
-                this.searchUI(val, 'list-wh-delivery', '.card'); 
-            },
-            toggleInbox: function() { document.getElementById('floating-inbox').classList.toggle('open'); },
-            formatDate: function(timestamp) {
-                if(!timestamp) return new Date().toLocaleDateString('en-GB');
-                const num = Number(timestamp);
-                return (num < 946684800000) ? new Date().toLocaleDateString('en-GB') : new Date(num).toLocaleDateString('en-GB'); 
-            },
-            save: function() {
-                try {
-                    localStorage.setItem('cozy_erp_v11', JSON.stringify(this.data));
-                    if(this.currentRole) localStorage.setItem('erp_last_role', this.currentRole);
-                    if(this.currentRole === 'admin') { this.updateDashboard(); this.renderSettings(); }
-                } catch(e) { alert("خطأ في الحفظ: مساحة التخزين ممتلئة."); }
-            },
-            addLog: function(dept, action, details) {
-                const date = new Date().toLocaleString('en-GB'); 
-                this.data.logs.unshift({ date, action, details, dept });
-                if(this.data.logs.length > 200) this.data.logs.pop();
-                this.save();
-            },
-            showDeptHistory: function(dept) {
-                const logs = this.data.logs.filter(l => l.dept === dept);
-                const titleMap = { 'sales': 'سجل المبيعات', 'purchases': 'سجل المشتريات', 'warehouse': 'سجل المخازن', 'accounting': 'سجل المحاسبة' };
-                document.getElementById('modal-title').innerText = titleMap[dept] || 'السجل';
-                document.getElementById('modal-body').innerHTML = logs.length > 0 ? logs.map(l => `<div class="log-item"><div class="log-date">${l.date}</div><strong>${l.action}</strong><div style="margin-top:5px;">${l.details}</div></div>`).join('') : '<p style="text-align:center; color:#999">لا توجد سجلات بعد.</p>';
-                document.getElementById('history-modal').style.display = 'block';
-            },
-            reset: function() {
-                const pass = prompt("أدخل كلمة المرور لتصفير النظام:");
-                if(pass === "20002000") {
-                    if(confirm("تحذير نهائي: سيتم حذف كل البيانات!")) {
-                        localStorage.removeItem('cozy_erp_v11');
-                        localStorage.removeItem('erp_last_role');
-                        this.data = { prods: [], pos: [], sos: [], tasks: [], logs: [], secureMsgs: [], passwords: { admin: '1234', sales: '1234', purchases: '1234', warehouse: '1234', logistics: '1234', accounting: '1234' } };
-                        this.save(); location.reload();
-                    }
-                } else { alert("كلمة المرور خاطئة!"); }
-            },
-            nav: function(id, btn) {
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                document.getElementById(id).classList.add('active');
-                if(btn) btn.classList.add('active');
-                this.renderAll();
-            },
-            switchTab: function(id, btn) {
-                const parent = btn.parentElement.parentElement;
-                parent.querySelectorAll('.sub-tab').forEach(d => d.style.display = 'none');
-                parent.querySelectorAll('.btn-ghost').forEach(b => b.classList.remove('active'));
-                document.getElementById(id).style.display = 'block';
-                btn.classList.add('active');
-            },
-            sendSecureMsg: function() {
-                const name = document.getElementById('sec-name').value || 'مجهول', dept = document.getElementById('sec-dept').value, text = document.getElementById('sec-text').value, pin = document.getElementById('sec-pin').value;
-                if(!text || !pin) return alert("الرسالة والـ PIN مطلوبين!");
-                this.data.secureMsgs.unshift({ id: Date.now(), name, dept, text, pin, reply: '', date: new Date().toLocaleString('en-GB') });
-                this.save(); document.getElementById('sec-text').value = ''; document.getElementById('sec-pin').value = ''; alert("تم إرسال الرسالة."); this.renderSecureMsgs();
-            },
-            checkMyMsgs: function() {
-                const pin = document.getElementById('check-pin').value;
-                if(!pin) return alert("أدخل الـ PIN");
-                const myMsgs = this.data.secureMsgs.filter(m => m.pin === pin);
-                document.getElementById('my-msgs-status').innerHTML = myMsgs.length > 0 ? myMsgs.map(m => `<div class="msg-box" style="border-right:3px solid var(--primary)"><small>${m.date} | ${m.dept}</small><p><strong>رسالتك:</strong> ${m.text}</p>${m.reply ? `<div class="msg-admin-reply"><strong>رد الإدارة:</strong> ${m.reply}</div>` : '<small style="color:orange">بانتظار الرد...</small>'}</div>`).join('') : '<p style="color:red">لا توجد رسائل بهذا الرقم السري.</p>';
-            },
-            replySecureMsg: function(id) {
-                const reply = prompt("اكتب الرد:");
-                if(reply) { const msg = this.data.secureMsgs.find(m => m.id === id); msg.reply = reply; this.save(); this.renderSecureMsgs(); }
-            },
-            renderSecureMsgs: function() {
-                if(this.currentRole === 'admin') {
-                    document.getElementById('floating-inbox-body').innerHTML = this.data.secureMsgs.sort((a,b)=>b.id-a.id).map(m => `<div class="msg-box"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><strong><i class="fas fa-user-secret"></i> ${m.name}</strong><small style="font-size:0.7rem">${m.dept}</small></div><p style="margin:0; font-size:0.9rem;">${m.text}</p>${m.reply ? `<div class="msg-admin-reply"><strong>ردك:</strong> ${m.reply}</div>` : `<button onclick="app.replySecureMsg(${m.id})" class="small-btn btn-ghost" style="margin-top:5px;">رد</button>`}</div>`).join('') || '<p style="text-align:center; color:#ccc; font-size:0.9rem;">لا توجد رسائل</p>';
-                }
-            },
-
-            importCSV: function(input) {
-                const file = input.files[0]; if(!file) return; const reader = new FileReader();
-                reader.onload = function(e) {
-                    const rows = e.target.result.split('\n'); let count = 0;
-                    rows.forEach((row) => { const cols = row.split(','); if(cols.length >= 3) { 
-                        // FORCE STRING:
-                        const code = String(cols[0]).trim(); 
-                        const name = cols[1].trim(); 
-                        const price = parseFloat(cols[2])||0; 
-                        const img = cols[3] ? cols[3].trim():''; 
-                        if(code && name && code.toLowerCase() !== 'code') { 
-                            app.data.prods.push({ id:Date.now()+Math.floor(Math.random()*1000), code: code, name, price, qty:0, img }); 
-                            count++; 
-                        } 
-                    } });
-                    if(count > 0) { app.addLog('general', "استيراد منتجات", `تم استيراد ${count}`); app.save(); app.renderProds(); alert(`تم استيراد ${count}`); }
-                    input.value = ''; 
-                }; reader.readAsText(file);
-            },
-            
-            // --- UPDATED: AGGRESSIVE CLEANING & DEBUG REPORT ---
-            importSalesCSV: function(input) {
-                const file = input.files[0]; 
-                if(!file) return;
-                
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    let content = e.target.result;
-                    if (content.charCodeAt(0) === 0xFEFF) { content = content.slice(1); }
-                    
-                    const rows = content.split(/\r\n|\n/);
-                    let foundCount = 0; 
-                    let errorRows = [];
-                    let warningMsg = "";
-
-                    document.querySelectorAll('.so-qty').forEach(i => i.value = '');
-                    document.querySelectorAll('.so-price').forEach(i => i.value = ''); 
-                    document.querySelectorAll('.prod-box').forEach(b => b.classList.remove('selected'));
-
-                    const productMap = {};
-                    const duplicates = [];
-
-                    app.data.prods.forEach(p => {
-                        if(p.code) {
-                            const cleanKey = String(p.code).trim().toUpperCase().replace(/[\u200B-\u200D\uFEFF]/g, '');
-                            if (productMap[cleanKey]) { duplicates.push(cleanKey); }
-                            productMap[cleanKey] = p;
-                        }
-                    });
-
-                    if (duplicates.length > 0) {
-                        warningMsg += "⚠️ تنبيه: توجد منتجات مكررة بنفس الكود في النظام!\n" + duplicates.join(", ") + "\n\n";
-                    }
-
-                    rows.forEach((row, index) => {
-                        if(!row.trim()) return; 
-
-                        const cols = row.split(',').map(c => c.trim());
-                        
-                        if (cols.length >= 2) {
-                            let csvCode = String(cols[0])
-                                .replace(/['"]+/g, '')
-                                .replace(/[\u200B-\u200D\uFEFF]/g, '')
-                                .trim()
-                                .toUpperCase();
-                            
-                            if (csvCode === 'CODE' || (index === 0 && isNaN(parseInt(cols[1])))) return;
-
-                            const qty = parseInt(cols[1]);
-                            const price = cols[2] ? parseFloat(cols[2]) : null; 
-
-                            if (csvCode) {
-                                const prod = productMap[csvCode];
-                                
-                                if (prod) {
-                                    if(!isNaN(qty) && qty > 0) {
-                                        const inputQty = document.querySelector(`.so-qty[data-id="${prod.id}"]`);
-                                        const inputPrice = document.querySelector(`.so-price[data-id="${prod.id}"]`);
-                                        
-                                        if(inputQty) {
-                                            inputQty.value = qty;
-                                            if (price !== null && !isNaN(price)) { inputPrice.value = price; } 
-                                            else { inputPrice.value = prod.price; }
-                                            inputQty.parentElement.classList.add('selected');
-                                            foundCount++;
-                                        } else {
-                                            errorRows.push({ code: csvCode, reason: 'موجود لكن مخفي (امسح البحث)' });
-                                        }
-                                    } 
-                                } else { 
-                                    errorRows.push({ code: csvCode, reason: 'غير موجود بالنظام (تأكد من المسافات)' }); 
-                                }
-                            }
-                        }
-                    });
-
-                    if (errorRows.length > 0 || warningMsg) {
-                        let msg = warningMsg;
-                        if(foundCount > 0) msg += `✅ تم تحديد ${foundCount} صنف.\n`;
-                        if(errorRows.length > 0) {
-                            msg += `❌ ${errorRows.length} خطأ (تم تنزيل تقرير التفاصيل).`;
-                            let csvContent = "\uFEFFCode read by System,Reason\n"; 
-                            errorRows.forEach(err => { csvContent += `"${err.code}",${err.reason}\n`; });
-                            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                            const link = document.createElement("a");
-                            link.href = URL.createObjectURL(blob);
-                            link.download = "Debug_Report.csv";
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        }
-                        alert(msg);
-                    } else {
-                        alert(`✅ تم تحديد ${foundCount} صنف بنجاح تام.`);
-                    }
-                    input.value = '';
-                };
-                reader.readAsText(file);
-            },
-
-            // --- FEATURE: WAREHOUSE ADD MISSING ITEM ---
-            whAddMissingItem: function(id) {
-                const code = prompt("أدخل كود الصنف المنسي:");
-                if(!code) return;
-
-                const cleanCode = String(code).trim().toUpperCase();
-                const product = this.data.prods.find(p => String(p.code).trim().toUpperCase() === cleanCode);
-
-                if(!product) return alert("❌ هذا الكود غير موجود في قاعدة بيانات المنتجات.");
-
-                const so = this.data.sos.find(s => s.id === id);
-                
-                const existingItem = so.items.find(i => i.id === product.id);
-                if(existingItem) return alert("⚠️ هذا الصنف موجود بالفعل في الطلب! قم بتعديل الكمية بدلاً من إضافته.");
-
-                so.items.push({
-                    id: product.id,
-                    code: product.code,
-                    name: product.name,
-                    img: product.img,
-                    price: product.price, 
-                    req: 0, 
-                    conf: 0, 
-                    finalQty: 0,
-                    whNote: 'تمت إضافته بواسطة المخزن'
-                });
-
-                this.save();
-                this.renderAll();
-                alert(`✅ تم إضافة "${product.name}" للطلب. قم بتحديد الكمية الآن.`);
-            },
-
-            // --- FEATURE: RECALL QUOTATION FOR EDIT ---
-            recallQuotForEdit: function(id) {
-                if(this.currentRole !== 'accounting' && this.currentRole !== 'admin') return alert("هذه الخاصية للمحاسبة فقط");
-                if(!confirm("هل أنت متأكد من سحب عرض السعر لتعديله؟\n(سيتم إخفاؤه من المخازن وإعادته لقائمة الانتظار لديك)")) return;
-                
-                const so = this.data.sos.find(s => s.id === id);
-                so.status = 'AccQuot'; // Return to accounting bucket
-                
-                this.save();
-                this.nav('accounting'); // Go to accounting
-                // Auto-click the tab button to ensure correct view
-                setTimeout(() => { document.getElementById('nav-acc-quot-btn').click(); }, 100);
-            },
-
-            saveProduct: function() {
-                const codeRaw = document.getElementById('p-code').value;
-                const name = document.getElementById('p-name').value;
-                const price = document.getElementById('p-price').value;
-                const img = document.getElementById('p-img').value;
-
-                if(!codeRaw || !name || !price) return alert("أكمل البيانات");
-                
-                const code = String(codeRaw).trim();
-
-                if(this.editingProdId) {
-                    const p = this.data.prods.find(x => x.id === this.editingProdId);
-                    if(p) { 
-                        p.code = code; 
-                        p.name = name; 
-                        p.price = parseFloat(price); 
-                        p.img = img; 
-                        this.addLog('general', "تعديل منتج", `${name}`); 
-                        alert("تم التعديل"); 
-                    }
-                } else {
-                    this.data.prods.push({ 
-                        id: Date.now(), 
-                        code: code, 
-                        name, 
-                        price: parseFloat(price), 
-                        qty: 0, 
-                        img 
-                    });
-                    this.addLog('general', "إضافة منتج", `${name}`); alert("تمت الإضافة");
-                }
-                this.save(); this.cancelEdit(); this.renderProds();
-            },
-            editProduct: function(id) {
-                const p = this.data.prods.find(x => x.id === id); if(!p) return;
-                this.editingProdId = id; document.getElementById('p-code').value = p.code; document.getElementById('p-name').value = p.name; document.getElementById('p-price').value = p.price; document.getElementById('p-img').value = p.img || '';
-                document.getElementById('form-title').innerText = "تعديل منتج: " + p.name; document.getElementById('btn-save-prod').innerText = "حفظ التعديلات"; document.getElementById('btn-cancel-edit').style.display = 'inline-block'; this.nav('products-create');
-            },
-            deleteProduct: function(id) { if(confirm("حذف؟")) { this.data.prods = this.data.prods.filter(p => p.id !== id); this.save(); this.renderProds(); } },
-            deleteTransaction: function(type, id) {
-                if(this.currentRole !== 'admin') return;
-                if(!confirm("تحذير: هل أنت متأكد من حذف هذا الأمر نهائياً من النظام؟")) return;
-                if (type === 'po') { this.data.pos = this.data.pos.filter(p => p.id !== id); this.addLog('admin', 'حذف أمر شراء', `PO: ${id}`); } 
-                else if (type === 'so') { this.data.sos = this.data.sos.filter(s => s.id !== id); this.addLog('admin', 'حذف أمر بيع', `SO: ${id}`); }
-                this.save(); this.renderAll(); alert("تم الحذف بنجاح");
-            },
-            cancelEdit: function() { this.editingProdId = null; document.getElementById('p-code').value = ''; document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; document.getElementById('p-img').value = ''; document.getElementById('form-title').innerText = "1. إضافة منتج جديد"; document.getElementById('btn-save-prod').innerText = "حفظ المنتج"; document.getElementById('btn-cancel-edit').style.display = 'none'; },
-            
-            renderProds: function() {
-                if(!this.data.prods) this.data.prods = [];
-                document.getElementById('tbl-products').innerHTML = this.data.prods.map(p => {
-                    return `<tr><td style="position:relative"><img src="${p.img||'https://placehold.co/40x40'}" class="list-thumb"></td><td><b>${p.code}</b></td><td>${p.name}</td><td>${p.price} SAR</td><td><button onclick="app.editProduct(${p.id})" class="btn-ghost small"><i class="fas fa-edit"></i></button><button onclick="app.deleteProduct(${p.id})" class="btn-ghost small" style="color:red"><i class="fas fa-trash"></i></button></td></tr>`;
-                }).join('');
-            },
-            renderPOGrid: function() {
-                document.getElementById('grid-po-prods').innerHTML = this.data.prods.map(p => `<div class="prod-box" onclick="this.classList.toggle('selected')"><img src="${p.img||'https://placehold.co/100x100'}" class="prod-thumb"><b>${p.name}</b> <small>(${p.code})</small><input type="number" class="po-qty" data-id="${p.id}" placeholder="الكمية" onclick="event.stopPropagation()"></div>`).join('');
-            },
-            renderSOGrid: function() {
-                document.getElementById('grid-so-prods').innerHTML = this.data.prods.map(p => `
-                    <div class="prod-box" onclick="this.classList.toggle('selected')">
-                        <img src="${p.img||'https://placehold.co/100x100'}" class="prod-thumb">
-                        <b>${p.name}</b>
-                        <small>(${p.code})</small>
-                        <label>السعر (SAR):</label>
-                        <input type="number" class="so-price" data-id="${p.id}" value="${p.price}" onclick="event.stopPropagation()">
-                        <label>الكمية:</label>
-                        <input type="number" class="so-qty" data-id="${p.id}" placeholder="الكمية" onclick="event.stopPropagation()">
+                <div id="whs-controls" style="display:none; margin-bottom:20px;">
+                    <div class="inp-field" id="opt-no-change" onclick="sys.toggleWhsOpt(true)" style="cursor:pointer; display:flex; align-items:center; gap:10px;">
+                        <div style="width:20px; height:20px; border-radius:50%; border:2px solid #ccc;" class="chk"></div>
+                        <strong>👍 مطابق تماماً (لا يوجد تغيير)</strong>
                     </div>
-                `).join('');
-            },
-            calcVat: function(val) { 
-                const cost = parseFloat(document.getElementById('po-cost-before').value) || 0;
-                const loc = document.getElementById('po-loc').value;
-                const rate = (loc === 'ksa') ? 1.15 : 1.0;
-                document.getElementById('po-cost-after-display').innerText = (cost * rate).toFixed(2) + " SAR"; 
-            },
-            
-            // --- ACTIONS ---
-            createPO: function() {
-                if(!confirm("هل أنت متأكد من إنشاء أمر الشراء؟")) return;
-                const ref = document.getElementById('po-ref').value, vnd = document.getElementById('po-vnd').value, country = document.getElementById('po-country').value, costB = parseFloat(document.getElementById('po-cost-before').value)||0;
-                const loc = document.getElementById('po-loc').value;
-                const expectedDate = document.getElementById('po-date-delivery').value;
-                const costA = costB * (loc==='ksa'?1.15:1.0);
-                const notes = document.getElementById('po-notes').value, fileInput = document.getElementById('po-file');
-
-                let items = []; document.querySelectorAll('.po-qty').forEach(inp => { if(inp.value > 0) items.push({ ...this.data.prods.find(p=>p.id==inp.dataset.id), req: parseInt(inp.value), got: 0, note: '' }); });
-                if(items.length===0 || !ref) return alert("البيانات ناقصة");
-
-                const processPO = (filesArray) => {
-                    const formattedDate = new Date().toLocaleDateString('en-GB');
-                    this.data.pos.push({ id: ref, vendor: vnd, country, location: loc, expectedDate, items, logisticsStatus: 'تم الطلب', costs: { before: costB, after: costA }, notes, smacc: '', smaccNotes: '', files: filesArray, createdAt: Date.now(), dateStr: formattedDate });
-                    this.addLog('purchases', "أمر شراء جديد", `المورد: ${vnd} | Ref: ${ref}`); this.save(); this.nav('purchases'); alert("تم");
-                };
-
-                if (fileInput.files.length > 0) {
-                    const promises = Array.from(fileInput.files).map(file => {
-                        return new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onload = (e) => resolve({ name: file.name, data: e.target.result });
-                            reader.readAsDataURL(file);
-                        });
-                    });
-                    Promise.all(promises).then(filesArray => processPO(filesArray));
-                } else { processPO([]); }
-            },
-            createSO: function() {
-                if(!confirm("هل أنت متأكد من إنشاء أمر البيع وإرساله للمخازن؟")) return;
-                const client = document.getElementById('so-client-name').value; 
-                const ref = document.getElementById('so-ref').value;
-                const notes = document.getElementById('so-notes').value;
-                const fileInput = document.getElementById('so-file-upload');
-
-                let items = []; 
-                document.querySelectorAll('.so-qty').forEach(inp => { 
-                    if(inp.value > 0) {
-                        const box = inp.parentElement;
-                        const priceInput = box.querySelector('.so-price');
-                        const price = parseFloat(priceInput.value);
-                        if(isNaN(price) || price < 0) return alert("الرجاء التأكد من أسعار المنتجات المختارة");
-                        items.push({ id: parseInt(inp.dataset.id), ...this.data.prods.find(p=>p.id==inp.dataset.id), req: parseInt(inp.value), conf: 0, finalQty: 0, price: price }); 
-                    }
-                });
-
-                if(items.length===0 || !client || !ref) return alert("بيانات ناقصة: تأكد من اسم العميل، الرقم المرجعي، والمنتجات");
-                if(fileInput.files.length === 0) return alert("⚠️ تنبيه: يجب إرفاق ملف (أمر الشراء الخاص بالعميل) لإتمام العملية.");
-
-                const processSO = (filesArray) => {
-                    const formattedDate = new Date().toLocaleDateString('en-GB');
-                    this.data.sos.push({ 
-                        id: Date.now(), dateStr: formattedDate, client, ref, items, status: 'Wh', logisticsStatus: 'تم الطلب', inv: '', notes, quotRef:'', quotFile:'', accFile: '', stampedInvoice: '', clientFiles: filesArray 
-                    });
-                    this.addLog('sales', "أمر بيع جديد", `Ref: ${ref}`); 
-                    this.save(); this.nav('sales'); 
-                    document.getElementById('so-ref').value = ''; document.getElementById('so-notes').value = ''; document.getElementById('so-file-upload').value = ''; document.getElementById('so-client-name').value = '';
-                    alert("تم حفظ أمر البيع مع المرفقات ✅");
-                };
-
-                // Handle multiple files
-                if (fileInput.files.length > 0) {
-                    const promises = Array.from(fileInput.files).map(file => {
-                        return new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onload = (e) => resolve({ name: file.name, data: e.target.result });
-                            reader.readAsDataURL(file);
-                        });
-                    });
-                    Promise.all(promises).then(filesArray => processSO(filesArray));
-                } else { processSO([]); }
-            },
-
-            accRegisterPO: function(id) {
-                if(!confirm("تأكيد تسجيل القيد المحاسبي؟")) return;
-                const smaccRef = document.getElementById(`smacc-${id}`).value, fileInput = document.getElementById(`acc-file-${id}`), accNotes = document.getElementById(`acc-n-${id}`).value;
-                if(!smaccRef) return alert("أدخل رقم القيد");
-                const processAcc = (fileData) => { const po = this.data.pos.find(p=>p.id===id); po.smacc = smaccRef; po.smaccNotes = accNotes; if(fileData) po.accFile = fileData; this.addLog('accounting', "تسجيل محاسبي PO", `Ref ${id}`); this.save(); this.renderAll(); };
-                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processAcc(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { processAcc(null); }
-            },
-            whConfirmPO: function(id) {
-                if(!confirm("هل أنت متأكد من استلام البضاعة في المخزن؟")) return;
-                const po = this.data.pos.find(p=>p.id===id), whNote = document.getElementById(`wh-po-note-${id}`).value;
-                po.items.forEach((item, idx) => { item.got = parseInt(document.getElementById(`rec-${id}-${idx}`).value)||0; item.note = document.getElementById(`note-${id}-${idx}`).value; let prod = this.data.prods.find(p=>p.id==item.id); if(prod) prod.qty += item.got; });
-                po.whRecNotes = whNote; po.logisticsStatus = 'تم الاستلام'; this.addLog('warehouse', "استلام مخزني", `PO: ${id}`); this.save(); this.renderAll();
-            },
-            whConfirmSO: function(id) {
-                if(!confirm("هل أنت متأكد من تأكيد الصرف وتحويل الطلب للمحاسبة لإصدار عرض السعر؟")) return;
-                let so = this.data.sos.find(s=>s.id===id), note = document.getElementById(`wh-so-note-${id}`).value;
-                so.items.forEach((item, idx) => { 
-                    item.conf = parseInt(document.getElementById(`conf-${id}-${idx}`).value)||0; 
-                    const newPrice = parseFloat(document.getElementById(`price-${id}-${idx}`).value);
-                    if(!isNaN(newPrice)) { item.price = newPrice; }
-                    item.whNote = document.getElementById(`wh-item-note-${id}-${idx}`).value;
-                });
-                so.items.forEach(item => this.data.prods.find(p=>p.id==item.id).qty -= item.conf);
-                so.status = 'AccQuot'; so.whNotes = note; this.addLog('warehouse', "صرف مبدئي", `SO: ${so.ref}`); this.save(); this.renderAll();
-            },
-            accIssueQuot: function(id) {
-                if(!confirm("هل أنت متأكد من إصدار عرض السعر وإرسال الطلب للمخزن للتوصيل؟")) return;
-                const quotRef = document.getElementById(`quot-ref-${id}`).value, fileInput = document.getElementById(`acc-file-quot-${id}`);
-                if(!quotRef) return alert("أدخل رقم عرض السعر");
-                const processQuot = (fileData) => { const so = this.data.sos.find(s=>s.id===id); so.status = 'WhDelivery'; so.quotRef = quotRef; if(fileData) so.quotFile = fileData; this.addLog('accounting', "إصدار عرض سعر", `Ref: ${quotRef}`); this.save(); this.renderAll(); };
-                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processQuot(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { processQuot(null); }
-            },
-            whConfirmDelivery: function(id) {
-                if(!confirm("هل أنت متأكد من تسليم البضاعة للعميل فعلياً؟")) return;
-                const so = this.data.sos.find(s=>s.id===id);
-                so.items.forEach((item, idx) => { const actualInput = document.getElementById(`actual-${id}-${idx}`); if(actualInput) { const actualQty = parseInt(actualInput.value) || 0; item.finalQty = actualQty; const diff = item.conf - actualQty; if(diff !== 0) { let prod = this.data.prods.find(p=>p.id==item.id); if(prod) prod.qty += diff; } } else { item.finalQty = item.conf; } });
-                so.status = 'AccFinal'; this.addLog('warehouse', "تأكيد تسليم", `SO: ${so.ref}`); this.save(); this.renderAll();
-            },
-            accFinalizeInvoice: function(id) {
-                if(!confirm("هل أنت متأكد من إصدار الفاتورة النهائية؟")) return;
-                const inv = document.getElementById(`inv-${id}`).value, fileInput = document.getElementById(`acc-file-inv-${id}`);
-                if(!inv) return alert("مطلوب رقم الفاتورة");
-                const processFinal = (fileData) => { const so = this.data.sos.find(s=>s.id===id); so.status = 'WhStamp'; so.inv = inv; if(fileData) so.accFile = fileData; this.addLog('accounting', "إصدار فاتورة نهائية", inv); this.save(); this.renderAll(); };
-                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processFinal(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { processFinal(null); }
-            },
-            whFinalizeStamp: function(id) {
-                if(!confirm("هل أنت متأكد من إغلاق الطلب نهائياً؟")) return;
-                const fileInput = document.getElementById(`wh-stamp-file-${id}`);
-                const processStamp = (fileData) => { if(!fileData) return alert("مطلوب صورة الفاتورة المختومة"); const so = this.data.sos.find(s=>s.id===id); so.status = 'Done'; so.stampedInvoice = fileData; so.logisticsStatus = 'تم التسليم'; this.addLog('warehouse', "إغلاق الطلب (مختوم)", so.ref); this.save(); this.renderAll(); };
-                if (fileInput && fileInput.files.length > 0) { const reader = new FileReader(); reader.onload = function(e) { processStamp(e.target.result); }; reader.readAsDataURL(fileInput.files[0]); } else { alert("اختر ملف"); }
-            },
-            
-            checkWhShortage: function(id, idx, type) {
-                const input = document.getElementById(`${type==='in'?'rec':'conf'}-${id}-${idx}`), val = parseInt(input.value) || 0;
-                let req = (type === 'in') ? this.data.pos.find(p=>p.id===id).items[idx].req : this.data.sos.find(s=>s.id===id).items[idx].req;
-                const diff = req - val;
-                if (type === 'out') { input.style.background = (diff > 0) ? "#fff0f0" : "#fff"; return; }
-                document.getElementById(`stat-rec-${id}-${idx}`).innerHTML = (diff>0) ? `<span style="color:red">عجز: ${diff}</span>` : ((diff<0)?`<span style="color:orange">زيادة</span>`:`<span style="color:green">مطابق</span>`);
-            },
-            downloadAccExcel: function(id, mode) {
-                const so = this.data.sos.find(s => s.id === id); if (!so) return;
-                let csvContent = "\uFEFFCode,Name,Sales Qty,WH Conf Qty,Delivered Qty,Unit Price,Total,Warehouse Note\n";
-                so.items.forEach(item => {
-                    let calcQty = (mode === 'quot') ? item.conf : (item.finalQty || 0);
-                    let totalLine = item.price * calcQty;
-                    let fQty = item.finalQty || 0;
-                    csvContent += `${item.code},"${item.name}",${item.req},${item.conf},${fQty},${item.price.toFixed(2)},${totalLine.toFixed(2)},"${item.whNote || ''}"\n`;
-                });
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement("a"); link.setAttribute("href", URL.createObjectURL(blob)); link.setAttribute("download", `Acc_${mode}_${so.ref}.csv`); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
-            },
-            printPO: function(id) {
-                const po = this.data.pos.find(p => p.id === id); if(!po) return;
-                const w = window.open('', '_blank');
-                const rows = po.items.map(i => `<tr><td style="border:1px solid #ddd; padding:8px">${i.code}</td><td style="border:1px solid #ddd; padding:8px">${i.name}</td><td style="border:1px solid #ddd; padding:8px">${i.req}</td></tr>`).join('');
-                w.document.write(`
-                    <html dir="rtl"><head><title>Purchase Order ${po.id}</title>
-                    <style>body{font-family:'Tajawal',sans-serif; padding:20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th{background:#eee;}</style>
-                    </head><body>
-                    <h1 style="text-align:center;">أمر شراء / Purchase Order</h1>
-                    <div style="display:flex; justify-content:space-between; border-bottom:2px solid #000; padding-bottom:10px;">
-                        <div><strong>المورد:</strong> ${po.vendor}<br><strong>الدولة:</strong> ${po.country}<br><strong>التوصيل المتوقع:</strong> ${po.expectedDate||'غير محدد'}</div>
-                        <div><strong>رقم الطلب:</strong> ${po.id}<br><strong>تاريخ الطلب:</strong> ${po.dateStr||'-'}</div>
+                    <div class="inp-field" id="opt-change" onclick="sys.toggleWhsOpt(false)" style="cursor:pointer; display:flex; align-items:center; gap:10px;">
+                        <div style="width:20px; height:20px; border-radius:50%; border:2px solid #ccc;" class="chk"></div>
+                        <strong>✏️ يوجد تعديل / نواقص</strong>
                     </div>
-                    <table><thead><tr><th style="border:1px solid #ddd; padding:8px">الكود</th><th style="border:1px solid #ddd; padding:8px">الصنف</th><th style="border:1px solid #ddd; padding:8px">الكمية</th></tr></thead><tbody>${rows}</tbody></table>
-                    <div style="margin-top:20px;"><strong>ملاحظات:</strong> ${po.notes}</div>
-                    <script>window.print();<\/script>
-                    </body></html>
-                `);
-                w.document.close();
-            },
-            checkNotifications: function(newData) {
-                if(!this.currentRole) return;
-                let notified = JSON.parse(sessionStorage.getItem('notified_items') || '[]');
-                const notify = (title, body, id) => { if(!notified.includes(id)) { if(Notification.permission === "granted") { new Notification(title, { body, icon: 'https://placehold.co/100' }); } notified.push(id); sessionStorage.setItem('notified_items', JSON.stringify(notified)); } };
-                if(newData.sos) { newData.sos.forEach(s => {
-                        if(this.currentRole === 'warehouse' && s.status === 'Wh') { notify("📦 طلب جديد", `SO: ${s.ref} بانتظار التجهيز`, `so_wh_${s.id}`); }
-                        if(this.currentRole === 'warehouse' && s.status === 'WhDelivery') { notify("🚚 توصيل", `SO: ${s.ref} جاهز للتوصيل`, `so_del_${s.id}`); }
-                        if(this.currentRole === 'warehouse' && s.status === 'WhStamp') { notify("📝 مطلوب الختم", `SO: ${s.ref} (صدرت الفاتورة)`, `so_stamp_${s.id}`); }
-                        if(this.currentRole === 'accounting' && s.status === 'AccQuot') { notify("📜 إصدار عرض سعر", `SO: ${s.ref} جاهز من المخزن`, `so_quot_${s.id}`); }
-                        if(this.currentRole === 'accounting' && s.status === 'AccFinal') { notify("💰 إصدار فاتورة نهائية", `SO: ${s.ref} تم تسليمه للعميل`, `so_inv_${s.id}`); }
-                        if(this.currentRole === 'sales' && s.status === 'Done') { notify("✅ اكتمل الطلب", `SO: ${s.ref} تم إغلاقه بنجاح`, `so_done_${s.id}`); }
-                }); }
-            },
+                </div>
 
-            addTask: function() {
-                const from = document.getElementById('task-from').value, dept = document.getElementById('task-dept').value, title = document.getElementById('task-title').value, desc = document.getElementById('task-desc').value, fileObj = document.getElementById('task-file').files[0];
-                if(!title) return alert("مطلوب العنوان");
-                const processTask = (fileData) => { this.data.tasks.push({ id: Date.now(), dept, from, title, desc, file: fileData, reply: '', done: false }); this.addLog('tasks', "مهمة جديدة", `${title} -> ${dept}`); this.save(); this.renderAll(); alert("تم"); };
-                if (fileObj) { const reader = new FileReader(); reader.onload = function(e) { processTask(e.target.result); }; reader.readAsDataURL(fileObj); } else { processTask(''); }
-            },
-            solveTask: function(id) {
-                const r = document.getElementById(`tr-${id}`).value; if(!r) return;
-                let t = this.data.tasks.find(x => x.id === id); t.reply = r; t.done = true; this.save(); this.renderAll();
-            },
-            renderDeptTasks: function(dept, containerId) {
-                const tasks = this.data.tasks.filter(t => (t.dept === dept || t.dept === 'General') && !t.done).sort((a,b) => b.id - a.id);
-                document.getElementById(containerId).innerHTML = tasks.length ? tasks.map(t => `<div class="card" style="border-right:4px solid var(--primary)"><h4>${t.title}</h4><small>من: ${t.from}</small><p>${t.desc}</p>${t.file?`<a href="${t.file}" download>مرفق</a>`:''}<div class="form-row"><input id="tr-${t.id}" placeholder="الرد..."><button onclick="app.solveTask(${t.id})" class="btn-primary small">إتمام</button></div></div>`).join('') : '<p style="text-align:center;color:#999">لا مهام</p>';
-            },
-            getLogisticsStatePO: function(po) {
-                let step = 0, statusText = "تم الطلب";
-                if (po.smacc) { step = 1; statusText = "تم التسجيل"; } else { statusText = "انتظار محاسب"; }
-                if (po.logisticsStatus === 'تم الاستلام' || po.whRecNotes) { step = 3; statusText = "تم الاستلام"; } else if (step === 1) { step = 2; }
-                return { step, text: statusText };
-            },
-            getLogisticsStateSO: function(so) {
-                let step = 0, statusText = "طلب جديد";
-                if (so.status === 'Wh') { step = 1; statusText = "تجهيز المخزن"; } 
-                else if (so.status === 'AccQuot') { step = 2; statusText = "إصدار عرض سعر"; }
-                else if (so.status === 'WhDelivery') { step = 3; statusText = "توصيل للعميل"; }
-                else if (so.status === 'AccFinal') { step = 4; statusText = "فاتورة نهائية"; }
-                else if (so.status === 'WhStamp') { step = 5; statusText = "ختم وإغلاق"; }
-                else if (so.status === 'Done') { step = 6; statusText = "مكتمل"; }
-                return { step, text: statusText };
-            },
-            renderAll: function() {
-                if(!this.data.prods) this.data.prods = []; if(!this.data.pos) this.data.pos = []; if(!this.data.sos) this.data.sos = []; if(!this.data.tasks) this.data.tasks = [];
-                this.renderProds(); this.renderPOGrid(); this.renderSOGrid(); if (this.currentRole === 'admin') { this.updateDashboard(); this.renderSettings(); } this.renderSecureMsgs();
+                <div id="act-upload-area">
+                    <label style="display:block; font-weight:700; margin-bottom:8px;">إرفاق ملفات المرحلة</label>
+                    <input type="file" id="act-file" class="inp-field" multiple>
+                </div>
+                <button class="btn-save" style="background:#f59e0b; color:white" onclick="sys.submitAct()">تأكيد وإتمام ✅</button>
+            </div>
+        </div>
+    </div>
 
-                // Admin Delete Button
-                const getDelBtn = (type, id) => (this.currentRole === 'admin') ? `<button onclick="app.deleteTransaction('${type}', ${id})" class="btn-ghost small" style="color:red; border-color:red; margin-top:5px;" title="حذف نهائي"><i class="fas fa-trash"></i> حذف</button>` : '';
+    <div id="modal-settings" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-head" style="background:#374151">
+                <h3 style="margin:0">إعدادات الفريق 🛠️</h3>
+                <i class="fas fa-times" onclick="sys.closeModal('modal-settings')" style="cursor:pointer"></i>
+            </div>
+            <div class="modal-body">
+                <label style="display:block; margin-bottom:5px; font-weight:700">فريق المبيعات</label><input id="s-sales" class="inp-field">
+                <label style="display:block; margin-bottom:5px; font-weight:700">فريق المحاسبة</label><input id="s-acc" class="inp-field">
+                <label style="display:block; margin-bottom:5px; font-weight:700">فريق المستودع</label><input id="s-whs" class="inp-field">
+                <button class="btn-save" onclick="sys.saveSettings()">حفظ التعديلات</button>
+            </div>
+        </div>
+    </div>
 
-                const poSteps = ['طلب', 'محاسبة', 'استلام', 'مكتمل'];
-                document.getElementById('log-inbound-readonly').innerHTML = this.data.pos.slice().sort((a,b)=>b.id-a.id).map(p => {
-                    const state = this.getLogisticsStatePO(p);
-                    const progHtml = poSteps.map((lbl, idx) => `<div class="prog-step ${idx<state.step?'completed':(idx===state.step?'active':'')}"></div>`).join('');
-                    let attachments = '';
-                    if(p.files && p.files.length) p.files.forEach(f => attachments += `<a href="${f.data}" download="${f.name}" class="attach-badge"><i class="fas fa-file"></i> ${f.name}</a>`);
-                    else if(p.file) attachments += `<a href="${p.file}" download class="attach-badge"><i class="fas fa-file"></i> أمر الشراء</a>`;
-                    if(p.accFile) attachments += `<a href="${p.accFile}" download class="attach-badge"><i class="fas fa-calculator"></i> قيد محاسبي</a>`;
-
-                    return `<div class="log-card" style="border-right:4px solid var(--secondary)"><div class="log-header"><div>PO: ${p.id}<br><small>المورد: ${p.vendor}</small><div class="date-badge">${p.dateStr||'-'}</div></div><span class="badge bg-blue">${state.text}</span></div><div class="log-progress">${progHtml}</div><div class="log-attachments">${attachments}</div>${getDelBtn('po', '"' + p.id + '"')}</div>`;
-                }).join('') || '<p style="text-align:center">لا طلبات</p>';
-
-                const soSteps = ['طلب', 'تجهيز', 'عرض سعر', 'توصيل', 'فاتورة', 'ختم', 'تم'];
-                document.getElementById('log-outbound-readonly').innerHTML = this.data.sos.slice().sort((a,b)=>b.id-a.id).map(s => {
-                    const state = this.getLogisticsStateSO(s);
-                    const progHtml = soSteps.map((lbl, idx) => `<div class="prog-step ${idx<state.step?'completed':(idx===state.step?'active':'')}"></div>`).join('');
-                    let attachments = '';
-                    if(s.clientFiles && s.clientFiles.length) { s.clientFiles.forEach(f => attachments += `<a href="${f.data}" download="${f.name}" class="attach-badge"><i class="fas fa-paperclip"></i> ${f.name}</a>`); }
-                    else if(s.clientPoFile) { attachments += `<a href="${s.clientPoFile}" download class="attach-badge"><i class="fas fa-paperclip"></i> طلب العميل</a>`; }
-                    if(s.quotFile) attachments += `<a href="${s.quotFile}" download class="attach-badge"><i class="fas fa-file-invoice"></i> عرض سعر</a>`;
-                    if(s.accFile) attachments += `<a href="${s.accFile}" download class="attach-badge"><i class="fas fa-file-alt"></i> فاتورة</a>`;
-                    if(s.stampedInvoice) attachments += `<a href="${s.stampedInvoice}" download class="attach-badge"><i class="fas fa-stamp"></i> فاتورة مختومة</a>`;
-
-                    return `<div class="log-card" style="border-right:4px solid var(--accent)"><div class="log-header"><div>SO: ${s.ref}<br><small>العميل: ${s.client}</small><div class="date-badge">${s.dateStr||'-'}</div></div><span class="badge bg-orange">${state.text}</span></div><div class="log-progress">${progHtml}</div><div class="log-attachments">${attachments}</div>${getDelBtn('so', s.id)}</div>`;
-                }).join('') || '<p style="text-align:center">لا مبيعات</p>';
-
-                this.renderDeptTasks('Sales','list-sales-tasks'); this.renderDeptTasks('Purchases','list-pur-tasks'); this.renderDeptTasks('Warehouse','list-wh-tasks'); this.renderDeptTasks('Accounting','list-acc-tasks'); this.renderDeptTasks('Logistics','list-log-tasks');
-                document.getElementById('list-tasks-all').innerHTML = this.data.tasks.slice().sort((a,b)=>b.id-a.id).map(t => `<div class="card" style="border-right:4px solid ${t.done?'#00b894':'#fdcb6e'}"><h4>${t.title} [${t.from}->${t.dept}]</h4><p>${t.desc}</p>${t.reply?`<p style="color:green">تم: ${t.reply}</p>`:'<div style="color:orange">انتظار...</div>'}</div>`).join('');
-
-                const renderArchCard = (title, subtitle, date, file) => `
-                    <div class="card" style="border-right:5px solid var(--primary); display:flex; justify-content:space-between; align-items:center;">
-                        <div><h3>${title}</h3><div>${date}</div><small>${subtitle}</small></div>
-                        ${file ? `<a href="${file}" download class="btn-download-fancy blue"><i class="fas fa-download"></i> تحميل الملف</a>` : '<span style="color:#999; font-size:0.8rem">لا يوجد مرفق</span>'}
-                    </div>`;
-
-                // --- ARCHIVE WITH EDIT BUTTON ---
-                const canEdit = (this.currentRole === 'accounting' || this.currentRole === 'admin');
-                document.getElementById('archive-list-quot').innerHTML = this.data.sos.filter(s=>s.quotRef).map(i => {
-                    const editBtn = canEdit ? `<button onclick="app.recallQuotForEdit(${i.id})" class="btn-ghost small" style="color:var(--primary); border-color:var(--primary); margin-right:10px;"><i class="fas fa-edit"></i> تعديل</button>` : '';
-                    return `
-                    <div class="card" style="border-right:5px solid var(--primary); display:flex; justify-content:space-between; align-items:center;">
-                        <div><h3>عرض سعر (${i.quotRef})</h3><div>${i.dateStr}</div><small>العميل: ${i.client} | Ref: ${i.ref}</small>${editBtn}</div>
-                        ${i.quotFile ? `<a href="${i.quotFile}" download class="btn-download-fancy blue"><i class="fas fa-download"></i> تحميل الملف</a>` : '<span style="color:#999; font-size:0.8rem">لا يوجد مرفق</span>'}
-                    </div>`;
-                }).join('') || '<p style="text-align:center;color:#ccc">لا توجد عروض أسعار</p>';
-
-                document.getElementById('archive-list-final').innerHTML = this.data.sos.filter(s=>s.inv).map(i => renderArchCard(`فاتورة نهائية (${i.inv})`, `العميل: ${i.client} | Ref: ${i.ref} | الحالة: ${i.status === 'Done' ? 'مختومة' : 'غير مختومة'}`, i.dateStr, i.accFile)).join('') || '<p style="text-align:center;color:#ccc">لا توجد فواتير نهائية</p>';
-                document.getElementById('archive-list-stamped').innerHTML = this.data.sos.filter(s=>s.status==='Done' || s.status==='WhStamp').map(i => renderArchCard(`فاتورة مختومة (${i.inv})`, `العميل: ${i.client} | Ref: ${i.ref}`, i.dateStr, i.stampedInvoice)).join('') || '<p style="text-align:center;color:#ccc">لا توجد فواتير مختومة</p>';
-                document.getElementById('archive-list-purch').innerHTML = this.data.pos.filter(p=>p.smacc).map(i => renderArchCard(`سند مشتريات (${i.smacc})`, `المورد: ${i.vendor} | Ref: ${i.id}`, i.dateStr, i.accFile)).join('') || '<p style="text-align:center;color:#ccc">لا توجد سندات مشتريات مؤرشفة</p>';
-                
-                let clientFilesHTML = '';
-                this.data.sos.forEach(so => {
-                    if (so.clientFiles && so.clientFiles.length > 0) { so.clientFiles.forEach(f => { clientFilesHTML += renderArchCard(`ملف عميل: ${f.name}`, `العميل: ${so.client} | Ref: ${so.ref} | ${so.notes || ''}`, so.dateStr, f.data); }); } 
-                    else if (so.clientPoFile) { clientFilesHTML += renderArchCard(`ملف عميل (PO)`, `العميل: ${so.client} | Ref: ${so.ref}`, so.dateStr, so.clientPoFile); }
-                });
-                document.getElementById('archive-list-clients').innerHTML = clientFilesHTML || '<p style="text-align:center;color:#ccc">لا توجد ملفات عملاء</p>';
-
-
-                document.getElementById('po-list-container').innerHTML = this.data.pos.slice().sort((a,b)=>b.id-a.id).map(p=>`<div class="card" style="padding:15px"><strong>PO: ${p.id}</strong> <small class="date-badge">${p.dateStr||'-'}</small><br><small>المورد: ${p.vendor}</small><br><span class="badge" style="margin-top:5px; background:${p.smacc?'green':'gray'}">${p.smacc?'مسجل':'غير مسجل'}</span><br><button class="btn-ghost small" style="margin-top:5px" onclick="app.printPO('${p.id}')"><i class="fas fa-print"></i> PDF</button>${getDelBtn('po', '"'+p.id+'"')}</div>`).join('');
-                document.getElementById('so-list-container').innerHTML = this.data.sos.slice().sort((a,b)=>b.id-a.id).map(s => {
-                    let statusColor = '#95a5a6', statusText = s.status, extraAction = '';
-                    if(s.status === 'Done') { statusColor = '#00b894'; statusText = 'مكتمل'; }
-                    else if(s.status === 'WhStamp') { statusColor = '#00b894'; statusText = 'مكتمل (بانتظار الختم)'; }
-                    else if(s.status === 'AccFinal') { statusColor = '#e67e22'; statusText = 'صدرت الفاتورة'; }
-                    if (s.inv) { const fileLink = s.stampedInvoice || s.accFile; extraAction = `<div style="margin-top:10px; padding-top:10px; border-top:1px dashed #eee;"><strong>فاتورة رقم: ${s.inv}</strong>${fileLink ? `<br><a href="${fileLink}" download class="btn-download-fancy"><i class="fas fa-file-invoice"></i> تحميل الفاتورة</a>` : ''}</div>`; }
-                    return `<div class="card" style="border-right:5px solid ${statusColor}"><div style="display:flex; justify-content:space-between;"><strong>${s.client}</strong><span class="badge" style="background:${statusColor}">${statusText}</span></div><div style="font-size:0.9rem; color:#666; margin-top:5px;">Ref: ${s.ref} <span class="date-badge">${s.dateStr||'-'}</span> ${s.clientPoFile ? ` | <a href="${s.clientPoFile}" download style="color:var(--primary); font-weight:bold"><i class="fas fa-paperclip"></i> ملف العميل</a>` : ''}</div>${extraAction}${getDelBtn('so', s.id)}</div>`;
-                }).join('');
-
-                document.getElementById('list-acc-reg').innerHTML = this.data.pos.filter(p=>!p.smacc).map(p=>`<div class="card"><h3>PO: ${p.id}</h3><div class="order-detail-header"><strong>المورد:</strong> ${p.vendor} <small class="date-badge">${p.dateStr}</small><br><strong>ملاحظات:</strong> ${p.notes || '-'}</div><p>قبل الضريبة: ${p.costs.before}</p>${p.files?p.files.map(f=>`<a href="${f.data}" download="${f.name}">📎 ${f.name}</a><br>`).join(''):(p.file?`<a href="${p.file}" download>مرفق</a>`:``)}<div class="form-row"><input id="smacc-${p.id}" placeholder="القيد"><input id="acc-n-${p.id}" placeholder="ملاحظة"><input type="file" id="acc-file-${p.id}"><button onclick="app.accRegisterPO('${p.id}')" class="btn-primary">تسجيل</button></div></div>`).join('');
-                document.getElementById('list-wh-in').innerHTML = this.data.pos.filter(p=>!p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').map(p=>`<div class="card"><h3>استلام PO: ${p.id}</h3><div class="order-detail-header"><strong>المورد:</strong> ${p.vendor} <small class="date-badge">${p.dateStr}</small><br><strong>توصيل متوقع:</strong> ${p.expectedDate||'غير محدد'}<br><strong>ملاحظات الشراء:</strong> ${p.notes || '-'}</div>${p.items.map((i,idx)=>`<div class="wh-item-row"><img src="${i.img || 'https://placehold.co/65'}" class="wh-img"><div style="flex:1; margin-right:10px;">${i.name}<br><small>${i.code}</small></div><div class="wh-input-area"><small>مطلوب</small><br><strong>${i.req}</strong></div><div class="wh-input-area"><small>وارد</small><input id="rec-${p.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${p.id}',${idx},'in')"></div><span id="stat-rec-${p.id}-${idx}"></span><input id="note-${p.id}-${idx}" placeholder="ملاحظة" style="max-width:100px;"></div>`).join('')}<div class="form-row"><input id="wh-po-note-${p.id}" placeholder="ملاحظات.."><button onclick="app.whConfirmPO('${p.id}')" class="btn-primary">تأكيد الاستلام</button></div></div>`).join('');
-                
-                document.getElementById('list-wh-out').innerHTML = this.data.sos.filter(s=>s.status==='Wh').map(s=> {
-                    let clientFilesHtml = '';
-                    if(s.clientFiles && s.clientFiles.length) { s.clientFiles.forEach(f => clientFilesHtml += `<a href="${f.data}" download="${f.name}" class="attach-badge"><i class="fas fa-paperclip"></i> ${f.name}</a>`); }
-                    else if(s.clientPoFile) { clientFilesHtml += `<a href="${s.clientPoFile}" download class="attach-badge"><i class="fas fa-paperclip"></i> ملف العميل</a>`; }
-                    
-                    return `
-                    <div class="card">
-                        <h3><i class="fas fa-box-open"></i> ${s.client} <small style="font-size:0.8rem; color:#888;">(#${s.ref})</small></h3>
-                        <div class="order-detail-header">
-                             <strong>تاريخ الطلب:</strong> ${s.dateStr||'-'}<br>
-                             <strong>ملاحظات المبيعات:</strong> <span style="color:#d63031; font-weight:bold">${s.notes || '-'}</span>
-                             <div style="margin-top:5px; display:flex; flex-wrap:wrap; gap:5px;">${clientFilesHtml}</div>
-                             <button onclick="app.whAddMissingItem(${s.id})" class="btn-ghost small" style="margin-top:10px; color:#6c5ce7; border-color:#6c5ce7"><i class="fas fa-plus-circle"></i> إضافة صنف منسي/طارئ</button>
-                        </div>
-                        ${s.items.map((i,idx)=>`
-                            <div class="wh-item-row" style="align-items: center; justify-content: space-between; flex-wrap:wrap;">
-                                <div style="display:flex; align-items:center; gap:15px; flex:2; min-width:200px;">
-                                    <img src="${i.img || 'https://placehold.co/65'}" class="wh-img">
-                                    <div><div style="font-weight:bold">${i.name}</div><small style="color:#666">${i.code}</small></div>
-                                </div>
-                                <div class="wh-input-area"><small style="display:block; margin-bottom:5px;">سعر الوحدة (تعديل)</small><input id="price-${s.id}-${idx}" value="${i.price}" type="number" step="0.01" style="border-color:#00cec9;"></div>
-                                <div class="wh-input-area"><small style="display:block; margin-bottom:5px;">مطلوب</small><strong style="font-size:1.2rem">${i.req}</strong></div>
-                                <div class="wh-input-area"><small style="display:block; margin-bottom:5px;">متوفر (يصرف)</small><input id="conf-${s.id}-${idx}" value="${i.req}" type="number" oninput="app.checkWhShortage('${s.id}',${idx},'out')" style="font-weight:bold; color:var(--primary)"></div>
-                                <div style="width:100%; margin-top:10px;"><input id="wh-item-note-${s.id}-${idx}" value="${i.whNote||''}" placeholder="ملاحظة خاصة بهذا الصنف (ستظهر للمحاسب في الإكسل)" style="width:100%;"></div>
-                            </div>`).join('')}
-                        <input id="wh-so-note-${s.id}" placeholder="ملاحظة عامة على الطلب (اختياري)" style="width:100%; margin-bottom:15px;">
-                        <div class="form-row"><button onclick="app.whConfirmSO(${s.id})" class="btn-secondary">تأكيد الصرف وحفظ الأسعار</button></div>
-                    </div>`;
-                }).join('');
-
-                // UPDATED ACCOUNTING QUOT CARD
-                document.getElementById('list-acc-quot').innerHTML = this.data.sos.filter(s=>s.status==='AccQuot').map(s=>`
-                    <div class="card">
-                        <div style="display:flex; justify-content:space-between;">
-                            <h3>SO: ${s.ref}</h3>
-                            <div>
-                                <button onclick="app.downloadAccExcel(${s.id}, 'quot')" class="btn-ghost small" style="color:green; border-color:green"><i class="fas fa-file-excel"></i> تنزيل Excel</button>
-                            </div>
-                        </div>
-                        <div class="order-detail-header"><strong>العميل:</strong> ${s.client}<br><strong>ملاحظات المخزن:</strong> ${s.whNotes || '-'}</div>
-                        <p>تم تأكيد الصرف المخزني. يرجى إصدار عرض سعر.</p>
-                        <div class="form-row">
-                            <input id="quot-ref-${s.id}" placeholder="رقم عرض السعر" value="${s.quotRef||''}">
-                            <input type="file" id="acc-file-quot-${s.id}">
-                            <button onclick="app.accIssueQuot(${s.id})" class="btn-secondary">إصدار وإرسال للمخزن</button>
-                        </div>
-                    </div>`).join('');
-
-                document.getElementById('list-wh-delivery').innerHTML = this.data.sos.filter(s=>s.status==='WhDelivery').map(s=> {
-                    let clientFilesHtml = '';
-                    if(s.clientFiles && s.clientFiles.length) { s.clientFiles.forEach(f => clientFilesHtml += `<a href="${f.data}" download="${f.name}" class="attach-badge"><i class="fas fa-paperclip"></i> ${f.name}</a>`); }
-                    else if(s.clientPoFile) { clientFilesHtml += `<a href="${s.clientPoFile}" download class="attach-badge"><i class="fas fa-paperclip"></i> ملف العميل</a>`; }
-                    return `<div class="card" style="border-right:4px solid #e67e22"><h3>توصيل SO: ${s.ref}</h3><div class="order-detail-header"><strong>العميل:</strong> ${s.client}<br><strong>رقم عرض السعر:</strong> ${s.quotRef}<div style="margin-top:5px; display:flex; flex-wrap:wrap; gap:5px;">${clientFilesHtml}</div></div>${s.quotFile?`<a href="${s.quotFile}" download class="btn-download-fancy blue"><i class="fas fa-file-invoice"></i> تحميل عرض السعر</a>`:''}<hr>${s.items.map((i,idx)=>`<div class="wh-item-row single-line"><div class="wh-info-compact">${i.name} <small>(صرف: ${i.conf})</small></div><input id="actual-${s.id}-${idx}" value="${i.conf}" class="wh-input-compact" type="number" style="border-color:#e67e22"><div class="wh-note-compact" style="font-size:0.8rem; color:#e67e22">الكمية الفعلية المستلمة</div></div>`).join('')}<div class="form-row"><button onclick="app.whConfirmDelivery(${s.id})" class="btn-warning">تأكيد الاستلام الفعلي (طلب فاتورة)</button></div></div>`;
-                }).join('');
-                document.getElementById('list-acc-inv').innerHTML = this.data.sos.filter(s=>s.status==='AccFinal').map(s=>`<div class="card"><div style="display:flex; justify-content:space-between;"><h3>فوترة نهائية: ${s.ref}</h3><button onclick="app.downloadAccExcel(${s.id}, 'inv')" class="btn-ghost small" style="color:green; border-color:green"><i class="fas fa-file-excel"></i> تنزيل Excel</button></div><div class="order-detail-header"><strong>العميل:</strong> ${s.client}</div><div style="background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:10px;">${s.items.map(i=>`<div>${i.name}: ${i.finalQty} * ${i.price} = ${(i.finalQty*i.price).toFixed(2)}</div>`).join('')}</div><div class="form-row"><input id="inv-${s.id}" placeholder="رقم الفاتورة النهائية"><input type="file" id="acc-file-inv-${s.id}"><button onclick="app.accFinalizeInvoice(${s.id})" class="btn-primary">إصدار الفاتورة</button></div></div>`).join('');
-                document.getElementById('list-wh-stamp').innerHTML = this.data.sos.filter(s=>s.status==='WhStamp').map(s=> {
-                    let clientFilesHtml = '';
-                    if(s.clientFiles && s.clientFiles.length) { s.clientFiles.forEach(f => clientFilesHtml += `<a href="${f.data}" download="${f.name}" class="attach-badge"><i class="fas fa-paperclip"></i> ${f.name}</a>`); }
-                    else if(s.clientPoFile) { clientFilesHtml += `<a href="${s.clientPoFile}" download class="attach-badge"><i class="fas fa-paperclip"></i> ملف العميل</a>`; }
-                    return `<div class="card" style="border-right:4px solid red"><h3>إغلاق: ${s.ref}</h3><div class="order-detail-header"><strong>العميل:</strong> ${s.client}<br><strong>فاتورة رقم:</strong> ${s.inv}<div style="margin-top:5px; display:flex; flex-wrap:wrap; gap:5px;">${clientFilesHtml}</div></div>${s.accFile?`<a href="${s.accFile}" download class="btn-download-fancy"><i class="fas fa-file-invoice"></i> تحميل الفاتورة</a>`:''}<div class="form-row"><label>ارفع صورة الفاتورة المختومة من العميل:</label><input type="file" id="wh-stamp-file-${s.id}"><button onclick="app.whFinalizeStamp(${s.id})" class="btn-danger">إغلاق الطلب نهائياً</button></div></div>`;
-                }).join('');
-            },
-
-            updateDashboard: function() {
-                document.getElementById('d-prod-count').innerText = this.data.prods.length;
-                document.getElementById('d-msgs-all').innerText = this.data.secureMsgs.length;
-                const salesDone = this.data.sos.filter(s => s.status === 'Done');
-                document.getElementById('d-sales-val').innerText = salesDone.reduce((acc, so) => acc + so.items.reduce((sum, i) => sum + (i.finalQty * i.price), 0), 0).toLocaleString() + " SAR";
-                document.getElementById('d-sales-done').innerText = salesDone.length;
-                document.getElementById('d-sales-pend').innerText = this.data.sos.filter(s => s.status !== 'Done').length;
-                const purDone = this.data.pos.filter(p => p.smacc);
-                document.getElementById('d-pur-val').innerText = purDone.reduce((acc, po) => acc + (po.costs ? po.costs.after : 0), 0).toLocaleString() + " SAR";
-                document.getElementById('d-pur-count').innerText = purDone.length;
-                
-                const whPend = this.data.sos.filter(s=>['Wh','WhDelivery','WhStamp'].includes(s.status)).length + this.data.pos.filter(p=>!p.logisticsStatus.includes('الاستلام') && p.logisticsStatus !== 'Received').length;
-                document.getElementById('d-pend-wh').innerText = whPend; document.getElementById('badge-wh').style.display = whPend>0?'block':'none';
-                
-                const accPend = this.data.sos.filter(s=>['AccQuot','AccFinal'].includes(s.status)).length + this.data.pos.filter(p=>!p.smacc).length;
-                document.getElementById('d-pend-acc').innerText = accPend; document.getElementById('badge-acc').style.display = accPend>0?'block':'none';
-
-                let soldMap = {}; 
-                salesDone.forEach(so => {
-                    so.items.forEach(i => {
-                        if (!soldMap[i.id]) { soldMap[i.id] = { ...i, totalQty: 0, totalVal: 0 }; }
-                        soldMap[i.id].totalQty += (i.finalQty || 0);
-                        soldMap[i.id].totalVal += ((i.finalQty || 0) * i.price);
-                    });
-                });
-                let soldArray = Object.values(soldMap).sort((a,b) => b.totalVal - a.totalVal);
-
-                const tableBody = document.getElementById('sales-report-body');
-                if (soldArray.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#999;">لا توجد مبيعات مكتملة بعد لعرض التقرير.</td></tr>';
-                } else {
-                    tableBody.innerHTML = soldArray.map(p => `
-                        <tr>
-                            <td><img src="${p.img || 'https://placehold.co/40'}" style="width:40px; height:40px; border-radius:6px; object-fit:cover;"></td>
-                            <td style="font-weight:bold;">${p.name}</td>
-                            <td>${p.code}</td>
-                            <td style="color:var(--primary); font-weight:bold; font-size:1.1rem;">${p.totalQty}</td>
-                            <td style="color:green; font-weight:bold;">${p.totalVal.toLocaleString()} SAR</td>
-                        </tr>
-                    `).join('');
-                }
-            }
-        };
-        window.onload = function() { app.init(); };
-    </script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        
         const firebaseConfig = { apiKey: "AIzaSyBB8kMXBgwoPKnsLylktWSWLeM4mX23sJo", authDomain: "blanche-ksa.firebaseapp.com", databaseURL: "https://blanche-ksa-default-rtdb.europe-west1.firebasedatabase.app", projectId: "blanche-ksa", storageBucket: "blanche-ksa.firebasestorage.app", messagingSenderId: "914541537325", appId: "1:914541537325:web:0cfed5799623b14033b0a4", measurementId: "G-M9T5VSCH0P" };
-        const fApp = initializeApp(firebaseConfig); const db = getDatabase(fApp);
-        function loadFromFirebase() {
-            onValue(ref(db, 'erp_data_final'), (snapshot) => {
-                const cloudData = snapshot.val();
-                if (cloudData) { app.checkNotifications(cloudData); app.data = cloudData; } 
-                else { app.data = { prods:[], pos:[], sos:[], tasks:[], logs:[], secureMsgs:[], passwords:{ admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' } }; }
-                if(!app.data.passwords) app.data.passwords = { admin:'1234',sales:'1234',purchases:'1234',warehouse:'1234',logistics:'1234',accounting:'1234' };
-                if(!app.data.logs) app.data.logs = [];
-                if(!app.data.secureMsgs) app.data.secureMsgs = [];
-                
-                // RE-APPLY FIX FOR CLOUD DATA (CRITICAL)
-                if(app.data.prods && app.data.prods.length > 0) {
-                     app.data.prods.forEach(p => { if (p.code) p.code = String(p.code).trim(); });
+        const app = initializeApp(firebaseConfig); const db = getDatabase(app);
+
+        const STEPS = [
+            { title: 'عرض مبدئي', role: 'acc', icon: 'fa-file-invoice-dollar', desc: 'إنشاء ورفع عرض السعر المبدئي.' },
+            { title: 'فحص الكميات', role: 'whs', icon: 'fa-box-open', desc: 'مراجعة الكميات واعتمادها.' },
+            { title: 'عرض نهائي', role: 'acc', icon: 'fa-calculator', desc: 'إصدار العرض النهائي.' },
+            { title: 'تسليم عميل', role: 'whs', icon: 'fa-truck-fast', desc: 'تسليم البضاعة ورفع السند.' },
+            { title: 'فاتورة نهائية', role: 'acc', icon: 'fa-receipt', desc: 'إصدار الفاتورة الضريبية.' },
+            { title: 'ختم وإغلاق', role: 'whs', icon: 'fa-stamp', desc: 'ختم الفاتورة وإغلاق الطلب.' }
+        ];
+
+        window.sys = {
+            orders: [],
+            roles: { sales: 'المبيعات', acc: 'المحاسبة', whs: 'المستودع' },
+            filter: 'active',
+            actId: null,
+            whsNoChange: false,
+            currentSheetList: [],
+
+            init: function() {
+                const saved = localStorage.getItem('erp_roles_v3');
+                if(saved) this.roles = JSON.parse(saved);
+                this.updateMenuUI();
+            },
+            search: function() { this.render(); },
+
+            formatDateArabic: function(dateStr) {
+                if(!dateStr) return 'غير محدد';
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', year: 'numeric' });
+            },
+
+            getRemainingTime: function(dateStr) {
+                if(!dateStr) return '';
+                const today = new Date(); today.setHours(0,0,0,0);
+                const target = new Date(dateStr); target.setHours(0,0,0,0);
+                const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+
+                if(diffDays < 0) return `<span class="countdown-badge count-late">⚠️ متأخر ${Math.abs(diffDays)} يوم</span>`;
+                if(diffDays === 0) return `<span class="countdown-badge count-late">🚨 اليوم!</span>`;
+                if(diffDays === 1) return `<span class="countdown-badge count-late">⚡ غداً</span>`;
+                return `<span class="countdown-badge count-normal">⏳ باقي ${diffDays} يوم</span>`;
+            },
+
+            // --- Excel Export Only ---
+            openSpreadsheet: function() {
+                const sheet = document.getElementById('spreadsheet-view');
+                document.getElementById('sheet-search-inp').value = ''; 
+                this.renderSheetRows(); 
+                sheet.style.display = 'flex';
+            },
+            closeSpreadsheet: function() { document.getElementById('spreadsheet-view').style.display = 'none'; },
+            
+            filterSheet: function() {
+                const term = document.getElementById('sheet-search-inp').value.toLowerCase();
+                this.renderSheetRows(term);
+            },
+
+            renderSheetRows: function(term = '') {
+                const tbody = document.getElementById('sheet-rows');
+                tbody.innerHTML = '';
+                let list = [...this.orders].sort((a,b) => b.ts - a.ts);
+                if(term) list = list.filter(o => o.client.toLowerCase().includes(term) || o.ref.toLowerCase().includes(term));
+                this.currentSheetList = list;
+
+                if(list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; font-weight:bold; color:#ccc">لا توجد نتائج 🌵</td></tr>';
+                    return;
                 }
 
-                if(app.currentRole) app.renderAll(); 
-            });
-        }
-        app.save = function() { try { if(!this.data) return; set(ref(db, 'erp_data_final'), this.data); } catch(e) { console.error(e); } };
-        loadFromFirebase();
+                list.forEach((o, idx) => {
+                    const isDone = o.status >= 6;
+                    const statusTxt = isDone ? 'مكتمل ✅' : STEPS[o.status].title;
+                    const roleTxt = isDone ? '-' : this.roles[STEPS[o.status].role];
+                    const archivedDate = o.archivedAt ? new Date(o.archivedAt).toLocaleDateString('ar-EG') : '-';
+                    
+                    const tr = `
+                    <tr>
+                        <td style="color:#888">${idx + 1}</td>
+                        <td style="color:#4c1d95; font-weight:800">${o.client}</td>
+                        <td><span style="background:#f3e8ff; color:#7e22ce; padding:3px 8px; border-radius:6px; font-size:0.85rem; font-weight:700">${o.ref}</span></td>
+                        <td>${o.loc}</td>
+                        <td>${this.formatDateArabic(o.delDate)}</td>
+                        <td>${archivedDate}</td>
+                        <td><span style="font-weight:700; color:${isDone?'#059669':'#d97706'}">${statusTxt}</span></td>
+                        <td>${roleTxt}</td>
+                    </tr>`;
+                    tbody.insertAdjacentHTML('beforeend', tr);
+                });
+            },
+
+            exportExcel: function() {
+                if(this.currentSheetList.length === 0) return alert("لا يوجد بيانات!");
+                const data = this.currentSheetList.map((o, i) => ({
+                    "م": i+1, "العميل": o.client, "PO": o.ref, "الموقع": o.loc, 
+                    "تاريخ التسليم": this.formatDateArabic(o.delDate),
+                    "تاريخ الأرشفة": o.archivedAt ? new Date(o.archivedAt).toLocaleDateString('ar-EG') : 'جاري العمل',
+                    "الحالة": o.status >= 6 ? 'مكتمل' : STEPS[o.status].title,
+                    "المسؤول": o.status >= 6 ? 'تم' : this.roles[STEPS[o.status].role]
+                }));
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "الطلبات");
+                XLSX.writeFile(wb, "Fun_Report.xlsx");
+            },
+
+            // --- Main Render ---
+            render: function() {
+                const listEl = document.getElementById('orders-list');
+                const term = document.getElementById('search-inp').value.toLowerCase();
+                listEl.innerHTML = '';
+
+                let list = this.orders.sort((a,b) => b.ts - a.ts);
+                if(term) list = list.filter(o => o.client.toLowerCase().includes(term) || o.ref.toLowerCase().includes(term));
+                if(this.filter === 'active') list = list.filter(o => o.status < 6);
+                if(this.filter === 'done') list = list.filter(o => o.status >= 6);
+
+                if(list.length === 0) {
+                    listEl.innerHTML = `<div style="text-align:center; padding:60px; color:#9ca3af;"><i class="fas fa-ghost fa-3x" style="margin-bottom:15px; display:block; color:#e5e7eb"></i><p>لا يوجد شيء هنا!</p></div>`;
+                    return;
+                }
+
+                list.forEach(o => {
+                    const isDone = o.status >= 6;
+                    let timelineHTML = '';
+                    
+                    // Logic for Action Holder / Archive Date
+                    let roleDisplay = '';
+                    if(isDone) {
+                        const archDate = o.archivedAt ? new Date(o.archivedAt).toLocaleDateString('ar-EG') : 'غير مسجل';
+                        roleDisplay = `<div class="archive-badge"><i class="fas fa-calendar-check"></i> أرشفة: ${archDate}</div>`;
+                    } else {
+                        const currentRoleName = this.roles[STEPS[o.status].role];
+                        roleDisplay = `<div class="role-badge"><i class="fas fa-user-clock"></i> مطلوب: ${currentRoleName}</div>`;
+                    }
+
+                    STEPS.forEach((s, i) => {
+                        let cls = '';
+                        if(i < o.status) cls = 'completed';
+                        else if(i === o.status && !isDone) cls = 'current';
+                        
+                        let fileHTML = '';
+                        if(o.files && o.files[i]) {
+                             const filesArr = Array.isArray(o.files[i]) ? o.files[i] : [o.files[i]];
+                             filesArr.forEach((f, fx) => {
+                                 fileHTML += `<div class="file-link" onclick="sys.dl(${o.id},${i},${fx})"><i class="fas fa-paperclip"></i> ${f.name.substring(0,8)}..</div>`;
+                             });
+                        }
+
+                        timelineHTML += `
+                        <div class="h-step ${cls}">
+                            <div class="icon-circle"><i class="fas ${s.icon}"></i></div>
+                            <div class="h-title">${s.title}</div>
+                            <div class="h-role">${this.roles[s.role]}</div>
+                            ${fileHTML}
+                        </div>`;
+                    });
+
+                    // PO Files
+                    let poFilesHTML = '';
+                    if(o.poFiles) {
+                         const pf = Array.isArray(o.poFiles) ? o.poFiles : [o.poFiles];
+                         poFilesHTML = `<div style="display:flex; flex-direction:column; align-items:center; gap:3px;">`;
+                         pf.forEach((f, fx) => {
+                             poFilesHTML += `<div class="file-link" style="background:#fce7f3; color:#be185d" onclick="sys.dlPO(${o.id},${fx})"><i class="fas fa-file-contract"></i> PO</div>`;
+                         });
+                         poFilesHTML += `</div>`;
+                    }
+
+                    let actionBtn = '';
+                    if(!isDone) {
+                        actionBtn = `<button class="btn-action-do" onclick="sys.openAct(${o.id})">🚀 تنفيذ: ${STEPS[o.status].title}</button>`;
+                    }
+
+                    const html = `
+                    <div class="order-row ${isDone?'done-row':''} ${this.filter==='done'?'expanded':''}" id="row-${o.id}">
+                        <div class="row-header" onclick="sys.toggleRow(${o.id})">
+                            
+                            <div class="cell-main">
+                                <span class="client-txt">${o.client}</span>
+                                <span class="ref-txt">${o.ref}</span>
+                            </div>
+                            
+                            <div style="display:flex; flex-direction:column; gap:5px;">
+                                <div class="info-badge"><i class="fas fa-map-pin"></i> ${o.loc}</div>
+                                <div class="info-badge"><i class="fas fa-clock"></i> تسليم: ${this.formatDateArabic(o.delDate)}</div>
+                            </div>
+
+                            <div style="text-align:center">
+                                ${isDone ? '' : this.getRemainingTime(o.delDate)} </div>
+                            
+                            <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:5px;">
+                                <span class="status-badge ${isDone?'badge-done':'badge-active'}">
+                                    ${isDone ? '<i class="fas fa-check"></i> مكتمل' : STEPS[o.status].title}
+                                </span>
+                                ${roleDisplay}
+                            </div>
+                            
+                            <div style="text-align:center; color:#ccc"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="row-details"><div class="details-content">
+                            <div class="h-timeline">
+                                <div class="h-step completed">
+                                    <div class="icon-circle" style="background:#be185d; border-color:#be185d; color:white"><i class="fas fa-file-invoice"></i></div>
+                                    <div class="h-title">أمر الشراء</div>
+                                    <div class="h-role">${this.roles.sales}</div>
+                                    ${poFilesHTML}
+                                </div>
+                                ${timelineHTML}
+                            </div>
+                            <div class="action-bar">
+                                <button onclick="sys.deleteOrder(${o.id})" style="background:#fee2e2; color:#b91c1c; border:none; padding:10px 20px; border-radius:15px; font-weight:bold; cursor:pointer; margin-right:auto">🗑️ حذف</button>
+                                ${actionBtn}
+                            </div>
+                        </div></div>
+                    </div>`;
+                    listEl.insertAdjacentHTML('beforeend', html);
+                });
+            },
+
+            // --- Logic Functions ---
+            toggleRow: function(id) {
+                const r = document.getElementById(`row-${id}`);
+                const open = r.classList.contains('expanded');
+                document.querySelectorAll('.order-row').forEach(x => x.classList.remove('expanded'));
+                if(!open) r.classList.add('expanded');
+            },
+            
+            openNew: function() {
+                document.getElementById('modal-order').style.display='flex';
+                document.getElementById('modal-title').innerText="✨ طلب جديد";
+                ['o-client','o-ref','o-loc','o-date'].forEach(k => document.getElementById(k).value='');
+                document.getElementById('o-file').value='';
+                document.getElementById('o-id').value='';
+            },
+            
+            saveOrder: async function() {
+                const id = document.getElementById('o-id').value;
+                const d = {
+                    client: document.getElementById('o-client').value,
+                    ref: document.getElementById('o-ref').value,
+                    loc: document.getElementById('o-loc').value,
+                    delDate: document.getElementById('o-date').value
+                };
+                if(!d.client) return alert("⚠️ البيانات ناقصة!");
+
+                if(id) { /* Edit logic if needed */ } 
+                else {
+                    const files = document.getElementById('o-file').files;
+                    if(files.length===0) return alert("⚠️ فين ملف الـ PO؟");
+                    
+                    const pFiles = [];
+                    for(let i=0; i<files.length; i++) {
+                        pFiles.push({ name: files[i].name, data: await this.toBase64(files[i]) });
+                    }
+                    
+                    const newId = Date.now();
+                    const obj = { ...d, id: newId, ts: newId, status: 0, poFiles: pFiles, files: [] };
+                    set(ref(db, 'erp_pro/orders/'+newId), obj).then(()=>sys.closeModal('modal-order'));
+                }
+            },
+            
+            openAct: function(id) {
+                this.actId = id;
+                const o = this.orders.find(x=>x.id===id);
+                document.getElementById('modal-act').style.display='flex';
+                document.getElementById('act-title').innerText = STEPS[o.status].title;
+                document.getElementById('act-role').innerText = "المسؤول: " + this.roles[STEPS[o.status].role];
+                document.getElementById('act-desc').innerText = STEPS[o.status].desc;
+                document.getElementById('act-file').value='';
+                
+                if(o.status === 1) {
+                    document.getElementById('whs-controls').style.display='block';
+                    document.getElementById('act-upload-area').style.display='none';
+                    this.toggleWhsOpt(true);
+                } else {
+                    document.getElementById('whs-controls').style.display='none';
+                    document.getElementById('act-upload-area').style.display='block';
+                    this.whsNoChange = false;
+                }
+            },
+
+            toggleWhsOpt: function(val) {
+                this.whsNoChange = val;
+                const setStyle = (id, active) => {
+                    const el = document.getElementById(id);
+                    el.style.background = active ? '#d1fae5' : '#fff';
+                    el.style.borderColor = active ? '#10b981' : '#eee';
+                    el.querySelector('.chk').style.background = active ? '#10b981' : 'transparent';
+                };
+                setStyle('opt-no-change', val);
+                setStyle('opt-change', !val);
+                document.getElementById('act-upload-area').style.display = val ? 'none' : 'block';
+            },
+
+            submitAct: async function() {
+                const o = this.orders.find(x=>x.id===this.actId);
+                let nextSt = o.status + 1;
+                let nFiles = [...(o.files||[])];
+
+                if(this.whsNoChange && o.status === 1) {
+                    const base = o.files[0];
+                    nFiles[1] = base.map(f=>({...f, name: "(تم الفحص) "+f.name}));
+                    nFiles[2] = base.map(f=>({...f, name: "(نهائي تلقائي) "+f.name}));
+                    nextSt = 3; 
+                } else {
+                    const fls = document.getElementById('act-file').files;
+                    if(fls.length===0) return alert("⚠️ لازم ترفع الملفات!");
+                    const arr = [];
+                    for(let i=0; i<fls.length; i++) arr.push({name:fls[i].name, data:await this.toBase64(fls[i])});
+                    nFiles[o.status] = arr;
+                }
+                
+                // --- ARCHIVE LOGIC ---
+                let updateData = { status: nextSt, files: nFiles };
+                if(nextSt >= 6) { // Completed
+                    updateData.archivedAt = Date.now();
+                }
+
+                update(ref(db, 'erp_pro/orders/'+o.id), updateData)
+                .then(()=>sys.closeModal('modal-act'));
+            },
+
+            deleteOrder: function(id) {
+                const p = prompt("🔑 الرقم السري للحذف:");
+                if(p==="20002000") {
+                    if(confirm("متأكد؟ هيمسح كل حاجة!")) remove(ref(db, 'erp_pro/orders/'+id));
+                } else if(p) alert("❌ غلط!");
+            },
+
+            // Utils
+            closeModal: function(id) { document.getElementById(id).style.display='none'; },
+            toBase64: f=>new Promise(r=>{const d=new FileReader();d.readAsDataURL(f);d.onload=()=>r(d.result)}),
+            dl: function(id,s,f) { 
+                const o = this.orders.find(x=>x.id===id);
+                const fs = Array.isArray(o.files[s]) ? o.files[s] : [o.files[s]];
+                this.down(fs[f]); 
+            },
+            dlPO: function(id,f) {
+                const o = this.orders.find(x=>x.id===id);
+                const fs = Array.isArray(o.poFiles) ? o.poFiles : [o.poFiles];
+                this.down(fs[f]);
+            },
+            down: function(f) { const a=document.createElement('a'); a.href=f.data; a.download=f.name; a.click(); },
+            
+            openSettings: function() { 
+                document.getElementById('modal-settings').style.display='flex'; 
+                document.getElementById('s-sales').value=this.roles.sales;
+                document.getElementById('s-acc').value=this.roles.acc; 
+                document.getElementById('s-whs').value=this.roles.whs; 
+            },
+            saveSettings: function() { 
+                this.roles={sales:document.getElementById('s-sales').value, acc:document.getElementById('s-acc').value, whs:document.getElementById('s-whs').value}; 
+                localStorage.setItem('erp_roles_v3',JSON.stringify(this.roles)); 
+                this.closeModal('modal-settings'); this.render(); 
+            },
+            setFilter: function(f) { this.filter=f; this.updateMenuUI(); this.render(); },
+            updateMenuUI: function() {
+                document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+                document.getElementById(this.filter==='active'?'btn-active':'btn-done').classList.add('active');
+            }
+        };
+
+        sys.init();
+        onValue(ref(db, 'erp_pro/orders'), snap => { sys.orders = snap.val() ? Object.values(snap.val()) : []; sys.render(); });
     </script>
 </body>
 </html>
