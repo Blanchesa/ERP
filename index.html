@@ -4,37 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1280, user-scalable=yes">
     <title>Beauty Co. System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
         :root {
             --primary-color: #ec4899;
             --primary-dark: #be185d;
-            --primary-light: #fce7f3;
-            --accent-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
             --pink-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
             --bg-color: #fff1f2;
-            --card-bg: #ffffff;
-            --text-main: #374151;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --shadow-soft: 0 4px 20px rgba(236, 72, 153, 0.15);
-            --shadow-hover: 0 10px 25px rgba(236, 72, 153, 0.25);
-            --border-light: #f3f4f6;
+            --text-main: #1f2937;
         }
 
+        /* --- Typography Updates (Bold & Clear) --- */
         body {
             font-family: 'Poppins', 'Cairo', sans-serif;
+            font-weight: 600; /* جعل الخط سميك بشكل عام */
             background-color: var(--bg-color);
             background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, hsla(253,16%,7%,0) 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,0) 0, hsla(225,39%,30%,0) 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,0) 0, hsla(339,49%,30%,0) 50%);
             min-height: 100vh;
             margin: 0;
             padding: 20px;
             color: var(--text-main);
-            min-width: 1200px; /* ضمان عرض الديسكتوب */
+            min-width: 1200px;
+        }
+
+        h1, h2, h3, h4, h5, h6 { font-weight: 800; letter-spacing: -0.5px; }
+        
+        /* --- Remove Number Input Arrows (Spinners) --- */
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        /* Firefox */
+        input[type=number] {
+          -moz-appearance: textfield;
         }
 
         /* --- Header --- */
@@ -43,32 +50,28 @@
             backdrop-filter: blur(10px);
             border-radius: 25px;
             padding: 20px 40px;
-            box-shadow: var(--shadow-soft);
+            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.15);
             border: 1px solid white;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 20px;
         }
 
         .brand-section h1 {
             margin: 0;
-            font-weight: 800;
             background: var(--pink-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 32px;
-            letter-spacing: -1px;
         }
 
         .stat-pill {
-            background: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 700;
+            background: white; padding: 10px 20px; border-radius: 50px; font-size: 15px; font-weight: 700;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 10px;
             color: var(--text-main); border: 1px solid #fce7f3; transition: 0.3s;
         }
-        .stat-pill:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+        .stat-pill:hover { transform: translateY(-2px); }
 
         /* --- Controls --- */
         .controls-area { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
@@ -77,7 +80,7 @@
         .search-wrapper input {
             width: 100%; padding: 15px 50px 15px 20px; border-radius: 15px;
             border: 2px solid white; background: white;
-            box-shadow: var(--shadow-soft); font-family: inherit; font-size: 15px; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); font-family: inherit; font-size: 15px; font-weight: 600;
         }
         .search-wrapper input:focus { outline: none; border-color: var(--primary-color); }
         .search-wrapper i { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #ec4899; }
@@ -90,10 +93,11 @@
         }
         .btn:hover { transform: translateY(-3px); filter: brightness(1.05); }
 
-        .btn-gradient { background: var(--pink-gradient); color: white; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4); }
+        .btn-gradient { background: var(--pink-gradient); color: white; }
         .btn-excel { background: #10b981; color: white; }
         .btn-warning { background: #f59e0b; color: white; }
         .btn-danger { background: #ef4444; color: white; }
+        .btn-purple { background: #8b5cf6; color: white; }
 
         /* --- Cards --- */
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
@@ -103,24 +107,24 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid white; transition: 0.3s; cursor: pointer;
             position: relative; overflow: hidden;
         }
-        .order-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); border-color: #fce7f3; }
+        .order-card:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(236, 72, 153, 0.25); border-color: #fce7f3; }
 
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         
         .po-badge {
             background: #fdf2f8; color: #db2777; padding: 6px 12px;
-            border-radius: 8px; font-size: 13px; font-weight: 700; border: 1px solid #fbcfe8; font-family: 'Poppins', sans-serif;
+            border-radius: 8px; font-size: 14px; font-weight: 800; border: 1px solid #fbcfe8;
         }
 
         .client-name { font-size: 20px; font-weight: 800; margin: 10px 0 5px 0; color: #1f2937; }
-        .location-text { color: #6b7280; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+        .location-text { color: #6b7280; font-size: 13px; display: flex; align-items: center; gap: 6px; font-weight: 600; }
 
         .progress-container { margin-top: 20px; background: #f3f4f6; height: 8px; border-radius: 10px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--pink-gradient); border-radius: 10px; transition: width 1s ease; }
         
         .card-stats { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f3f4f6; }
-        .stat-box label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-box val { font-weight: 700; font-size: 15px; color: #374151; font-family: 'Poppins', sans-serif; }
+        .stat-box label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+        .stat-box val { font-weight: 800; font-size: 16px; color: #374151; }
 
         /* --- Modals --- */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); z-index: 1000; overflow-y: auto; }
@@ -131,52 +135,112 @@
         .modal-header { padding: 25px 35px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; background: #fffbff; border-radius: 25px 25px 0 0; }
         .modal-body { padding: 35px; }
 
-        /* Table Styling */
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { background: #fdf2f8; padding: 15px; text-align: center; color: #db2777; font-weight: 700; border-bottom: 2px solid #fbcfe8; }
-        td { padding: 12px; text-align: center; vertical-align: middle; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #f9fafb; }
-        tr:hover td { background-color: #fff1f2; }
-
-        /* Inputs */
-        .input-group label { font-size: 13px; font-weight: 700; color: #4b5563; display: block; margin-bottom: 8px; }
-        .input-group input, .input-group select {
-            width: 95%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-family: 'Poppins', 'Cairo', sans-serif; transition: 0.3s;
+        /* --- Google Sheets Style Table (Refined) --- */
+        .sheet-table-container {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .input-group input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1); }
 
-        .item-avail { width: 70px; text-align: center; padding: 8px; border: 2px solid #3b82f6 !important; border-radius: 8px; background: white; font-weight: 700; color: #1e40af; font-size: 15px; }
-        .item-notes { width: 90%; padding: 8px; border: 1px solid #cbd5e0 !important; border-radius: 6px; background: #f8fafc; transition: 0.2s; }
-        .item-notes:focus { background: white; border-color: var(--primary-color) !important; }
+        .sheet-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 14px; 
+            font-family: 'Poppins', 'Cairo', sans-serif;
+        }
 
-        /* Paste Box */
-        .paste-grid { display: grid; grid-template-columns: 1fr 2fr 0.5fr 0.5fr; gap: 10px; }
-        textarea.paste-box { width: 100%; height: 120px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 10px; font-family: monospace; font-size: 12px; }
+        .sheet-table thead th {
+            background: #e2e8f0;
+            color: #1e293b;
+            font-weight: 800;
+            text-align: center;
+            padding: 15px;
+            border-bottom: 2px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .sheet-table tbody td {
+            padding: 0;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            height: 45px; /* Taller rows for better touch targets */
+            position: relative;
+        }
+
+        /* Zebra Striping (Color & Color) */
+        .sheet-table tbody tr:nth-child(odd) { background-color: #ffffff; }
+        .sheet-table tbody tr:nth-child(even) { background-color: #f1f5f9; } /* Light gray */
+        .sheet-table tbody tr:hover { background-color: #e0f2fe; }
+
+        /* Highlight Shortage in Table (Yellow) */
+        .sheet-table tbody tr.row-changed { background-color: #fef9c3 !important; } /* Light Yellow */
+
+        /* Inputs inside table */
+        .cell-input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            padding: 0 10px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+            outline: none;
+            box-sizing: border-box; /* Important for border calculation */
+        }
+
+        /* Focus Ring constrained strictly inside the cell */
+        .cell-input:focus {
+            box-shadow: inset 0 0 0 3px #3b82f6; /* Inset blue border */
+            background: #fff;
+        }
+        
+        .cell-read-only { padding: 10px; display: block; color: #475569; font-weight: 600; }
+        .cell-code { font-family: 'Poppins', monospace; font-weight: 800; color: #334155; letter-spacing: 0.5px; }
+        .cell-qty { font-weight: 800; font-size: 16px; color: #1e40af; } /* Blue for numbers */
+        .cell-notes { color: #b91c1c; text-align: right; }
+        
+        .txt-left { text-align: left; }
+        .txt-right { text-align: right; }
+
+        /* Inputs Groups */
+        .input-group label { font-size: 13px; font-weight: 800; color: #4b5563; display: block; margin-bottom: 8px; }
+        .input-group input, .input-group select {
+            width: 95%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-family: inherit; font-weight: 600; transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--primary-color); outline: none; }
 
         /* Animations */
         @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        /* Badge Colors */
-        .badge-status { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+        /* Badges */
+        .badge-status { padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; }
         .st-late { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
         .st-today { background: #fffbeb; color: #f59e0b; border: 1px solid #fde68a; }
         .st-ok { background: #ecfdf5; color: #10b981; border: 1px solid #a7f3d0; }
 
-        /* Files Section Styling */
-        .file-box { background: #fff; border-radius: 15px; padding: 15px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .file-box h4 { margin: 0; color: #db2777; font-size: 14px; font-weight: 700; border-bottom: 1px solid #fce7f3; padding-bottom: 8px; }
+        /* Files Section */
+        .file-box { background: #fff; border-radius: 15px; padding: 15px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 10px; }
+        .file-box h4 { margin: 0; color: #db2777; font-size: 14px; font-weight: 800; border-bottom: 1px solid #fce7f3; padding-bottom: 8px; }
         .file-item {
             display: flex; justify-content: space-between; align-items: center;
             background: #f8fafc; padding: 8px 12px; border-radius: 8px;
-            border: 1px solid #e2e8f0; font-size: 12px; margin-bottom: 5px;
+            border: 1px solid #e2e8f0; font-size: 13px; margin-bottom: 5px; font-weight: 600;
         }
-        .file-link {
-            text-decoration: none; color: #0284c7; font-weight: 600;
-            display: flex; align-items: center; gap: 8px; overflow: hidden;
-            flex-grow: 1;
-        }
-        .file-link:hover { color: #0369a1; text-decoration: underline; }
+        .file-link { text-decoration: none; color: #0284c7; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-grow: 1; }
         .file-del { color: #ef4444; cursor: pointer; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .file-del:hover { background: #fee2e2; }
+
+        /* Products Management */
+        .prod-list { max-height: 400px; overflow-y: auto; margin-top: 15px; border: 1px solid #e5e7eb; border-radius: 10px; }
+        .prod-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f3f4f6; align-items: center; font-weight: 600; }
+        .prod-code { font-family: monospace; background: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-weight: 800; color: #374151; }
 
         /* Loading */
         #loadingOverlay {
@@ -186,22 +250,32 @@
         .heart-beat { font-size: 50px; color: var(--primary-color); animation: beat 1s infinite; }
         @keyframes beat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed #8b5cf6; background: #f5f3ff; border-radius: 12px;
+            padding: 20px; text-align: center; margin-bottom: 20px; cursor: pointer; transition: 0.3s;
+        }
+        .upload-zone:hover { background: #ede9fe; transform: scale(1.02); }
+
+        /* Special New Entry Table */
+        .sheet-table tr.unknown-row td { background-color: #fee2e2 !important; }
+
     </style>
 </head>
 <body>
 
     <div id="loadingOverlay">
         <i class="fas fa-heart heart-beat"></i>
-        <div style="margin-top:15px; font-weight: bold; color: #db2777;">جاري تحميل النظام...</div>
+        <div style="margin-top:15px; font-weight: 800; color: #db2777;">جاري تحميل النظام...</div>
     </div>
 
     <header class="glass-header">
         <div class="brand-section">
             <h1><i class="fas fa-spa"></i> Lolo Logistics </h1>
-            <small style="color: #6b7280; font-size: 14px;">نظام إدارة الطلبات المتكامل</small>
+            <small style="color: #6b7280; font-size: 14px; font-weight: 600;">نظام إدارة الطلبات المتكامل</small>
         </div>
         <div class="stats-bar" style="display:flex; gap:15px">
-            <div class="stat-pill"><i class="fas fa-box" style="color:#3b82f6"></i> <span id="statTotal">0</span> الكلي</div>
+            <div class="stat-pill"><i class="fas fa-box" style="color:#3b82f6"></i> <span id="statTotal">0</span> اجمالى الطلبات</div>
             <div class="stat-pill"><i class="fas fa-clock" style="color:#f59e0b"></i> <span id="statPending">0</span> قيد العمل</div>
             <div class="stat-pill"><i class="fas fa-check-circle" style="color:#10b981"></i> <span id="statDone">0</span> مكتمل</div>
         </div>
@@ -213,6 +287,7 @@
             <input type="text" id="searchInput" placeholder="بحث باسم العميل، رقم PO..." onkeyup="renderList()">
         </div>
         <div class="action-buttons" style="display:flex; gap:10px;">
+            <button class="btn btn-purple" onclick="openProductsModal()"><i class="fas fa-tags"></i> إدارة المنتجات</button>
             <button class="btn btn-warning" onclick="exportShortagesToExcel()"><i class="fas fa-exclamation-triangle"></i> تقرير النواقص</button>
             <button class="btn btn-excel" onclick="exportMainListToExcel()"><i class="fas fa-file-excel"></i> تقرير الطلبات</button>
             <button class="btn btn-gradient" onclick="openCreateModal()"><i class="fas fa-plus"></i> طلب جديد</button>
@@ -220,6 +295,39 @@
     </div>
 
     <div class="cards-grid" id="ordersList"></div>
+
+    <div id="productsModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 style="margin:0; color:#374151"><i class="fas fa-tags" style="color:#8b5cf6"></i> قاعدة بيانات المنتجات</h3>
+                <div onclick="closeModal('productsModal')" style="cursor:pointer; font-size:24px;">×</div>
+            </div>
+            <div class="modal-body">
+                
+                <div class="upload-zone" onclick="document.getElementById('excelProdInput').click()">
+                    <i class="fas fa-file-excel" style="font-size:30px; color:#8b5cf6; margin-bottom:10px;"></i>
+                    <div style="font-weight:bold; color:#5b21b6">استيراد منتجات بالجملة (Excel)</div>
+                    <div style="font-size:12px; color:#6b7280; margin-top:5px;">يجب أن يكون العمود الأول هو الباركود والعمود الثاني هو الاسم</div>
+                    <input type="file" id="excelProdInput" accept=".xlsx, .xls, .csv" style="display:none" onchange="importProductsFromExcel(this)">
+                </div>
+
+                <div style="background: #f9fafb; padding: 20px; border-radius: 15px; border: 1px solid #e5e7eb; margin-bottom: 20px;">
+                    <h4 style="margin:0 0 10px 0;">إضافة يدوية (فردي)</h4>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="prodCodeInput" placeholder="الباركود (Code)" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:8px;">
+                        <input type="text" id="prodNameInput" placeholder="اسم المنتج (Item Name)" style="flex:2; padding:10px; border:1px solid #ccc; border-radius:8px;">
+                        <button class="btn btn-purple" onclick="saveSingleProduct()">حفظ</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:10px;">
+                    <input type="text" id="searchProductInput" placeholder="🔍 بحث في قاعدة المنتجات..." onkeyup="renderProductsList()" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+                </div>
+
+                <div class="prod-list" id="productsListContainer"></div>
+            </div>
+        </div>
+    </div>
 
     <div id="createModal" class="modal">
         <div class="modal-content">
@@ -240,12 +348,33 @@
                     <input type="file" id="newPOFiles" multiple>
                 </div>
 
-                <h4 style="margin-bottom:15px; color:#4b5563">📋 نسخ محتويات الطلب (Copy columns from Excel)</h4>
-                <div class="paste-grid">
-                    <textarea id="pasteBarcode" class="paste-box" placeholder="الباركود (Barcode)"></textarea>
-                    <textarea id="pasteName" class="paste-box" placeholder="اسم المنتج (Item Name)"></textarea>
-                    <textarea id="pasteQty" class="paste-box" placeholder="الكمية (Qty)"></textarea>
-                    <textarea id="pastePrice" class="paste-box" placeholder="السعر (Price)"></textarea>
+                <div style="border: 1px solid #e5e7eb; border-radius: 15px; padding: 20px; background: #fff;">
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="margin:0 0 10px 0; color: #374151;"><i class="fas fa-table"></i> محتوى الطلب (المنتجات)</h4>
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <textarea id="bulkBarcodes" placeholder="1. انسخ عمود الباركودات من الإكسل وضعه هنا لإنشاء الجدول..." 
+                                style="width: 100%; height: 60px; padding: 10px; border: 2px solid #8b5cf6; border-radius: 10px; font-family: monospace;"
+                                oninput="generateRowsFromPaste()"></textarea>
+                        </div>
+                    </div>
+
+                    <div style="max-height: 400px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 10px;" class="sheet-table-container">
+                        <table class="sheet-table">
+                            <thead>
+                                <tr>
+                                    <th width="20%">الباركود (Barcode)</th>
+                                    <th width="40%">اسم المنتج (Item Name)</th>
+                                    <th width="15%">الكمية (Qty)</th>
+                                    <th width="15%">السعر (Price)</th>
+                                    <th width="10%">حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody id="entryTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 5px; color:#ec4899; font-size: 12px; font-weight: bold;">
+                        * ملاحظة: يمكنك نسخ عمود الكميات أو الأسعار من الإكسل ولصقه في أول خانة في الجدول.
+                    </div>
                 </div>
 
                 <div style="text-align: center; margin-top: 30px;">
@@ -265,7 +394,7 @@
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <div id="headerDateContainer" style="display:none; align-items:center; gap:5px; background:#f3f4f6; padding:8px 15px; border-radius:12px;">
                         <i class="fas fa-calendar-alt" style="color:#db2777;"></i>
-                        <input type="date" id="editableDeliveryDate" onchange="updateDateInstant()" style="border:none; background:transparent; font-family:'Poppins';">
+                        <input type="date" id="editableDeliveryDate" onchange="updateDateInstant()" style="border:none; background:transparent; font-family:'Poppins'; font-weight: 700;">
                     </div>
                     <button class="btn btn-danger btn-sm" onclick="deleteCurrentOrder()"><i class="fas fa-trash"></i></button>
                     <div onclick="closeModal('detailsModal')" style="cursor:pointer; font-size:28px; margin-right:15px; color:#9ca3af">×</div>
@@ -281,8 +410,8 @@
                     </button>
                 </div>
 
-                <div id="tableContainer" style="max-height: 500px; overflow-y: auto; border-radius: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
-                    <table style="width:100%">
+                <div id="tableContainer" class="sheet-table-container" style="max-height: 500px; overflow-y: auto;">
+                    <table class="sheet-table">
                         <thead style="position: sticky; top: 0; z-index: 10;">
                             <tr>
                                 <th>Code</th>
@@ -327,18 +456,36 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const DB_PATH = 'beauty_oms/orders'; 
+        const PROD_PATH = 'beauty_oms/products';
 
         let orders = [];
+        let globalProducts = {}; 
         let currentId = null;
 
-        document.addEventListener('keydown', (e) => { if(e.key==="Escape"){ closeModal('createModal'); closeModal('detailsModal'); }});
+        document.addEventListener('keydown', (e) => { 
+            if(e.key==="Escape"){ 
+                closeModal('createModal'); 
+                closeModal('detailsModal'); 
+                closeModal('productsModal');
+            }
+        });
 
+        // Load Orders
         onValue(ref(db, DB_PATH), (snapshot) => {
             const data = snapshot.val();
             orders = data ? Object.values(data) : [];
             document.getElementById('loadingOverlay').style.display = 'none';
             updateStats();
             window.renderList();
+        });
+
+        // Load Products
+        onValue(ref(db, PROD_PATH), (snapshot) => {
+            const data = snapshot.val();
+            globalProducts = data || {};
+            if(document.getElementById('productsModal').style.display === 'block') {
+                window.renderProductsList();
+            }
         });
 
         function updateStats() {
@@ -350,6 +497,126 @@
         window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
         window.formatMoney = function(a) { return parseFloat(a).toLocaleString('en-US', {minimumFractionDigits:2}); }
 
+        // --- Products Functions ---
+        window.openProductsModal = function() {
+            document.getElementById('productsModal').style.display = 'block';
+            window.renderProductsList();
+        }
+
+        window.saveSingleProduct = function() {
+            const code = document.getElementById('prodCodeInput').value.trim();
+            const name = document.getElementById('prodNameInput').value.trim();
+            if(!code || !name) return alert("يرجى إدخال الكود والاسم");
+            update(ref(db, PROD_PATH), { [cleanKey(code)]: name })
+            .then(() => {
+                document.getElementById('prodCodeInput').value = '';
+                document.getElementById('prodNameInput').value = '';
+            });
+        }
+        
+        window.importProductsFromExcel = function(input) {
+            const file = input.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+                let updates = {};
+                let count = 0;
+                rows.forEach((row, index) => {
+                    if(index === 0 && typeof row[0] === 'string' && row[0].toLowerCase().includes('code')) return;
+                    let code = row[0]; let name = row[1];
+                    if(code && name) {
+                        const cleanCode = cleanKey(String(code).trim());
+                        if(cleanCode) { updates[cleanCode] = String(name).trim(); count++; }
+                    }
+                });
+                if(count > 0 && confirm(`سيتم إضافة/تحديث ${count} منتج. هل أنت متأكد؟`)) {
+                    update(ref(db, PROD_PATH), updates).then(() => { alert("تم الاستيراد بنجاح!"); input.value = ''; });
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function cleanKey(k) { return k.replace(/[.#$/[\]]/g, "_"); }
+        window.deleteProduct = function(key) { if(confirm("حذف هذا المنتج من قاعدة البيانات؟")) remove(ref(db, PROD_PATH + '/' + key)); }
+
+        window.renderProductsList = function() {
+            const container = document.getElementById('productsListContainer');
+            const search = document.getElementById('searchProductInput').value.toLowerCase();
+            container.innerHTML = '';
+            const keys = Object.keys(globalProducts);
+            const limit = search ? keys.length : 100;
+            let displayed = 0;
+            for(let i=0; i<keys.length; i++) {
+                const key = keys[i];
+                const name = globalProducts[key];
+                if(key.toLowerCase().includes(search) || name.toLowerCase().includes(search)) {
+                    container.innerHTML += `<div class="prod-item"><div><span class="prod-code">${key}</span><span style="font-weight:700; margin-right:10px;">${name}</span></div><button class="btn btn-danger" style="padding:5px 10px; font-size:12px;" onclick="deleteProduct('${key}')"><i class="fas fa-trash"></i></button></div>`;
+                    displayed++; if(displayed >= limit) break;
+                }
+            }
+            if(container.innerHTML === '') container.innerHTML = '<div style="padding:20px; text-align:center; color:#999;">لا توجد نتائج</div>';
+        }
+
+        // --- NEW: Smart Table Generation Logic ---
+        window.generateRowsFromPaste = function() {
+            const text = document.getElementById('bulkBarcodes').value;
+            if(!text) return;
+            const tbody = document.getElementById('entryTableBody');
+            tbody.innerHTML = '';
+            const lines = text.split(/\r?\n/);
+            lines.forEach(line => {
+                const code = line.trim();
+                if(code) {
+                    const cleanCode = cleanKey(code);
+                    const isKnown = globalProducts.hasOwnProperty(cleanCode);
+                    const prodName = isKnown ? globalProducts[cleanCode] : '';
+                    const tr = document.createElement('tr');
+                    if(!isKnown) tr.classList.add('unknown-row');
+                    tr.innerHTML = `
+                        <td><input type="text" name="code" class="cell-input cell-code" value="${code}" readonly></td>
+                        <td><input type="text" name="name" class="cell-input txt-right" value="${prodName}" placeholder="${isKnown ? '' : 'يرجى كتابة الاسم هنا'}" ${isKnown ? 'readonly' : ''}></td>
+                        <td><input type="number" name="qty" class="cell-input cell-qty" placeholder="0"></td>
+                        <td><input type="number" name="price" class="cell-input" placeholder="0.00"></td>
+                        <td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()" style="margin:auto; padding:5px 10px;">×</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+            setupPasteListeners();
+        }
+
+        function setupPasteListeners() {
+            document.querySelectorAll('.cell-input').forEach(input => {
+                input.removeEventListener('paste', handleColumnPaste); 
+                input.addEventListener('paste', handleColumnPaste);
+            });
+        }
+
+        function handleColumnPaste(e) {
+            const target = e.target;
+            const name = target.getAttribute('name');
+            if(name !== 'qty' && name !== 'price') return; 
+            e.preventDefault();
+            const clipboardData = (e.clipboardData || window.clipboardData).getData('text');
+            const values = clipboardData.split(/\r?\n/);
+            const allRows = Array.from(document.querySelectorAll('#entryTableBody tr'));
+            const currentRow = target.closest('tr');
+            const startIndex = allRows.indexOf(currentRow);
+            if(startIndex === -1) return;
+            values.forEach((val, i) => {
+                if(startIndex + i < allRows.length) {
+                    const row = allRows[startIndex + i];
+                    const input = row.querySelector(`input[name="${name}"]`);
+                    if(input && val.trim() !== '') input.value = val.trim();
+                }
+            });
+        }
+
+        // --- Core Functions ---
         function getDaysRemaining(dateString) {
             if (!dateString) return { days: '-', class: '' };
             const today = new Date(); today.setHours(0,0,0,0);
@@ -403,21 +670,11 @@
                         </div>
                         <h3 class="client-name">${o.client}</h3>
                         <div class="location-text"><i class="fas fa-map-marker-alt" style="color:#ec4899"></i> ${o.location || 'غير محدد'}</div>
-                        
-                        <div class="progress-container">
-                            <div class="progress-fill" style="width: ${st.pct}; background: ${o.status === 'DONE' ? '#10b981' : 'var(--pink-gradient)'}"></div>
-                        </div>
-                        <div style="font-size:12px; margin-top:5px; color:#6b7280; font-weight:bold">${st.text} (${st.pct})</div>
-
+                        <div class="progress-container"><div class="progress-fill" style="width: ${st.pct}; background: ${o.status === 'DONE' ? '#10b981' : 'var(--pink-gradient)'}"></div></div>
+                        <div style="font-size:12px; margin-top:5px; color:#6b7280; font-weight:700">${st.text} (${st.pct})</div>
                         <div class="card-stats">
-                            <div class="stat-box">
-                                <label>قيمة الطلب</label><div style="height:2px"></div>
-                                <val>${formatMoney(t.reqTotal)}</val>
-                            </div>
-                             <div class="stat-box">
-                                <label>تاريخ التسليم</label><div style="height:2px"></div>
-                                <val>${o.deliveryDate}</val>
-                            </div>
+                            <div class="stat-box"><label>قيمة الطلب</label><div style="height:2px"></div><val>${formatMoney(t.reqTotal)}</val></div>
+                            <div class="stat-box"><label>تاريخ التسليم</label><div style="height:2px"></div><val>${o.deliveryDate}</val></div>
                         </div>
                     </div>
                 `;
@@ -442,29 +699,22 @@
             tableContainer.style.display = 'block';
             actionArea.style.display = 'block';
             completedView.style.display = 'none';
-
-            // --- جعل قسم الملفات ظاهراً دائماً ومحدثاً ---
             filesContainer.style.display = 'grid';
             window.renderAllFilesSections(order);
-            // ------------------------------------------
 
             if (order.status === 'NEW' || order.status === 'QUOTE_ISSUED') {
-                summaryBox.style.display = 'none'; 
-                btnExport.style.display = 'none';
+                summaryBox.style.display = 'none'; btnExport.style.display = 'none';
                 document.getElementById('detailTitle').innerText = order.status === 'NEW' ? "📦 مراجعة المخزون" : "🚚 تجهيز الطلب";
                 document.getElementById('detailSub').innerText = order.client;
             } 
             else if (order.status === 'STOCK_CHECKED' || order.status === 'DELIVERY_CONFIRMED') {
-                summaryBox.style.display = 'grid'; 
-                btnExport.style.display = 'inline-block';
+                summaryBox.style.display = 'grid'; btnExport.style.display = 'inline-block';
                 window.updateFinancialSummary(order); 
                 document.getElementById('detailTitle').innerText = "المراجعة المالية";
                 document.getElementById('detailSub').innerText = order.client;
             }
             else if (order.status === 'INVOICED') {
-                summaryBox.style.display = 'none'; 
-                tableContainer.style.display = 'none'; 
-                btnExport.style.display = 'none';
+                summaryBox.style.display = 'none'; tableContainer.style.display = 'none'; btnExport.style.display = 'none';
                 document.getElementById('detailTitle').innerText = "إغلاق الطلب";
                 document.getElementById('detailSub').innerText = "يرجى رفع النسخة المختومة";
             } 
@@ -479,18 +729,17 @@
                 tbody.innerHTML = '';
                 if(order.items) {
                     order.items.forEach((item, index) => {
-                        const isShort = parseInt(item.availQty) < parseInt(item.reqQty);
                         tbody.innerHTML += `
-                            <tr data-index="${index}" style="${isShort ? 'background-color:#fff1f2;' : ''}">
-                                <td style="font-family:monospace; color:#6b7280; font-weight:bold">${item.barcode}</td>
-                                <td style="text-align:right;">${item.name}</td>
-                                <td style="font-weight:bold; font-size:16px;">${item.reqQty}</td>
-                                <td style="padding:8px;">
-                                    <input type="number" class="item-avail" value="${item.availQty}" onchange="recalcTotalsLive()">
+                            <tr data-index="${index}">
+                                <td><span class="cell-read-only cell-code">${item.barcode}</span></td>
+                                <td><span class="cell-read-only txt-right">${item.name}</span></td>
+                                <td><span class="cell-read-only cell-qty" style="color:#64748b">${item.reqQty}</span></td>
+                                <td>
+                                    <input type="number" class="cell-input cell-qty" value="${item.availQty}" onchange="recalcTotalsLive()">
                                 </td>
-                                <td>${item.price}</td>
-                                <td style="padding:8px;">
-                                    <input type="text" class="item-notes" value="${item.notes || ''}" placeholder="ملاحظات المستودع...">
+                                <td><span class="cell-read-only">${item.price}</span></td>
+                                <td>
+                                    <input type="text" class="cell-input txt-right cell-notes" value="${item.notes || ''}" placeholder="...">
                                 </td>
                             </tr>
                         `;
@@ -512,20 +761,17 @@
                     list.map(f => `<a href="${f.data}" download="${f.name}" class="file-item" style="color:#ec4899; text-decoration:none; display:flex; align-items:center; gap:5px;"><i class="fas fa-download"></i> ${f.name.substring(0,20)}</a>`).join('') + `</div>`;
                 }
             });
-
             container.innerHTML = `
                 <div style="background:linear-gradient(to bottom, #ecfdf5, white); border-radius:20px; padding:40px; text-align:center; border:1px solid #d1fae5;">
                     <i class="fas fa-check-circle" style="font-size:70px; color:#10b981; margin-bottom:20px; box-shadow:0 10px 20px rgba(16,185,129,0.2); border-radius:50%;"></i>
                     <h2 style="color:#065f46; margin:0;">تم إكمال الطلب بنجاح</h2>
                     <p style="color:#6b7280;">${order.client}</p>
-                    
                     <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:15px; margin:30px 0;">
                         <div class="stat-box"><div>PO</div><strong>${order.poNumber}</strong></div>
                         <div class="stat-box"><div>الإجمالي</div><strong>${formatMoney(t.delTotal)}</strong></div>
                         <div class="stat-box"><div>الفاتورة</div><strong>${order.finalInvoice || '-'}</strong></div>
                         <div class="stat-box"><div>التاريخ</div><strong>${new Date(order.completionDate).toLocaleDateString()}</strong></div>
                     </div>
-                    
                     <h4 style="text-align:right; border-bottom:1px solid #e5e7eb; padding-bottom:10px; color:#374151">📂 أرشيف الملفات</h4>
                     <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">${filesHtml}</div>
                 </div>
@@ -535,7 +781,7 @@
         function renderActionArea(order) {
             const area = document.getElementById('actionArea');
             area.innerHTML = '';
-            const btnStyle = "width:100%; padding:15px; border-radius:12px; font-size:16px; margin-top:10px; font-weight:bold";
+            const btnStyle = "width:100%; padding:15px; border-radius:12px; font-size:16px; margin-top:10px; font-weight:800";
 
             if(order.status === 'NEW') {
                 area.innerHTML = `<div style="background:#eff6ff; padding:20px; border-radius:15px; border:1px solid #dbeafe;">
@@ -575,7 +821,10 @@
             const order = orders.find(o => o.id === currentId);
             document.querySelectorAll('#detailsTableBody tr').forEach(row => {
                 const idx = row.getAttribute('data-index');
-                order.items[idx].availQty = row.querySelector('.item-avail').value;
+                const qtyInput = row.querySelector('input[type="number"]'); 
+                const noteInput = row.querySelector('input[type="text"]');
+                if(qtyInput) order.items[idx].availQty = qtyInput.value;
+                if(noteInput) order.items[idx].notes = noteInput.value;
             });
             if (document.getElementById('financialSummary').style.display !== 'none') window.updateFinancialSummary(order);
         }
@@ -586,47 +835,54 @@
             document.getElementById('financialSummary').innerHTML = `
                 <div style="background:white; padding:15px; border-radius:15px; text-align:center; border:1px solid #f3f4f6">
                     <div style="font-size:12px; color:#6b7280;">قيمة الطلب الأصلية</div>
-                    <div style="font-weight:bold; font-size:20px; font-family:'Poppins'">${formatMoney(t.reqTotal)}</div>
+                    <div style="font-weight:800; font-size:20px; font-family:'Poppins'">${formatMoney(t.reqTotal)}</div>
                 </div>
                 <div style="background:var(--pink-gradient); color:white; padding:15px; border-radius:15px; text-align:center; box-shadow:0 10px 15px -3px rgba(236, 72, 153, 0.3);">
                     <div style="font-size:12px; opacity:0.9;">القيمة المعتمدة</div>
-                    <div style="font-weight:bold; font-size:20px; font-family:'Poppins'">${formatMoney(t.delTotal)}</div>
+                    <div style="font-weight:800; font-size:20px; font-family:'Poppins'">${formatMoney(t.delTotal)}</div>
                 </div>
                 <div style="background:${diff > 1 ? '#fef2f2' : '#ecfdf5'}; padding:15px; border-radius:15px; text-align:center; border:1px solid ${diff > 1 ? '#fecaca' : '#a7f3d0'}">
                     <div style="font-size:12px; color:#6b7280;">${diff > 1 ? 'خسارة نواقص' : 'الحالة'}</div>
-                    <div style="font-weight:bold; font-size:20px; color:${diff > 1 ? '#ef4444' : '#10b981'}; font-family:'Poppins'">${diff > 1 ? formatMoney(diff) : 'ممتاز'}</div>
+                    <div style="font-weight:800; font-size:20px; color:${diff > 1 ? '#ef4444' : '#10b981'}; font-family:'Poppins'">${diff > 1 ? formatMoney(diff) : 'ممتاز'}</div>
                 </div>
             `;
         }
 
-        window.openCreateModal = function() { document.getElementById('createModal').style.display = 'block'; }
+        window.openCreateModal = function() { 
+            document.getElementById('newClient').value = '';
+            document.getElementById('newPONumber').value = '';
+            document.getElementById('newLocation').value = '';
+            document.getElementById('newDate').value = '';
+            document.getElementById('newPOFiles').value = '';
+            document.getElementById('bulkBarcodes').value = '';
+            document.getElementById('entryTableBody').innerHTML = '';
+            document.getElementById('createModal').style.display = 'block'; 
+        }
         
         window.processAndSaveOrder = function() {
             const client = document.getElementById('newClient').value;
             const poNum = document.getElementById('newPONumber').value;
             if(!client || !poNum) return alert("يرجى ملء البيانات الأساسية");
-
-            const barcodes = document.getElementById('pasteBarcode').value.trim().split(/\r?\n/);
-            const names = document.getElementById('pasteName').value.trim().split(/\r?\n/);
-            const qtys = document.getElementById('pasteQty').value.trim().split(/\r?\n/);
-            const prices = document.getElementById('pastePrice').value.trim().split(/\r?\n/);
-
             let items = [];
-            const maxLen = Math.max(barcodes.length, names.length);
-            for(let i=0; i<maxLen; i++) {
-                if(barcodes[i] || names[i]) {
-                    const q = qtys[i] ? qtys[i].trim() : '0';
-                    items.push({ barcode: barcodes[i]||'', name: names[i]||'', reqQty: q, price: prices[i]?prices[i].trim().replace(/,/g,''):'0', availQty: q, notes: '' });
+            let newProductsToSave = {}; 
+            let missingNames = false;
+            const rows = document.querySelectorAll('#entryTableBody tr');
+            rows.forEach(row => {
+                const code = row.querySelector('input[name="code"]').value;
+                const name = row.querySelector('input[name="name"]').value;
+                const qty = row.querySelector('input[name="qty"]').value || '0';
+                const price = row.querySelector('input[name="price"]').value || '0';
+                if(code) {
+                    if(!name.trim()) { missingNames = true; row.style.border = "2px solid red"; }
+                    const cleanCode = cleanKey(code);
+                    if(!globalProducts[cleanCode] && name.trim()) { newProductsToSave[cleanCode] = name.trim(); }
+                    items.push({ barcode: code, name: name.trim(), reqQty: qty, price: price.replace(/,/g,''), availQty: qty, notes: '' });
                 }
-            }
-
-            const newOrder = {
-                id: Date.now(), poNumber: poNum, client: client,
-                location: document.getElementById('newLocation').value,
-                deliveryDate: document.getElementById('newDate').value,
-                items: items, status: 'NEW', files: { po:[], quote:[], invoice:[], stamped:[] }
-            };
-
+            });
+            if(missingNames) return alert("يوجد منتجات بدون أسماء (باللون الأحمر). يرجى كتابة الأسماء قبل الحفظ.");
+            if(items.length === 0) return alert("القائمة فارغة!");
+            if(Object.keys(newProductsToSave).length > 0) update(ref(db, PROD_PATH), newProductsToSave);
+            const newOrder = { id: Date.now(), poNumber: poNum, client: client, location: document.getElementById('newLocation').value, deliveryDate: document.getElementById('newDate').value, items: items, status: 'NEW', files: { po:[], quote:[], invoice:[], stamped:[] } };
             const fileInput = document.getElementById('newPOFiles');
             if (fileInput.files.length > 0) processFiles(fileInput.files, (fs) => { newOrder.files.po = fs; save(newOrder); });
             else save(newOrder);
@@ -639,8 +895,10 @@
             const o = orders.find(x => x.id === currentId);
             document.querySelectorAll('#detailsTableBody tr').forEach(r => {
                 const i = r.getAttribute('data-index');
-                o.items[i].availQty = r.querySelector('.item-avail').value;
-                o.items[i].notes = r.querySelector('.item-notes').value;
+                const qtyInput = r.querySelector('input[type="number"]'); 
+                const noteInput = r.querySelector('input[type="text"]');
+                if(qtyInput) o.items[i].availQty = qtyInput.value;
+                if(noteInput) o.items[i].notes = noteInput.value;
             });
             if(s === 'QUOTE_ISSUED') o.quotationRef = document.getElementById('quoteRefInput').value;
             if(s === 'INVOICED') o.finalInvoice = document.getElementById('finalInv').value;
@@ -670,13 +928,10 @@
 
         window.renderAllFilesSections = function(o) { ['po','quote','invoice','stamped'].forEach(t => renderFilesType(o,t)); }
         
-        // --- تحديث جذري لدالة عرض الملفات لجعلها قابلة للتحميل ---
         function renderFilesType(o, t) {
             const div = document.getElementById(`fileArea_${t}`);
             const list = (o.files && o.files[t]) ? o.files[t] : [];
-            
             if (list.length > 0) {
-                // إذا وجدت ملفات، ارسمها كروابط تحميل حقيقية مع زر حذف منفصل
                 div.innerHTML = list.map((f, i) => `
                     <div class="file-item">
                         <a href="${f.data}" download="${f.name}" class="file-link">
@@ -687,17 +942,12 @@
                     </div>
                 `).join('');
             } else {
-                // إذا لم توجد ملفات، أظهر زر الرفع
-                div.innerHTML = `<label style="cursor:pointer; display:block; padding:10px; border:1px dashed #ccc; text-align:center; border-radius:10px; font-size:12px; color:#666;">
-                    <i class="fas fa-plus"></i> اضغط للرفع
-                    <input type="file" onchange="uplFile(this,'${t}')" style="display:none">
-                </label>`;
+                div.innerHTML = `<label style="cursor:pointer; display:block; padding:10px; border:1px dashed #ccc; text-align:center; border-radius:10px; font-size:12px; color:#666;"><i class="fas fa-plus"></i> اضغط للرفع<input type="file" onchange="uplFile(this,'${t}')" style="display:none"></label>`;
             }
         }
 
         window.uplFile = function(inp, t) { processFiles(inp.files, (fs) => { const o=orders.find(x=>x.id===currentId); if(!o.files)o.files={}; if(!o.files[t])o.files[t]=[]; o.files[t]=[...o.files[t], ...fs]; update(ref(db, DB_PATH + '/' + o.id), o); renderFilesType(o,t); }); }
         window.delFile = function(t, i) { const o=orders.find(x=>x.id===currentId); o.files[t].splice(i,1); update(ref(db, DB_PATH + '/' + o.id), o); renderFilesType(o,t); }
-
         window.downloadExcel = function(h, f) { const b = new Blob([h], {type: 'application/vnd.ms-excel'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = f; a.click(); }
         
         window.exportToExcel = function() {
@@ -715,19 +965,9 @@
                 <table style="width:100%; font-family: Calibri, sans-serif;">
                     <tr><td colspan="4" style="${titleStyle}">تقرير تفاصيل الطلب (PO Details)</td></tr>
                     <tr><td colspan="4"></td></tr>
-                    
-                    <tr>
-                        <td style="${headerStyle}">رقم الـ PO</td> <td style="${cellStyle}">${o.poNumber}</td>
-                        <td style="${headerStyle}">اسم العميل</td> <td style="${cellStyle}">${o.client}</td>
-                    </tr>
-                    <tr>
-                        <td style="${headerStyle}">تاريخ التسليم</td> <td style="${cellStyle}">${o.deliveryDate}</td>
-                        <td style="${headerStyle}">موقع التسليم</td> <td style="${cellStyle}">${o.location || '-'}</td>
-                    </tr>
-                    <tr>
-                        <td style="${headerStyle}">رقم عرض السعر</td> <td style="${cellStyle}">${o.quotationRef || 'N/A'}</td>
-                        <td style="${headerStyle}">رقم الفاتورة</td> <td style="${cellStyle}">${o.finalInvoice || 'N/A'}</td>
-                    </tr>
+                    <tr><td style="${headerStyle}">رقم الـ PO</td> <td style="${cellStyle}">${o.poNumber}</td><td style="${headerStyle}">اسم العميل</td> <td style="${cellStyle}">${o.client}</td></tr>
+                    <tr><td style="${headerStyle}">تاريخ التسليم</td> <td style="${cellStyle}">${o.deliveryDate}</td><td style="${headerStyle}">موقع التسليم</td> <td style="${cellStyle}">${o.location || '-'}</td></tr>
+                    <tr><td style="${headerStyle}">رقم عرض السعر</td> <td style="${cellStyle}">${o.quotationRef || 'N/A'}</td><td style="${headerStyle}">رقم الفاتورة</td> <td style="${cellStyle}">${o.finalInvoice || 'N/A'}</td></tr>
                 </table>
                 <br>
                 <table border="1" style="border-collapse: collapse; width:100%">
@@ -746,25 +986,21 @@
             
             if(o.items) {
                 o.items.forEach(i => { 
-                    h += `<tr>
+                    // Yellow Highlight Logic for Excel: If Req != Avail
+                    let rowBg = (i.reqQty != i.availQty) ? 'background-color: #ffff00;' : ''; // Yellow background
+
+                    h += `<tr style="${rowBg}">
                         <td style="${cellStyle} mso-number-format:'\@'">${i.barcode}</td>
                         <td style="${cellStyle}">${i.name}</td>
                         <td style="${cellStyle}">${i.reqQty}</td>
-                        <td style="${cellStyle} background-color: #eff6ff;">${i.availQty}</td>
+                        <td style="${cellStyle} ${rowBg}">${i.availQty}</td>
                         <td style="${cellStyle}">${i.price}</td>
                         <td style="${cellStyle}">${(i.availQty*i.price).toFixed(2)}</td>
                         <td style="${cellStyle}">${i.notes}</td>
                     </tr>`; 
                 });
             }
-            
-            h += `<tr>
-                    <td colspan="5" style="${headerStyle} text-align:right;">الإجمالي الكلي (Grand Total)</td>
-                    <td style="${cellStyle} background-color: #fce7f3; font-weight:bold">${t.delTotal.toFixed(2)}</td>
-                    <td></td>
-                  </tr>
-                  </tbody></table></body></html>`;
-                  
+            h += `<tr><td colspan="5" style="${headerStyle} text-align:right;">الإجمالي الكلي (Grand Total)</td><td style="${cellStyle} background-color: #fce7f3; font-weight:bold">${t.delTotal.toFixed(2)}</td><td></td></tr></tbody></table></body></html>`;
             const fileName = `${o.poNumber} - ${o.client} - ${o.location || 'No Location'}.xls`;
             window.downloadExcel(h, fileName);
         }
