@@ -20,7 +20,7 @@
         /* --- Typography Updates (Bold & Clear) --- */
         body {
             font-family: 'Poppins', 'Cairo', sans-serif;
-            font-weight: 600; /* جعل الخط سميك بشكل عام */
+            font-weight: 600;
             background-color: var(--bg-color);
             background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, hsla(253,16%,7%,0) 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,0) 0, hsla(225,39%,30%,0) 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,0) 0, hsla(339,49%,30%,0) 50%);
             min-height: 100vh;
@@ -33,16 +33,9 @@
         h1, h2, h3, h4, h5, h6 { font-weight: 800; letter-spacing: -0.5px; }
         
         /* --- Remove Number Input Arrows (Spinners) --- */
-        /* Chrome, Safari, Edge, Opera */
         input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-        /* Firefox */
-        input[type=number] {
-          -moz-appearance: textfield;
-        }
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
 
         /* --- Header --- */
         .glass-header {
@@ -98,6 +91,7 @@
         .btn-warning { background: #f59e0b; color: white; }
         .btn-danger { background: #ef4444; color: white; }
         .btn-purple { background: #8b5cf6; color: white; }
+        .btn-blue { background: #3b82f6; color: white; }
 
         /* --- Cards --- */
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
@@ -135,7 +129,7 @@
         .modal-header { padding: 25px 35px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; background: #fffbff; border-radius: 25px 25px 0 0; }
         .modal-body { padding: 35px; }
 
-        /* --- Google Sheets Style Table (Refined) --- */
+        /* --- Google Sheets Style Table --- */
         .sheet-table-container {
             border: 1px solid #cbd5e1;
             border-radius: 8px;
@@ -144,121 +138,85 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .sheet-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 14px; 
-            font-family: 'Poppins', 'Cairo', sans-serif;
-        }
-
-        .sheet-table thead th {
-            background: #e2e8f0;
-            color: #1e293b;
-            font-weight: 800;
-            text-align: center;
-            padding: 15px;
-            border-bottom: 2px solid #cbd5e1;
-            border-right: 1px solid #cbd5e1;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .sheet-table tbody td {
-            padding: 0;
-            border-bottom: 1px solid #cbd5e1;
-            border-right: 1px solid #cbd5e1;
-            height: 45px; /* Taller rows for better touch targets */
-            position: relative;
-        }
-
-        /* Zebra Striping (Color & Color) */
+        .sheet-table { width: 100%; border-collapse: collapse; font-size: 14px; font-family: 'Poppins', 'Cairo', sans-serif; }
+        .sheet-table thead th { background: #e2e8f0; color: #1e293b; font-weight: 800; text-align: center; padding: 15px; border-bottom: 2px solid #cbd5e1; border-right: 1px solid #cbd5e1; position: sticky; top: 0; z-index: 10; }
+        .sheet-table tbody td { padding: 0; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; height: 45px; position: relative; }
         .sheet-table tbody tr:nth-child(odd) { background-color: #ffffff; }
-        .sheet-table tbody tr:nth-child(even) { background-color: #f1f5f9; } /* Light gray */
+        .sheet-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
         .sheet-table tbody tr:hover { background-color: #e0f2fe; }
+        .sheet-table tbody tr.row-changed { background-color: #fef9c3 !important; }
 
-        /* Highlight Shortage in Table (Yellow) */
-        .sheet-table tbody tr.row-changed { background-color: #fef9c3 !important; } /* Light Yellow */
-
-        /* Inputs inside table */
-        .cell-input {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: transparent;
-            padding: 0 10px;
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 700;
-            color: #1f2937;
-            text-align: center;
-            outline: none;
-            box-sizing: border-box; /* Important for border calculation */
-        }
-
-        /* Focus Ring constrained strictly inside the cell */
-        .cell-input:focus {
-            box-shadow: inset 0 0 0 3px #3b82f6; /* Inset blue border */
-            background: #fff;
-        }
-        
+        .cell-input { width: 100%; height: 100%; border: none; background: transparent; padding: 0 10px; font-family: inherit; font-size: 14px; font-weight: 700; color: #1f2937; text-align: center; outline: none; box-sizing: border-box; }
+        .cell-input:focus { box-shadow: inset 0 0 0 3px #3b82f6; background: #fff; }
         .cell-read-only { padding: 10px; display: block; color: #475569; font-weight: 600; }
         .cell-code { font-family: 'Poppins', monospace; font-weight: 800; color: #334155; letter-spacing: 0.5px; }
-        .cell-qty { font-weight: 800; font-size: 16px; color: #1e40af; } /* Blue for numbers */
+        .cell-qty { font-weight: 800; font-size: 16px; color: #1e40af; }
         .cell-notes { color: #b91c1c; text-align: right; }
-        
         .txt-left { text-align: left; }
         .txt-right { text-align: right; }
 
-        /* Inputs Groups */
         .input-group label { font-size: 13px; font-weight: 800; color: #4b5563; display: block; margin-bottom: 8px; }
-        .input-group input, .input-group select {
-            width: 95%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-family: inherit; font-weight: 600; transition: 0.3s;
-        }
+        .input-group input, .input-group select { width: 95%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-family: inherit; font-weight: 600; transition: 0.3s; }
         .input-group input:focus { border-color: var(--primary-color); outline: none; }
 
-        /* Animations */
         @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        /* Badges */
         .badge-status { padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; }
         .st-late { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
         .st-today { background: #fffbeb; color: #f59e0b; border: 1px solid #fde68a; }
         .st-ok { background: #ecfdf5; color: #10b981; border: 1px solid #a7f3d0; }
 
-        /* Files Section */
         .file-box { background: #fff; border-radius: 15px; padding: 15px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 10px; }
         .file-box h4 { margin: 0; color: #db2777; font-size: 14px; font-weight: 800; border-bottom: 1px solid #fce7f3; padding-bottom: 8px; }
-        .file-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #f8fafc; padding: 8px 12px; border-radius: 8px;
-            border: 1px solid #e2e8f0; font-size: 13px; margin-bottom: 5px; font-weight: 600;
-        }
+        .file-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 13px; margin-bottom: 5px; font-weight: 600; }
         .file-link { text-decoration: none; color: #0284c7; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-grow: 1; }
         .file-del { color: #ef4444; cursor: pointer; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
 
-        /* Products Management */
         .prod-list { max-height: 400px; overflow-y: auto; margin-top: 15px; border: 1px solid #e5e7eb; border-radius: 10px; }
         .prod-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f3f4f6; align-items: center; font-weight: 600; }
         .prod-code { font-family: monospace; background: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-weight: 800; color: #374151; }
 
-        /* Loading */
-        #loadingOverlay {
-            position: fixed; inset: 0; background: white; z-index: 2000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
+        #loadingOverlay { position: fixed; inset: 0; background: white; z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .heart-beat { font-size: 50px; color: var(--primary-color); animation: beat 1s infinite; }
         @keyframes beat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        /* Upload Zone */
-        .upload-zone {
-            border: 2px dashed #8b5cf6; background: #f5f3ff; border-radius: 12px;
-            padding: 20px; text-align: center; margin-bottom: 20px; cursor: pointer; transition: 0.3s;
-        }
+        .upload-zone { border: 2px dashed #8b5cf6; background: #f5f3ff; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; cursor: pointer; transition: 0.3s; }
         .upload-zone:hover { background: #ede9fe; transform: scale(1.02); }
 
-        /* Special New Entry Table */
         .sheet-table tr.unknown-row td { background-color: #fee2e2 !important; }
+
+        /* --- TASKS SYSTEM NEW STYLES (Sheet + ToDo Mix) --- */
+        .task-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #e5e7eb; padding-bottom: 0px; }
+        .task-tab { padding: 12px 25px; border-radius: 10px 10px 0 0; font-weight: 800; cursor: pointer; color: #6b7280; transition: 0.3s; background: transparent; border: none; font-family: inherit; position: relative; top: 2px; border: 1px solid transparent; border-bottom: none; }
+        .task-tab.active { background: white; color: #2563eb; border-color: #e5e7eb; border-bottom-color: white; z-index: 2; }
+        .task-tab:hover:not(.active) { background: #f1f5f9; }
+
+        /* Report Table Style for Tasks */
+        .tasks-report-table { width: 100%; border-collapse: collapse; background: white; }
+        .tasks-report-table th { background: #f8fafc; color: #475569; font-weight: 800; padding: 15px; text-align: right; border-bottom: 2px solid #e2e8f0; font-size: 13px; }
+        .tasks-report-table td { padding: 15px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; color: #334155; font-weight: 600; font-size: 14px; }
+        .tasks-report-table tr:last-child td { border-bottom: none; }
+        .tasks-report-table tr:hover { background-color: #f8fafc; }
+
+        /* To-Do Checkbox */
+        .todo-checkbox { 
+            width: 22px; height: 22px; border: 2px solid #cbd5e1; border-radius: 6px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; transition: 0.2s; background: white;
+        }
+        .todo-checkbox:hover { border-color: #3b82f6; }
+        .todo-checkbox.checked { background: #10b981; border-color: #10b981; color: white; }
+        .todo-checkbox i { font-size: 14px; display: none; }
+        .todo-checkbox.checked i { display: block; }
+
+        /* Task File Badge */
+        .t-file { display: inline-flex; align-items: center; gap: 5px; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-size: 12px; text-decoration: none; border: 1px solid #bae6fd; margin-right: 5px; }
+        .t-file:hover { background: #bae6fd; }
+
+        /* Completion Row */
+        .completion-row { background-color: #f0f9ff !important; animation: fadeIn 0.3s; }
+        .completion-box { display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border: 1px dashed #3b82f6; border-radius: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
     </style>
 </head>
@@ -287,6 +245,7 @@
             <input type="text" id="searchInput" placeholder="بحث باسم العميل، رقم PO..." onkeyup="renderList()">
         </div>
         <div class="action-buttons" style="display:flex; gap:10px;">
+            <button class="btn btn-blue" onclick="openTasksModal()"><i class="fas fa-clipboard-list"></i> المهام الداخلية</button>
             <button class="btn btn-purple" onclick="openProductsModal()"><i class="fas fa-tags"></i> إدارة المنتجات</button>
             <button class="btn btn-warning" onclick="exportShortagesToExcel()"><i class="fas fa-exclamation-triangle"></i> تقرير النواقص</button>
             <button class="btn btn-excel" onclick="exportMainListToExcel()"><i class="fas fa-file-excel"></i> تقرير الطلبات</button>
@@ -303,14 +262,12 @@
                 <div onclick="closeModal('productsModal')" style="cursor:pointer; font-size:24px;">×</div>
             </div>
             <div class="modal-body">
-                
                 <div class="upload-zone" onclick="document.getElementById('excelProdInput').click()">
                     <i class="fas fa-file-excel" style="font-size:30px; color:#8b5cf6; margin-bottom:10px;"></i>
                     <div style="font-weight:bold; color:#5b21b6">استيراد منتجات بالجملة (Excel)</div>
                     <div style="font-size:12px; color:#6b7280; margin-top:5px;">يجب أن يكون العمود الأول هو الباركود والعمود الثاني هو الاسم</div>
                     <input type="file" id="excelProdInput" accept=".xlsx, .xls, .csv" style="display:none" onchange="importProductsFromExcel(this)">
                 </div>
-
                 <div style="background: #f9fafb; padding: 20px; border-radius: 15px; border: 1px solid #e5e7eb; margin-bottom: 20px;">
                     <h4 style="margin:0 0 10px 0;">إضافة يدوية (فردي)</h4>
                     <div style="display:flex; gap:10px;">
@@ -319,12 +276,47 @@
                         <button class="btn btn-purple" onclick="saveSingleProduct()">حفظ</button>
                     </div>
                 </div>
-
                 <div style="margin-bottom:10px;">
                     <input type="text" id="searchProductInput" placeholder="🔍 بحث في قاعدة المنتجات..." onkeyup="renderProductsList()" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
                 </div>
-
                 <div class="prod-list" id="productsListContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tasksModal" class="modal">
+        <div class="modal-content" style="max-width: 1100px; background: #f1f5f9;">
+            <div class="modal-header">
+                <h3 style="margin:0; color:#1e3a8a"><i class="fas fa-clipboard-check" style="color:#3b82f6"></i> مركز المهام (Tasks Report)</h3>
+                <div onclick="closeModal('tasksModal')" style="cursor:pointer; font-size:24px;">×</div>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                
+                <div class="task-tabs">
+                    <button class="task-tab active" id="tabPending" onclick="switchTaskTab('PENDING')">⏳ قيد الانتظار (To-Do List)</button>
+                    <button class="task-tab" id="tabDone" onclick="switchTaskTab('DONE')">✅ الأرشيف المكتمل (Report)</button>
+                </div>
+
+                <div id="addTaskForm" style="background: white; padding: 15px; border-radius: 0 15px 15px 15px; border: 1px solid #e2e8f0; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <div style="display:flex; gap:10px; align-items: center;">
+                        <input type="text" id="taskTitle" placeholder="✍️ عنوان المهمة الجديدة..." style="flex:2; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-weight:600;">
+                        <input type="text" id="taskFrom" placeholder="👤 المُرسل" style="flex:1; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-weight:600;">
+                        <label class="btn btn-purple" style="padding:10px 15px; font-size:12px; margin:0;">
+                            <i class="fas fa-paperclip"></i> مرفق
+                            <input type="file" id="taskFilesReq" multiple style="display:none">
+                        </label>
+                        <button class="btn btn-blue" onclick="saveNewTask()" style="padding:10px 20px;">إضافة</button>
+                    </div>
+                    <textarea id="taskDetails" placeholder="تفاصيل إضافية (اختياري)..." style="width:100%; height:40px; margin-top:10px; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-family:inherit;"></textarea>
+                </div>
+
+                <div style="background: white; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <table class="tasks-report-table">
+                        <thead id="tasksHead"></thead>
+                        <tbody id="tasksBody"></tbody>
+                    </table>
+                </div>
+
             </div>
         </div>
     </div>
@@ -392,9 +384,23 @@
                     <span id="detailSub" style="color:#db2777; font-weight:600; font-size:14px;"></span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <div id="headerDateContainer" style="display:none; align-items:center; gap:5px; background:#f3f4f6; padding:8px 15px; border-radius:12px;">
-                        <i class="fas fa-calendar-alt" style="color:#db2777;"></i>
-                        <input type="date" id="editableDeliveryDate" onchange="updateDateInstant()" style="border:none; background:transparent; font-family:'Poppins'; font-weight: 700;">
+                    <div id="headerDateContainer" style="display:none; align-items:center; gap:15px; background:#f3f4f6; padding:8px 15px; border-radius:12px;">
+                        <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                            <span style="font-size:10px; color:#6b7280; font-weight:700;">تاريخ الإنشاء</span>
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <i class="fas fa-calendar-plus" style="color:#6b7280; font-size:12px;"></i>
+                                <span id="creationDateText" style="font-size:13px; font-weight:800; color:#374151"></span>
+                            </div>
+                        </div>
+                        <div style="width:1px; height:25px; background:#cbd5e1;"></div>
+                        <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                            <span style="font-size:10px; color:#ec4899; font-weight:700;">موعد التسليم</span>
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <i class="fas fa-truck" style="color:#db2777; font-size:12px;"></i>
+                                <input type="date" id="editableDeliveryDate" onchange="updateDateInstant()" 
+                                    style="border:none; background:transparent; font-family:'Poppins'; font-weight: 800; color:#be185d; cursor:pointer; width:110px;">
+                            </div>
+                        </div>
                     </div>
                     <button class="btn btn-danger btn-sm" onclick="deleteCurrentOrder()"><i class="fas fa-trash"></i></button>
                     <div onclick="closeModal('detailsModal')" style="cursor:pointer; font-size:28px; margin-right:15px; color:#9ca3af">×</div>
@@ -402,7 +408,7 @@
             </div>
 
             <div class="modal-body">
-                <div id="financialSummary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;"></div>
+                <div id="financialSummary" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px;"></div>
 
                 <div style="display:flex; justify-content:flex-end; margin-bottom:15px;">
                     <button class="btn btn-excel" id="btnExport" onclick="exportToExcel()" style="padding:8px 20px;">
@@ -457,16 +463,20 @@
         const db = getDatabase(app);
         const DB_PATH = 'beauty_oms/orders'; 
         const PROD_PATH = 'beauty_oms/products';
+        const TASKS_PATH = 'beauty_oms/tasks';
 
         let orders = [];
         let globalProducts = {}; 
+        let globalTasks = [];
         let currentId = null;
+        let currentTaskTab = 'PENDING';
 
         document.addEventListener('keydown', (e) => { 
             if(e.key==="Escape"){ 
                 closeModal('createModal'); 
                 closeModal('detailsModal'); 
                 closeModal('productsModal');
+                closeModal('tasksModal');
             }
         });
 
@@ -483,9 +493,14 @@
         onValue(ref(db, PROD_PATH), (snapshot) => {
             const data = snapshot.val();
             globalProducts = data || {};
-            if(document.getElementById('productsModal').style.display === 'block') {
-                window.renderProductsList();
-            }
+            if(document.getElementById('productsModal').style.display === 'block') window.renderProductsList();
+        });
+
+        // Load Tasks
+        onValue(ref(db, TASKS_PATH), (snapshot) => {
+            const data = snapshot.val();
+            globalTasks = data ? Object.values(data) : [];
+            if(document.getElementById('tasksModal').style.display === 'block') window.renderTasks();
         });
 
         function updateStats() {
@@ -496,6 +511,148 @@
 
         window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
         window.formatMoney = function(a) { return parseFloat(a).toLocaleString('en-US', {minimumFractionDigits:2}); }
+
+        // --- TASKS FUNCTIONS (REPORT STYLE) ---
+        window.openTasksModal = function() {
+            document.getElementById('tasksModal').style.display = 'block';
+            window.renderTasks();
+        }
+
+        window.switchTaskTab = function(tab) {
+            currentTaskTab = tab;
+            document.querySelectorAll('.task-tab').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab === 'PENDING' ? 'tabPending' : 'tabDone').classList.add('active');
+            window.renderTasks();
+        }
+
+        window.renderTasks = function() {
+            const thead = document.getElementById('tasksHead');
+            const tbody = document.getElementById('tasksBody');
+            tbody.innerHTML = '';
+            
+            // Sort: Pending (Newest First), Done (Newest First)
+            const filtered = globalTasks.filter(t => t.status === currentTaskTab).sort((a,b) => b.id - a.id);
+
+            // Toggle Add Form visibility
+            document.getElementById('addTaskForm').style.display = (currentTaskTab === 'PENDING') ? 'block' : 'none';
+
+            if(currentTaskTab === 'PENDING') {
+                thead.innerHTML = `<tr><th style="width:50px;">إنجاز</th><th>المهمة (Subject)</th><th>التفاصيل</th><th>المُرسل</th><th>التاريخ</th><th>مرفقات</th><th>حذف</th></tr>`;
+                if(filtered.length === 0) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">✨ القائمة فارغة! لا توجد مهام معلقة.</td></tr>`;
+                
+                filtered.forEach(task => {
+                    const dateStr = new Date(task.id).toLocaleDateString('ar-EG');
+                    let filesHtml = task.files_req ? task.files_req.map(f => `<a href="${f.data}" download="${f.name}" class="t-file"><i class="fas fa-paperclip"></i> ${f.name.substring(0,10)}...</a>`).join('') : '-';
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><div class="todo-checkbox" onclick="toggleCompleteRow(${task.id})"><i class="fas fa-check"></i></div></td>
+                            <td style="font-weight:800; color:#1e3a8a;">${task.title}</td>
+                            <td style="font-size:13px; color:#64748b;">${task.details || ''}</td>
+                            <td><span style="background:#f1f5f9; padding:3px 8px; border-radius:5px; font-size:12px;">${task.from}</span></td>
+                            <td style="font-size:12px; color:#94a3b8;">${dateStr}</td>
+                            <td>${filesHtml}</td>
+                            <td><button onclick="deleteTask(${task.id})" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+                        </tr>
+                        <tr id="action_row_${task.id}" class="completion-row" style="display:none;">
+                            <td colspan="7">
+                                <div class="completion-box">
+                                    <span style="font-size:13px; font-weight:700; color:#2563eb;">⚡ إتمام المهمة:</span>
+                                    <input type="text" id="smacc_${task.id}" placeholder="SMACC Ref (اختياري)" style="padding:8px; border:1px solid #cbd5e1; border-radius:5px; font-size:13px;">
+                                    <input type="file" id="fileRes_${task.id}" style="font-size:12px;">
+                                    <button class="btn btn-excel" style="padding:6px 15px; font-size:12px;" onclick="completeTask(${task.id})">تأكيد الإنجاز</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } else {
+                // DONE TABLE (REPORT)
+                thead.innerHTML = `<tr><th style="width:50px;">Status</th><th>المهمة</th><th>SMACC Ref</th><th>تاريخ الإنجاز</th><th>بواسطة</th><th>مرفقات الرد</th><th>حذف</th></tr>`;
+                if(filtered.length === 0) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">الأرشيف فارغ.</td></tr>`;
+                
+                filtered.forEach(task => {
+                    const doneDate = task.completedAt ? new Date(task.completedAt).toLocaleDateString('ar-EG') : '-';
+                    let filesResHtml = task.files_res ? task.files_res.map(f => `<a href="${f.data}" download="${f.name}" class="t-file" style="background:#ecfdf5; color:#065f46; border-color:#a7f3d0"><i class="fas fa-check"></i> ${f.name.substring(0,10)}...</a>`).join('') : '-';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><i class="fas fa-check-circle" style="color:#10b981; font-size:18px;"></i></td>
+                            <td style="font-weight:700;">${task.title}</td>
+                            <td style="color:#2563eb; font-family:monospace; font-weight:700;">${task.smaccRef || '-'}</td>
+                            <td>${doneDate}</td>
+                            <td>${task.from}</td>
+                            <td>${filesResHtml}</td>
+                            <td><button onclick="deleteTask(${task.id})" style="background:none; border:none; color:#cbd5e1; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        window.toggleCompleteRow = function(id) {
+            const row = document.getElementById(`action_row_${id}`);
+            row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+        }
+
+        window.saveNewTask = function() {
+            const title = document.getElementById('taskTitle').value;
+            const from = document.getElementById('taskFrom').value;
+            const details = document.getElementById('taskDetails').value;
+            if(!title) return alert("يرجى كتابة عنوان المهمة");
+
+            const newTask = {
+                id: Date.now(),
+                title: title,
+                from: from || 'Admin',
+                details: details,
+                status: 'PENDING',
+                files_req: []
+            };
+
+            const fileInput = document.getElementById('taskFilesReq');
+            if(fileInput.files.length > 0) {
+                processFiles(fileInput.files, (fs) => {
+                    newTask.files_req = fs;
+                    set(ref(db, TASKS_PATH + '/' + newTask.id), newTask);
+                    resetTaskForm();
+                });
+            } else {
+                set(ref(db, TASKS_PATH + '/' + newTask.id), newTask);
+                resetTaskForm();
+            }
+        }
+
+        function resetTaskForm() {
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDetails').value = '';
+            document.getElementById('taskFilesReq').value = '';
+        }
+
+        window.completeTask = function(id) {
+            const fileInput = document.getElementById(`fileRes_${id}`);
+            const smaccInput = document.getElementById(`smacc_${id}`);
+            const task = globalTasks.find(t => t.id === id);
+            
+            const doComplete = (files) => {
+                task.status = 'DONE';
+                task.completedAt = new Date().toISOString();
+                task.smaccRef = smaccInput.value || ''; // Save SMACC Ref
+                if(files) task.files_res = files;
+                update(ref(db, TASKS_PATH + '/' + id), task);
+            };
+
+            if(fileInput && fileInput.files.length > 0) {
+                processFiles(fileInput.files, (fs) => doComplete(fs));
+            } else {
+                doComplete(null);
+            }
+        }
+
+        window.deleteTask = function(id) {
+            if(confirm("هل أنت متأكد من حذف هذه المهمة نهائياً؟")) remove(ref(db, TASKS_PATH + '/' + id));
+        }
+
 
         // --- Products Functions ---
         window.openProductsModal = function() {
@@ -687,6 +844,11 @@
             if(!order) return;
 
             document.getElementById('editableDeliveryDate').value = order.deliveryDate;
+            
+            // Set Creation Date
+            const createdDate = new Date(order.id);
+            document.getElementById('creationDateText').innerText = createdDate.toLocaleDateString('en-GB');
+
             const modalHeader = document.getElementById('headerDateContainer');
             const summaryBox = document.getElementById('financialSummary');
             const tableContainer = document.getElementById('tableContainer');
@@ -695,7 +857,7 @@
             const completedView = document.getElementById('completedView');
             const btnExport = document.getElementById('btnExport');
 
-            modalHeader.style.display = 'flex';
+            modalHeader.style.display = 'flex'; 
             tableContainer.style.display = 'block';
             actionArea.style.display = 'block';
             completedView.style.display = 'none';
@@ -719,7 +881,7 @@
                 document.getElementById('detailSub').innerText = "يرجى رفع النسخة المختومة";
             } 
             else if (order.status === 'DONE') {
-                summaryBox.style.display = 'none'; tableContainer.style.display = 'none'; filesContainer.style.display = 'none'; actionArea.style.display = 'none'; btnExport.style.display = 'none'; modalHeader.style.display = 'none';
+                summaryBox.style.display = 'none'; tableContainer.style.display = 'none'; filesContainer.style.display = 'none'; actionArea.style.display = 'none'; btnExport.style.display = 'none'; 
                 completedView.style.display = 'block';
                 renderCompletedView(order, completedView);
             }
@@ -831,19 +993,16 @@
 
         window.updateFinancialSummary = function(order) {
             const t = calculateOrderTotals(order.items);
-            const diff = t.reqTotal - t.delTotal;
+            
+            // MODIFIED: Only 2 Columns now
             document.getElementById('financialSummary').innerHTML = `
                 <div style="background:white; padding:15px; border-radius:15px; text-align:center; border:1px solid #f3f4f6">
                     <div style="font-size:12px; color:#6b7280;">قيمة الطلب الأصلية</div>
                     <div style="font-weight:800; font-size:20px; font-family:'Poppins'">${formatMoney(t.reqTotal)}</div>
                 </div>
                 <div style="background:var(--pink-gradient); color:white; padding:15px; border-radius:15px; text-align:center; box-shadow:0 10px 15px -3px rgba(236, 72, 153, 0.3);">
-                    <div style="font-size:12px; opacity:0.9;">القيمة المعتمدة</div>
+                    <div style="font-size:12px; opacity:0.9;">القيمة المعتمدة (الفاتورة)</div>
                     <div style="font-weight:800; font-size:20px; font-family:'Poppins'">${formatMoney(t.delTotal)}</div>
-                </div>
-                <div style="background:${diff > 1 ? '#fef2f2' : '#ecfdf5'}; padding:15px; border-radius:15px; text-align:center; border:1px solid ${diff > 1 ? '#fecaca' : '#a7f3d0'}">
-                    <div style="font-size:12px; color:#6b7280;">${diff > 1 ? 'خسارة نواقص' : 'الحالة'}</div>
-                    <div style="font-weight:800; font-size:20px; color:${diff > 1 ? '#ef4444' : '#10b981'}; font-family:'Poppins'">${diff > 1 ? formatMoney(diff) : 'ممتاز'}</div>
                 </div>
             `;
         }
@@ -986,9 +1145,7 @@
             
             if(o.items) {
                 o.items.forEach(i => { 
-                    // Yellow Highlight Logic for Excel: If Req != Avail
-                    let rowBg = (i.reqQty != i.availQty) ? 'background-color: #ffff00;' : ''; // Yellow background
-
+                    let rowBg = (i.reqQty != i.availQty) ? 'background-color: #ffff00;' : ''; 
                     h += `<tr style="${rowBg}">
                         <td style="${cellStyle} mso-number-format:'\@'">${i.barcode}</td>
                         <td style="${cellStyle}">${i.name}</td>
@@ -1006,8 +1163,11 @@
         }
 
         window.exportMainListToExcel = function() {
-            let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل الطلبات</h3><table border="1"><thead><tr style="background:#fce7f3"><th>PO</th><th>العميل</th><th>الموقع</th><th>التاريخ</th><th>الحالة</th><th>القيمة</th></tr></thead><tbody>`;
-            orders.forEach(o => { h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${o.location||''}</td><td>${o.deliveryDate}</td><td>${o.status}</td><td>${calculateOrderTotals(o.items).reqTotal.toFixed(2)}</td></tr>`; });
+            let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل الطلبات</h3><table border="1"><thead><tr style="background:#fce7f3"><th>PO</th><th>العميل</th><th>الموقع</th><th>التاريخ</th><th>الحالة</th><th>القيمة المطلوبة (PO)</th><th>القيمة المعتمدة (Inv)</th><th>الفرق</th></tr></thead><tbody>`;
+            orders.forEach(o => { 
+                const t = calculateOrderTotals(o.items);
+                h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${o.location||''}</td><td>${o.deliveryDate}</td><td>${o.status}</td><td>${t.reqTotal.toFixed(2)}</td><td>${t.delTotal.toFixed(2)}</td><td>${(t.reqTotal - t.delTotal).toFixed(2)}</td></tr>`; 
+            });
             h += `</tbody></table></body></html>`;
             window.downloadExcel(h, 'All_Orders.xls');
         }
