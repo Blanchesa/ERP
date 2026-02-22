@@ -185,39 +185,6 @@
 
         .sheet-table tr.unknown-row td { background-color: #fee2e2 !important; }
 
-        /* --- TASKS SYSTEM NEW STYLES (Sheet + ToDo Mix) --- */
-        .task-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #e5e7eb; padding-bottom: 0px; }
-        .task-tab { padding: 12px 25px; border-radius: 10px 10px 0 0; font-weight: 800; cursor: pointer; color: #6b7280; transition: 0.3s; background: transparent; border: none; font-family: inherit; position: relative; top: 2px; border: 1px solid transparent; border-bottom: none; }
-        .task-tab.active { background: white; color: #2563eb; border-color: #e5e7eb; border-bottom-color: white; z-index: 2; }
-        .task-tab:hover:not(.active) { background: #f1f5f9; }
-
-        /* Report Table Style for Tasks */
-        .tasks-report-table { width: 100%; border-collapse: collapse; background: white; }
-        .tasks-report-table th { background: #f8fafc; color: #475569; font-weight: 800; padding: 15px; text-align: right; border-bottom: 2px solid #e2e8f0; font-size: 13px; }
-        .tasks-report-table td { padding: 15px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; color: #334155; font-weight: 600; font-size: 14px; }
-        .tasks-report-table tr:last-child td { border-bottom: none; }
-        .tasks-report-table tr:hover { background-color: #f8fafc; }
-
-        /* To-Do Checkbox */
-        .todo-checkbox { 
-            width: 22px; height: 22px; border: 2px solid #cbd5e1; border-radius: 6px; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; transition: 0.2s; background: white;
-        }
-        .todo-checkbox:hover { border-color: #3b82f6; }
-        .todo-checkbox.checked { background: #10b981; border-color: #10b981; color: white; }
-        .todo-checkbox i { font-size: 14px; display: none; }
-        .todo-checkbox.checked i { display: block; }
-
-        /* Task File Badge */
-        .t-file { display: inline-flex; align-items: center; gap: 5px; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-size: 12px; text-decoration: none; border: 1px solid #bae6fd; margin-right: 5px; }
-        .t-file:hover { background: #bae6fd; }
-
-        /* Completion Row */
-        .completion-row { background-color: #f0f9ff !important; animation: fadeIn 0.3s; }
-        .completion-box { display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border: 1px dashed #3b82f6; border-radius: 10px; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
     </style>
 </head>
 <body>
@@ -245,7 +212,6 @@
             <input type="text" id="searchInput" placeholder="بحث باسم العميل، رقم PO..." onkeyup="renderList()">
         </div>
         <div class="action-buttons" style="display:flex; gap:10px;">
-            <button class="btn btn-blue" onclick="openTasksModal()"><i class="fas fa-clipboard-list"></i> المهام الداخلية</button>
             <button class="btn btn-purple" onclick="openProductsModal()"><i class="fas fa-tags"></i> إدارة المنتجات</button>
             <button class="btn btn-warning" onclick="exportShortagesToExcel()"><i class="fas fa-exclamation-triangle"></i> تقرير النواقص</button>
             <button class="btn btn-excel" onclick="exportMainListToExcel()"><i class="fas fa-file-excel"></i> تقرير الطلبات</button>
@@ -280,43 +246,6 @@
                     <input type="text" id="searchProductInput" placeholder="🔍 بحث في قاعدة المنتجات..." onkeyup="renderProductsList()" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
                 </div>
                 <div class="prod-list" id="productsListContainer"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tasksModal" class="modal">
-        <div class="modal-content" style="max-width: 1100px; background: #f1f5f9;">
-            <div class="modal-header">
-                <h3 style="margin:0; color:#1e3a8a"><i class="fas fa-clipboard-check" style="color:#3b82f6"></i> مركز المهام (Tasks Report)</h3>
-                <div onclick="closeModal('tasksModal')" style="cursor:pointer; font-size:24px;">×</div>
-            </div>
-            <div class="modal-body" style="padding: 20px;">
-                
-                <div class="task-tabs">
-                    <button class="task-tab active" id="tabPending" onclick="switchTaskTab('PENDING')">⏳ قيد الانتظار (To-Do List)</button>
-                    <button class="task-tab" id="tabDone" onclick="switchTaskTab('DONE')">✅ الأرشيف المكتمل (Report)</button>
-                </div>
-
-                <div id="addTaskForm" style="background: white; padding: 15px; border-radius: 0 15px 15px 15px; border: 1px solid #e2e8f0; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <div style="display:flex; gap:10px; align-items: center;">
-                        <input type="text" id="taskTitle" placeholder="✍️ عنوان المهمة الجديدة..." style="flex:2; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-weight:600;">
-                        <input type="text" id="taskFrom" placeholder="👤 المُرسل" style="flex:1; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-weight:600;">
-                        <label class="btn btn-purple" style="padding:10px 15px; font-size:12px; margin:0;">
-                            <i class="fas fa-paperclip"></i> مرفق
-                            <input type="file" id="taskFilesReq" multiple style="display:none">
-                        </label>
-                        <button class="btn btn-blue" onclick="saveNewTask()" style="padding:10px 20px;">إضافة</button>
-                    </div>
-                    <textarea id="taskDetails" placeholder="تفاصيل إضافية (اختياري)..." style="width:100%; height:40px; margin-top:10px; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-family:inherit;"></textarea>
-                </div>
-
-                <div style="background: white; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <table class="tasks-report-table">
-                        <thead id="tasksHead"></thead>
-                        <tbody id="tasksBody"></tbody>
-                    </table>
-                </div>
-
             </div>
         </div>
     </div>
@@ -463,20 +392,16 @@
         const db = getDatabase(app);
         const DB_PATH = 'beauty_oms/orders'; 
         const PROD_PATH = 'beauty_oms/products';
-        const TASKS_PATH = 'beauty_oms/tasks';
 
         let orders = [];
         let globalProducts = {}; 
-        let globalTasks = [];
         let currentId = null;
-        let currentTaskTab = 'PENDING';
 
         document.addEventListener('keydown', (e) => { 
             if(e.key==="Escape"){ 
                 closeModal('createModal'); 
                 closeModal('detailsModal'); 
                 closeModal('productsModal');
-                closeModal('tasksModal');
             }
         });
 
@@ -496,13 +421,6 @@
             if(document.getElementById('productsModal').style.display === 'block') window.renderProductsList();
         });
 
-        // Load Tasks
-        onValue(ref(db, TASKS_PATH), (snapshot) => {
-            const data = snapshot.val();
-            globalTasks = data ? Object.values(data) : [];
-            if(document.getElementById('tasksModal').style.display === 'block') window.renderTasks();
-        });
-
         function updateStats() {
             document.getElementById('statTotal').innerText = orders.length;
             document.getElementById('statPending').innerText = orders.filter(o => o.status !== 'DONE').length;
@@ -511,148 +429,6 @@
 
         window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
         window.formatMoney = function(a) { return parseFloat(a).toLocaleString('en-US', {minimumFractionDigits:2}); }
-
-        // --- TASKS FUNCTIONS (REPORT STYLE) ---
-        window.openTasksModal = function() {
-            document.getElementById('tasksModal').style.display = 'block';
-            window.renderTasks();
-        }
-
-        window.switchTaskTab = function(tab) {
-            currentTaskTab = tab;
-            document.querySelectorAll('.task-tab').forEach(b => b.classList.remove('active'));
-            document.getElementById(tab === 'PENDING' ? 'tabPending' : 'tabDone').classList.add('active');
-            window.renderTasks();
-        }
-
-        window.renderTasks = function() {
-            const thead = document.getElementById('tasksHead');
-            const tbody = document.getElementById('tasksBody');
-            tbody.innerHTML = '';
-            
-            // Sort: Pending (Newest First), Done (Newest First)
-            const filtered = globalTasks.filter(t => t.status === currentTaskTab).sort((a,b) => b.id - a.id);
-
-            // Toggle Add Form visibility
-            document.getElementById('addTaskForm').style.display = (currentTaskTab === 'PENDING') ? 'block' : 'none';
-
-            if(currentTaskTab === 'PENDING') {
-                thead.innerHTML = `<tr><th style="width:50px;">إنجاز</th><th>المهمة (Subject)</th><th>التفاصيل</th><th>المُرسل</th><th>التاريخ</th><th>مرفقات</th><th>حذف</th></tr>`;
-                if(filtered.length === 0) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">✨ القائمة فارغة! لا توجد مهام معلقة.</td></tr>`;
-                
-                filtered.forEach(task => {
-                    const dateStr = new Date(task.id).toLocaleDateString('ar-EG');
-                    let filesHtml = task.files_req ? task.files_req.map(f => `<a href="${f.data}" download="${f.name}" class="t-file"><i class="fas fa-paperclip"></i> ${f.name.substring(0,10)}...</a>`).join('') : '-';
-                    
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><div class="todo-checkbox" onclick="toggleCompleteRow(${task.id})"><i class="fas fa-check"></i></div></td>
-                            <td style="font-weight:800; color:#1e3a8a;">${task.title}</td>
-                            <td style="font-size:13px; color:#64748b;">${task.details || ''}</td>
-                            <td><span style="background:#f1f5f9; padding:3px 8px; border-radius:5px; font-size:12px;">${task.from}</span></td>
-                            <td style="font-size:12px; color:#94a3b8;">${dateStr}</td>
-                            <td>${filesHtml}</td>
-                            <td><button onclick="deleteTask(${task.id})" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
-                        </tr>
-                        <tr id="action_row_${task.id}" class="completion-row" style="display:none;">
-                            <td colspan="7">
-                                <div class="completion-box">
-                                    <span style="font-size:13px; font-weight:700; color:#2563eb;">⚡ إتمام المهمة:</span>
-                                    <input type="text" id="smacc_${task.id}" placeholder="SMACC Ref (اختياري)" style="padding:8px; border:1px solid #cbd5e1; border-radius:5px; font-size:13px;">
-                                    <input type="file" id="fileRes_${task.id}" style="font-size:12px;">
-                                    <button class="btn btn-excel" style="padding:6px 15px; font-size:12px;" onclick="completeTask(${task.id})">تأكيد الإنجاز</button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } else {
-                // DONE TABLE (REPORT)
-                thead.innerHTML = `<tr><th style="width:50px;">Status</th><th>المهمة</th><th>SMACC Ref</th><th>تاريخ الإنجاز</th><th>بواسطة</th><th>مرفقات الرد</th><th>حذف</th></tr>`;
-                if(filtered.length === 0) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">الأرشيف فارغ.</td></tr>`;
-                
-                filtered.forEach(task => {
-                    const doneDate = task.completedAt ? new Date(task.completedAt).toLocaleDateString('ar-EG') : '-';
-                    let filesResHtml = task.files_res ? task.files_res.map(f => `<a href="${f.data}" download="${f.name}" class="t-file" style="background:#ecfdf5; color:#065f46; border-color:#a7f3d0"><i class="fas fa-check"></i> ${f.name.substring(0,10)}...</a>`).join('') : '-';
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><i class="fas fa-check-circle" style="color:#10b981; font-size:18px;"></i></td>
-                            <td style="font-weight:700;">${task.title}</td>
-                            <td style="color:#2563eb; font-family:monospace; font-weight:700;">${task.smaccRef || '-'}</td>
-                            <td>${doneDate}</td>
-                            <td>${task.from}</td>
-                            <td>${filesResHtml}</td>
-                            <td><button onclick="deleteTask(${task.id})" style="background:none; border:none; color:#cbd5e1; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
-                        </tr>
-                    `;
-                });
-            }
-        }
-
-        window.toggleCompleteRow = function(id) {
-            const row = document.getElementById(`action_row_${id}`);
-            row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
-        }
-
-        window.saveNewTask = function() {
-            const title = document.getElementById('taskTitle').value;
-            const from = document.getElementById('taskFrom').value;
-            const details = document.getElementById('taskDetails').value;
-            if(!title) return alert("يرجى كتابة عنوان المهمة");
-
-            const newTask = {
-                id: Date.now(),
-                title: title,
-                from: from || 'Admin',
-                details: details,
-                status: 'PENDING',
-                files_req: []
-            };
-
-            const fileInput = document.getElementById('taskFilesReq');
-            if(fileInput.files.length > 0) {
-                processFiles(fileInput.files, (fs) => {
-                    newTask.files_req = fs;
-                    set(ref(db, TASKS_PATH + '/' + newTask.id), newTask);
-                    resetTaskForm();
-                });
-            } else {
-                set(ref(db, TASKS_PATH + '/' + newTask.id), newTask);
-                resetTaskForm();
-            }
-        }
-
-        function resetTaskForm() {
-            document.getElementById('taskTitle').value = '';
-            document.getElementById('taskDetails').value = '';
-            document.getElementById('taskFilesReq').value = '';
-        }
-
-        window.completeTask = function(id) {
-            const fileInput = document.getElementById(`fileRes_${id}`);
-            const smaccInput = document.getElementById(`smacc_${id}`);
-            const task = globalTasks.find(t => t.id === id);
-            
-            const doComplete = (files) => {
-                task.status = 'DONE';
-                task.completedAt = new Date().toISOString();
-                task.smaccRef = smaccInput.value || ''; // Save SMACC Ref
-                if(files) task.files_res = files;
-                update(ref(db, TASKS_PATH + '/' + id), task);
-            };
-
-            if(fileInput && fileInput.files.length > 0) {
-                processFiles(fileInput.files, (fs) => doComplete(fs));
-            } else {
-                doComplete(null);
-            }
-        }
-
-        window.deleteTask = function(id) {
-            if(confirm("هل أنت متأكد من حذف هذه المهمة نهائياً؟")) remove(ref(db, TASKS_PATH + '/' + id));
-        }
-
 
         // --- Products Functions ---
         window.openProductsModal = function() {
