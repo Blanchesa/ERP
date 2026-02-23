@@ -139,7 +139,7 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .sheet-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: 'Poppins', 'Cairo', sans-serif; table-layout: auto; }
+        .sheet-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: 'Poppins', 'Cairo', sans-serif; table-layout: fixed; }
         
         .sheet-table thead { position: sticky; top: 0; z-index: 10; background: white; }
         .sheet-table thead tr:first-child th { background: #e2e8f0; color: #1e293b; font-weight: 800; text-align: center; padding: 12px 8px; border-bottom: 2px solid #cbd5e1; border-right: 1px solid #cbd5e1; white-space: nowrap;}
@@ -154,7 +154,7 @@
         .input-row.sales-mode td { border-bottom: 4px solid #10b981 !important; background-color: #f0fdf4 !important; }
         .input-row.purc-mode td { border-bottom: 4px solid #ef4444 !important; background-color: #fef2f2 !important; }
         
-        .sheet-table tbody td { padding: 5px; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; position: relative; text-align: center; }
+        .sheet-table tbody td { padding: 5px; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; position: relative; text-align: center; word-wrap: break-word;}
         .sheet-table tbody tr:nth-child(odd) { background-color: #ffffff; }
         .sheet-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
         .sheet-table tbody tr:hover { background-color: #e0f2fe; }
@@ -505,46 +505,39 @@
                 </div>
                 
                 <div id="viewSalesLedger">
+                    <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center; background: #eff6ff; padding: 10px 15px; border-radius: 12px; border: 1px dashed #bfdbfe;">
+                        <span style="color:#1d4ed8; font-weight:800; font-size:13px;"><i class="fas fa-info-circle"></i> يمكنك تحديد أي حقل ولصق عمود كامل من إكسل. (التاريخ يقبل النسخ المباشر ويُكتب بصيغة DD/MM/YYYY)</span>
+                        <div style="display:flex; gap: 10px;">
+                            <button class="btn btn-outline btn-sm" onclick="addFinanceRow('sales')"><i class="fas fa-plus"></i> إضافة سطر</button>
+                            <button class="btn btn-gradient btn-sm" onclick="saveAllFinances('sales')"><i class="fas fa-save"></i> حفظ الحركات المدخلة</button>
+                        </div>
+                    </div>
                     <div class="sheet-table-container">
                         <table class="sheet-table finance-table">
+                            <colgroup>
+                                <col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="5%">
+                            </colgroup>
                             <thead>
                                 <tr>
-                                    <th width="10%">التاريخ</th>
-                                    <th width="13%">نوع الحركة</th>
-                                    <th width="16%">اسم العميل</th>
-                                    <th width="16%">الوصف / البيان</th>
-                                    <th width="12%">رقم المرجع</th>
-                                    <th width="10%">المبلغ الأساسي</th>
-                                    <th width="8%">الضريبة</th>
-                                    <th width="10%">الإجمالي</th>
-                                    <th width="5%">إجراء</th>
-                                </tr>
-                                <tr class="input-row sales-mode">
-                                    <td><input type="date" id="salesDate" class="cell-input" style="color: #166534;"></td>
-                                    <td>
-                                        <select id="salesType" class="cell-input" onchange="updateSalesCalc()" style="color: #166534; font-weight: 800;">
-                                            <option value="SALE">فاتورة مبيعات</option>
-                                            <option value="SALE_RET">مرتجع مبيعات</option>
-                                            <option value="SALE_DISC">إشعار خصم</option>
-                                            <option value="PAY_IN">دفعة مستلمة</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="text" id="salesClient" class="cell-input" placeholder="اسم العميل..." style="color: #166534;" oninput="handleNameInput(this)"></td>
-                                    <td><input type="text" id="salesDesc" class="cell-input" placeholder="تفاصيل..." style="color: #166534;"></td>
-                                    <td><input type="text" id="salesRef" class="cell-input" placeholder="INV-000" style="color: #166534; font-family: monospace;"></td>
-                                    <td><input type="text" id="salesAmount" class="cell-input accounting-num" placeholder="0.00" oninput="formatLiveMoney(this, 'sales')" style="color: #166534;"></td>
-                                    <td><input type="text" id="salesVat" class="cell-input accounting-num" style="color:#db2777;" readonly placeholder="0.00"></td>
-                                    <td><input type="text" id="salesTotal" class="cell-input accounting-num" style="color:#1d4ed8;" readonly placeholder="0.00"></td>
-                                    <td>
-                                        <button class="btn btn-blue btn-sm" style="margin:auto; padding:6px 12px; border-radius:8px;" onclick="saveFinanceEntry('sales')">
-                                            <i class="fas fa-plus"></i> حفظ
-                                        </button>
-                                    </td>
+                                    <th>التاريخ</th>
+                                    <th>نوع الحركة</th>
+                                    <th>اسم العميل</th>
+                                    <th>الوصف / البيان</th>
+                                    <th>رقم المرجع</th>
+                                    <th>المبلغ الأساسي</th>
+                                    <th>الضريبة</th>
+                                    <th>الإجمالي</th>
+                                    <th>حذف</th>
                                 </tr>
                             </thead>
+                            <tbody id="salesInputBody" class="finance-input-body"></tbody>
                         </table>
-                        <div style="max-height: 500px; overflow-y: auto;">
-                            <table class="sheet-table finance-table" style="margin-top: -1px;">
+                        <div style="background: #cbd5e1; height: 3px; border-top: 1px solid #94a3b8;"></div>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            <table class="sheet-table finance-table">
+                                <colgroup>
+                                    <col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="5%">
+                                </colgroup>
                                 <tbody id="salesTableBody"></tbody>
                             </table>
                         </div>
@@ -552,45 +545,39 @@
                 </div>
 
                 <div id="viewPurchasesLedger" style="display: none;">
+                    <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center; background: #fef2f2; padding: 10px 15px; border-radius: 12px; border: 1px dashed #fecaca;">
+                        <span style="color:#b91c1c; font-weight:800; font-size:13px;"><i class="fas fa-info-circle"></i> يمكنك تحديد أي حقل ولصق عمود كامل من إكسل. (التاريخ يقبل النسخ المباشر ويُكتب بصيغة DD/MM/YYYY)</span>
+                        <div style="display:flex; gap: 10px;">
+                            <button class="btn btn-outline btn-sm" onclick="addFinanceRow('purc')"><i class="fas fa-plus"></i> إضافة سطر</button>
+                            <button class="btn btn-danger btn-sm" onclick="saveAllFinances('purc')"><i class="fas fa-save"></i> حفظ الحركات المدخلة</button>
+                        </div>
+                    </div>
                     <div class="sheet-table-container">
                         <table class="sheet-table finance-table">
+                            <colgroup>
+                                <col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="5%">
+                            </colgroup>
                             <thead>
                                 <tr>
-                                    <th width="10%">التاريخ</th>
-                                    <th width="13%">نوع الحركة</th>
-                                    <th width="16%">اسم المورد</th>
-                                    <th width="16%">الوصف / البيان</th>
-                                    <th width="12%">رقم المرجع</th>
-                                    <th width="10%">المبلغ الأساسي</th>
-                                    <th width="8%">الضريبة</th>
-                                    <th width="10%">الإجمالي</th>
-                                    <th width="5%">إجراء</th>
-                                </tr>
-                                <tr class="input-row purc-mode">
-                                    <td><input type="date" id="purcDate" class="cell-input" style="color: #991b1b;"></td>
-                                    <td>
-                                        <select id="purcType" class="cell-input" onchange="updatePurchasesCalc()" style="color: #991b1b; font-weight: 800;">
-                                            <option value="PURC_VAT">فاتورة ضريبية (15%)</option>
-                                            <option value="PURC_NO_VAT">بدون ضريبة (0%)</option>
-                                            <option value="PAY_OUT">دفعة صادرة</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="text" id="purcClient" class="cell-input" placeholder="اسم المورد..." style="color: #991b1b;" oninput="handleNameInput(this)"></td>
-                                    <td><input type="text" id="purcDesc" class="cell-input" placeholder="تفاصيل..." style="color: #991b1b;"></td>
-                                    <td><input type="text" id="purcRef" class="cell-input" placeholder="INV-000" style="color: #991b1b; font-family: monospace;"></td>
-                                    <td><input type="text" id="purcAmount" class="cell-input accounting-num" placeholder="0.00" oninput="formatLiveMoney(this, 'purc')" style="color: #991b1b;"></td>
-                                    <td><input type="text" id="purcVat" class="cell-input accounting-num" style="color:#db2777;" readonly placeholder="0.00"></td>
-                                    <td><input type="text" id="purcTotal" class="cell-input accounting-num" style="color:#1d4ed8;" readonly placeholder="0.00"></td>
-                                    <td>
-                                        <button class="btn btn-blue btn-sm" style="margin:auto; padding:6px 12px; border-radius:8px; background:#ef4444;" onclick="saveFinanceEntry('purc')">
-                                            <i class="fas fa-plus"></i> حفظ
-                                        </button>
-                                    </td>
+                                    <th>التاريخ</th>
+                                    <th>نوع الحركة</th>
+                                    <th>اسم المورد</th>
+                                    <th>الوصف / البيان</th>
+                                    <th>رقم المرجع</th>
+                                    <th>المبلغ الأساسي</th>
+                                    <th>الضريبة</th>
+                                    <th>الإجمالي</th>
+                                    <th>حذف</th>
                                 </tr>
                             </thead>
+                            <tbody id="purcInputBody" class="finance-input-body"></tbody>
                         </table>
-                        <div style="max-height: 500px; overflow-y: auto;">
-                            <table class="sheet-table finance-table" style="margin-top: -1px;">
+                        <div style="background: #cbd5e1; height: 3px; border-top: 1px solid #94a3b8;"></div>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            <table class="sheet-table finance-table">
+                                <colgroup>
+                                    <col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="5%">
+                                </colgroup>
                                 <tbody id="purchasesTableBody"></tbody>
                             </table>
                         </div>
@@ -603,15 +590,18 @@
                     </div>
                     <div class="sheet-table-container" style="max-height: 450px; overflow-y: auto;">
                         <table class="sheet-table finance-table">
+                            <colgroup>
+                                <col width="12%"><col width="15%"><col width="18%"><col width="20%"><col width="15%"><col width="10%"><col width="10%">
+                            </colgroup>
                             <thead>
                                 <tr>
-                                    <th width="12%">التاريخ</th>
-                                    <th width="15%">رقم المرجع</th>
-                                    <th width="18%">الاسم</th>
-                                    <th width="20%">الوصف / البيان</th>
-                                    <th width="15%">نوع الحركة</th>
-                                    <th width="10%">المبلغ الخاضع</th>
-                                    <th width="10%" style="background:#fce7f3;">قيمة الضريبة</th>
+                                    <th>التاريخ</th>
+                                    <th>رقم المرجع</th>
+                                    <th>الاسم</th>
+                                    <th>الوصف / البيان</th>
+                                    <th>نوع الحركة</th>
+                                    <th>المبلغ الخاضع</th>
+                                    <th style="background:#fce7f3;">قيمة الضريبة</th>
                                 </tr>
                             </thead>
                             <tbody id="vatTableBody"></tbody>
@@ -660,7 +650,7 @@
             }
         });
 
-        // Load Orders
+        // Load DB Data
         onValue(ref(db, DB_PATH), (snapshot) => {
             const data = snapshot.val();
             orders = data ? Object.values(data) : [];
@@ -669,38 +659,25 @@
             window.renderList();
         });
 
-        // Load Products
         onValue(ref(db, PROD_PATH), (snapshot) => {
             const data = snapshot.val();
             globalProducts = data || {};
             if(document.getElementById('productsModal').style.display === 'block') window.renderProductsList();
         });
 
-        // Load Finances
         onValue(ref(db, FIN_PATH), (snapshot) => {
             const data = snapshot.val();
             finances = data ? Object.values(data) : [];
             window.updateNameSuggestions(); 
-            
-            if(document.getElementById('financeModal').style.display === 'block') {
-                window.triggerFinSearch();
-            }
-            if(document.getElementById('partnersView').style.display === 'block') {
-                window.renderPartnersList();
-            }
+            if(document.getElementById('financeModal').style.display === 'block') window.triggerFinSearch();
+            if(document.getElementById('partnersView').style.display === 'block') window.renderPartnersList();
         });
 
-        // Load Opening Balances
         onValue(ref(db, BAL_PATH), (snapshot) => {
             const data = snapshot.val();
             openingBalances = data || {};
-            
-            if(document.getElementById('financeModal').style.display === 'block') {
-                window.triggerFinSearch();
-            }
-            if(document.getElementById('partnersView').style.display === 'block') {
-                window.renderPartnersList();
-            }
+            if(document.getElementById('financeModal').style.display === 'block') window.triggerFinSearch();
+            if(document.getElementById('partnersView').style.display === 'block') window.renderPartnersList();
         });
 
         function updateStats() {
@@ -718,7 +695,7 @@
             return num < 0 ? `(${formatted})` : formatted;
         }
 
-        window.formatLiveMoney = function(input, source) {
+        window.formatLiveMoney = function(input) {
             let cursor = input.selectionStart;
             let oldLength = input.value.length;
             let val = input.value.replace(/[^0-9.]/g, '');
@@ -728,13 +705,61 @@
             let newVal = parts.join('.');
             input.value = newVal;
             let newLength = newVal.length;
-            input.setSelectionRange(cursor + (newLength - oldLength), cursor + (newLength - oldLength));
-            
-            if(source === 'sales') window.updateSalesCalc();
-            if(source === 'purc') window.updatePurchasesCalc();
+            try { input.setSelectionRange(cursor + (newLength - oldLength), cursor + (newLength - oldLength)); } catch(e){}
         }
 
-        // --- Products & Orders ---
+        // --- Date Parsing and Formatting (Smart Paste & Typing - 4 Digits) ---
+        window.parseDisplayDateToISO = function(val) {
+            if(!val) return '';
+            let parts = val.split('/');
+            if(parts.length === 3) {
+                let d = parts[0].padStart(2, '0');
+                let m = parts[1].padStart(2, '0');
+                let y = parts[2].length === 2 ? '20' + parts[2] : parts[2];
+                return `${y}-${m}-${d}`; // YYYY-MM-DD
+            }
+            return val;
+        }
+
+        window.parseISOToDisplayDate = function(val) {
+            if(!val || !val.includes('-')) return val;
+            let parts = val.split('-');
+            if(parts.length === 3) {
+                let y = parts[0]; // الاحتفاظ بـ 4 أرقام
+                let m = parts[1];
+                let d = parts[2];
+                return `${d}/${m}/${y}`; // DD/MM/YYYY
+            }
+            return val;
+        }
+
+        window.formatDateInput = function(input) {
+            let val = input.value;
+            if (val.match(/[/.-]/)) {
+                let parts = val.split(/[/.-]/);
+                if (parts.length === 3 && parts[2] !== "") {
+                    let d = parts[0].padStart(2, '0');
+                    let m = parts[1].padStart(2, '0');
+                    let y = parts[2];
+                    if (y.length > 4) y = y.slice(0, 4);
+                    val = `${d}/${m}/${y}`;
+                }
+            } else {
+                val = val.replace(/[^0-9]/g, '');
+                if (val.length > 8) val = val.slice(0, 8); // 8 أرقام بحد أقصى
+                if (val.length >= 5) {
+                    let d = val.slice(0, 2);
+                    let m = val.slice(2, 4);
+                    let y = val.slice(4); 
+                    val = `${d}/${m}/${y}`;
+                } else if (val.length >= 3) {
+                    val = `${val.slice(0, 2)}/${val.slice(2)}`;
+                }
+            }
+            input.value = val;
+        }
+
+        // --- Products & Orders Logic ---
         window.openProductsModal = function() { document.getElementById('productsModal').style.display = 'block'; window.renderProductsList(); }
         window.saveSingleProduct = function() {
             const code = document.getElementById('prodCodeInput').value.trim(); const name = document.getElementById('prodNameInput').value.trim();
@@ -832,165 +857,212 @@
         window.exportShortagesToExcel = function() { let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>النواقص</h3><table border="1"><thead><tr style="background:#fee2e2"><th>PO</th><th>العميل</th><th>المنتج</th><th>مطلوب</th><th>متوفر</th><th>خسارة</th></tr></thead><tbody>`; orders.forEach(o => { if(o.items) o.items.forEach(i => { if(i.reqQty > i.availQty) h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${i.name}</td><td>${i.reqQty}</td><td>${i.availQty}</td><td>${((i.reqQty-i.availQty)*i.price).toFixed(2)}</td></tr>`; }); }); h += `</tbody></table></body></html>`; window.downloadExcel(h, 'Shortages.xls'); }
 
         window.handleNameInput = function(input) {
-            if(input.value.trim().length > 0) {
-                input.setAttribute('list', 'finNamesList');
-            } else {
-                input.removeAttribute('list');
-            }
+            if(input.value.trim().length > 0) { input.setAttribute('list', 'finNamesList'); } else { input.removeAttribute('list'); }
         }
 
         window.updateNameSuggestions = function() {
             const names = new Set();
-            finances.forEach(f => {
-                if (f.client && f.client.trim() !== '') names.add(f.client.trim());
-            });
+            finances.forEach(f => { if (f.client && f.client.trim() !== '') names.add(f.client.trim()); });
             const dList = document.getElementById('finNamesList');
-            if(dList) {
-                dList.innerHTML = Array.from(names).map(n => `<option value="${n}">`).join('');
-            }
+            if(dList) { dList.innerHTML = Array.from(names).map(n => `<option value="${n}">`).join(''); }
         }
 
-        // --- إدارة عرض قسم العملاء والموردين ---
-        window.togglePartnersView = function() {
-            const dash = document.getElementById('mainDashboardView');
-            const partners = document.getElementById('partnersView');
-            
-            if (partners.style.display === 'none') {
-                dash.style.display = 'none';
-                partners.style.display = 'block';
-                window.renderPartnersList();
-            } else {
-                partners.style.display = 'none';
-                dash.style.display = 'block';
-            }
+        // --- Finance Multi-Row Implementation ---
+
+        window.getSalesInputRowHtml = function() {
+            let d = new Date();
+            let dd = String(d.getDate()).padStart(2, '0');
+            let mm = String(d.getMonth() + 1).padStart(2, '0');
+            let yyyy = d.getFullYear();
+            let todayDisplay = `${dd}/${mm}/${yyyy}`;
+
+            return `
+            <tr class="input-row sales-mode">
+                <td><input type="text" name="f_date" class="cell-input" placeholder="DD/MM/YYYY" value="${todayDisplay}" oninput="formatDateInput(this)" style="color: #166534; font-family: 'Poppins', monospace; font-weight: 800; font-size: 14px;"></td>
+                <td>
+                    <select name="f_type" class="cell-input" onchange="calcFinanceRow(this, 'sales')" style="color: #166534; font-weight: 800;">
+                        <option value="SALE">فاتورة مبيعات</option>
+                        <option value="SALE_RET">مرتجع مبيعات</option>
+                        <option value="SALE_DISC">إشعار خصم</option>
+                        <option value="PAY_IN">دفعة مستلمة</option>
+                    </select>
+                </td>
+                <td><input type="text" name="f_client" class="cell-input" placeholder="اسم العميل..." style="color: #166534;" oninput="handleNameInput(this)"></td>
+                <td><input type="text" name="f_desc" class="cell-input" placeholder="تفاصيل..." style="color: #166534;"></td>
+                <td><input type="text" name="f_ref" class="cell-input" placeholder="INV-000" style="color: #166534; font-family: monospace;"></td>
+                <td><input type="text" name="f_amount" class="cell-input accounting-num" placeholder="0.00" oninput="formatFinanceMoney(this, 'sales')" style="color: #166534;"></td>
+                <td><input type="text" name="f_vat" class="cell-input accounting-num" style="color:#db2777;" readonly placeholder="0.00"></td>
+                <td><input type="text" name="f_total" class="cell-input accounting-num" style="color:#1d4ed8;" readonly placeholder="0.00"></td>
+                <td>
+                    <button class="btn btn-danger btn-sm" style="margin:auto; padding:4px 8px; border-radius:6px;" onclick="this.closest('tr').remove()"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>`;
         }
 
-        window.openOpBalModal = function() {
-            document.getElementById('opBalModal').style.display = 'block';
-            document.getElementById('opBalName').value = '';
-            document.getElementById('opBalAmount').value = '';
+        window.getPurcInputRowHtml = function() {
+            let d = new Date();
+            let dd = String(d.getDate()).padStart(2, '0');
+            let mm = String(d.getMonth() + 1).padStart(2, '0');
+            let yyyy = d.getFullYear();
+            let todayDisplay = `${dd}/${mm}/${yyyy}`;
+
+            return `
+            <tr class="input-row purc-mode">
+                <td><input type="text" name="f_date" class="cell-input" placeholder="DD/MM/YYYY" value="${todayDisplay}" oninput="formatDateInput(this)" style="color: #991b1b; font-family: 'Poppins', monospace; font-weight: 800; font-size: 14px;"></td>
+                <td>
+                    <select name="f_type" class="cell-input" onchange="calcFinanceRow(this, 'purc')" style="color: #991b1b; font-weight: 800;">
+                        <option value="PURC_VAT">فاتورة ضريبية (15%)</option>
+                        <option value="PURC_NO_VAT">بدون ضريبة (0%)</option>
+                        <option value="PAY_OUT">دفعة صادرة</option>
+                    </select>
+                </td>
+                <td><input type="text" name="f_client" class="cell-input" placeholder="اسم المورد..." style="color: #991b1b;" oninput="handleNameInput(this)"></td>
+                <td><input type="text" name="f_desc" class="cell-input" placeholder="تفاصيل..." style="color: #991b1b;"></td>
+                <td><input type="text" name="f_ref" class="cell-input" placeholder="INV-000" style="color: #991b1b; font-family: monospace;"></td>
+                <td><input type="text" name="f_amount" class="cell-input accounting-num" placeholder="0.00" oninput="formatFinanceMoney(this, 'purc')" style="color: #991b1b;"></td>
+                <td><input type="text" name="f_vat" class="cell-input accounting-num" style="color:#db2777;" readonly placeholder="0.00"></td>
+                <td><input type="text" name="f_total" class="cell-input accounting-num" style="color:#1d4ed8;" readonly placeholder="0.00"></td>
+                <td>
+                    <button class="btn btn-danger btn-sm" style="margin:auto; padding:4px 8px; border-radius:6px;" onclick="this.closest('tr').remove()"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>`;
         }
 
-        window.switchFinTab = function(tab) {
-            activeFinTab = tab;
-            document.getElementById('viewSalesLedger').style.display = 'none';
-            document.getElementById('viewPurchasesLedger').style.display = 'none';
-            document.getElementById('viewVatLedger').style.display = 'none';
-            
-            document.getElementById('tabSales').classList.remove('active');
-            document.getElementById('tabPurchases').classList.remove('active');
-            document.getElementById('tabVat').classList.remove('active');
-
-            if(tab === 'SALES') {
-                document.getElementById('viewSalesLedger').style.display = 'block';
-                document.getElementById('tabSales').classList.add('active');
-            } else if (tab === 'PURCHASES') {
-                document.getElementById('viewPurchasesLedger').style.display = 'block';
-                document.getElementById('tabPurchases').classList.add('active');
-            } else if (tab === 'VAT') {
-                document.getElementById('viewVatLedger').style.display = 'block';
-                document.getElementById('tabVat').classList.add('active');
-            }
+        window.addFinanceRow = function(source) {
+            const tbody = document.getElementById(source === 'sales' ? 'salesInputBody' : 'purcInputBody');
+            const html = source === 'sales' ? window.getSalesInputRowHtml() : window.getPurcInputRowHtml();
+            tbody.insertAdjacentHTML('beforeend', html);
+            window.setupFinancePasteListeners();
         }
 
-        window.openFinanceModal = function() {
-            document.getElementById('financeModal').style.display = 'block';
-            document.getElementById('salesDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('purcDate').value = new Date().toISOString().split('T')[0];
-            window.switchFinTab('SALES'); 
-            window.updateSalesCalc();
-            window.updatePurchasesCalc();
-            window.triggerFinSearch();
-        }
+        window.calcFinanceRow = function(el, source) {
+            let row = el.closest('tr');
+            if(!row) return;
+            let type = row.querySelector('[name="f_type"]').value;
+            let amountRaw = row.querySelector('[name="f_amount"]').value.replace(/,/g, '');
+            let amount = Math.abs(parseFloat(amountRaw) || 0);
 
-        window.updateSalesCalc = function() {
-            const type = document.getElementById('salesType').value;
-            const rawVal = document.getElementById('salesAmount').value.replace(/,/g, '');
-            const amount = Math.abs(parseFloat(rawVal) || 0); 
-            
-            let vatRate = (type === 'SALE' || type === 'SALE_RET' || type === 'SALE_DISC') ? 0.15 : 0;
+            let vatRate = 0;
+            if(source === 'sales' && ['SALE', 'SALE_RET', 'SALE_DISC'].includes(type)) vatRate = 0.15;
+            if(source === 'purc' && type === 'PURC_VAT') vatRate = 0.15;
+
             let vat = amount * vatRate;
             let total = amount + vat;
 
-            document.getElementById('salesVat').value = window.formatMoney(vat);
-            document.getElementById('salesTotal').value = window.formatMoney(total);
-            document.getElementById('salesRef').placeholder = (type === 'PAY_IN') ? 'سند/بنك...' : 'INV- / RET- ...';
+            row.querySelector('[name="f_vat"]').value = window.formatMoney(vat);
+            row.querySelector('[name="f_total"]').value = window.formatMoney(total);
+            
+            let refInput = row.querySelector('[name="f_ref"]');
+            if(source === 'sales') refInput.placeholder = (type === 'PAY_IN') ? 'سند/بنك...' : 'INV- / RET- ...';
+            if(source === 'purc') refInput.placeholder = (type === 'PAY_OUT') ? 'سند/بنك...' : 'رقم الفاتورة...';
         }
 
-        window.updatePurchasesCalc = function() {
-            const type = document.getElementById('purcType').value;
-            const rawVal = document.getElementById('purcAmount').value.replace(/,/g, '');
-            const amount = Math.abs(parseFloat(rawVal) || 0); 
-            
-            let vatRate = (type === 'PURC_VAT') ? 0.15 : 0;
-            let vat = amount * vatRate;
-            let total = amount + vat;
-
-            document.getElementById('purcVat').value = window.formatMoney(vat);
-            document.getElementById('purcTotal').value = window.formatMoney(total);
-            document.getElementById('purcRef').placeholder = (type === 'PAY_OUT') ? 'سند/بنك...' : 'رقم الفاتورة...';
+        window.formatFinanceMoney = function(input, source) {
+            let cursor = input.selectionStart;
+            let oldLength = input.value.length;
+            let val = input.value.replace(/[^0-9.]/g, '');
+            let parts = val.split('.');
+            if(parts.length > 2) parts[1] = parts.slice(1).join('');
+            if(parts[0].length > 0) { parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+            let newVal = parts.join('.');
+            input.value = newVal;
+            let newLength = newVal.length;
+            try { input.setSelectionRange(cursor + (newLength - oldLength), cursor + (newLength - oldLength)); } catch(e){}
+            window.calcFinanceRow(input, source);
         }
 
-        window.saveFinanceEntry = function(source) {
-            let type, client, desc, date, amountRaw, refInput;
+        window.handleFinanceGridPaste = function(e) {
+            const target = e.target;
+            const name = target.getAttribute('name');
+            if(!name) return;
             
-            if (source === 'sales') {
-                type = document.getElementById('salesType').value;
-                client = document.getElementById('salesClient').value.trim();
-                desc = document.getElementById('salesDesc').value.trim();
-                date = document.getElementById('salesDate').value;
-                amountRaw = document.getElementById('salesAmount').value;
-                refInput = document.getElementById('salesRef').value.trim();
-            } else {
-                type = document.getElementById('purcType').value;
-                client = document.getElementById('purcClient').value.trim();
-                desc = document.getElementById('purcDesc').value.trim();
-                date = document.getElementById('purcDate').value;
-                amountRaw = document.getElementById('purcAmount').value;
-                refInput = document.getElementById('purcRef').value.trim();
+            e.preventDefault();
+            const clipboardData = (e.clipboardData || window.clipboardData).getData('text');
+            const values = clipboardData.split(/\r?\n/);
+            
+            const tbody = target.closest('tbody');
+            const allRows = Array.from(tbody.querySelectorAll('tr.input-row'));
+            let startIndex = allRows.indexOf(target.closest('tr'));
+            
+            if(startIndex === -1) return;
+
+            let source = tbody.id === 'salesInputBody' ? 'sales' : 'purc';
+            
+            let requiredLength = startIndex + values.filter(v => v.trim() !== '').length;
+            while (allRows.length < requiredLength) {
+                const html = source === 'sales' ? window.getSalesInputRowHtml() : window.getPurcInputRowHtml();
+                tbody.insertAdjacentHTML('beforeend', html);
+                allRows.push(tbody.lastElementChild);
+                window.setupFinancePasteListeners();
             }
 
-            const amount = Math.abs(parseFloat(amountRaw.replace(/,/g, '')) || 0);
-
-            if(!client || !date || amount <= 0 || !refInput) return alert("يرجى إدخال (الاسم، التاريخ، المرجع، والمبلغ) بشكل صحيح.");
-
-            let vatRate = (type === 'SALE' || type === 'SALE_RET' || type === 'SALE_DISC' || type === 'PURC_VAT') ? 0.15 : 0;
-            let vat = amount * vatRate;
-            let total = amount + vat;
-
-            const entry = {
-                id: Date.now(),
-                type: type,
-                client: client,
-                desc: desc,
-                date: date,
-                amount: amount, 
-                vat: vat,
-                total: total,
-                ref: refInput
-            };
-
-            set(ref(db, FIN_PATH + '/' + entry.id), entry).then(() => {
-                if (source === 'sales') {
-                    document.getElementById('salesAmount').value = '';
-                    document.getElementById('salesRef').value = '';
-                    document.getElementById('salesDesc').value = '';
-                    document.getElementById('salesClient').removeAttribute('list');
-                    window.updateSalesCalc();
-                } else {
-                    document.getElementById('purcAmount').value = '';
-                    document.getElementById('purcRef').value = '';
-                    document.getElementById('purcDesc').value = '';
-                    document.getElementById('purcClient').removeAttribute('list');
-                    window.updatePurchasesCalc();
+            values.forEach((val, i) => {
+                let cleanVal = val.trim();
+                if(cleanVal !== '' && startIndex + i < allRows.length) {
+                    const input = allRows[startIndex + i].querySelector(`[name="${name}"]`);
+                    if(input) {
+                        input.value = cleanVal;
+                        if(name === 'f_amount') window.formatFinanceMoney(input, source);
+                        else if (name === 'f_date') window.formatDateInput(input);
+                        else window.calcFinanceRow(input, source);
+                        if(name === 'f_client') window.handleNameInput(input);
+                    }
                 }
             });
         }
 
-        window.deleteFinanceEntry = function(id) {
-            if(confirm("هل أنت متأكد من حذف هذا القيد؟ سيتم حذفه من كافة السجلات المرتبطة.")) {
-                remove(ref(db, FIN_PATH + '/' + id));
+        window.setupFinancePasteListeners = function() {
+            document.querySelectorAll('.finance-input-body .cell-input').forEach(input => {
+                input.removeEventListener('paste', window.handleFinanceGridPaste);
+                input.addEventListener('paste', window.handleFinanceGridPaste);
+            });
+        }
+
+        window.saveAllFinances = function(source) {
+            const tbody = document.getElementById(source === 'sales' ? 'salesInputBody' : 'purcInputBody');
+            const rows = tbody.querySelectorAll('tr.input-row');
+            let updates = {};
+            let validCount = 0;
+
+            rows.forEach(row => {
+                let type = row.querySelector('[name="f_type"]').value;
+                let client = row.querySelector('[name="f_client"]').value.trim();
+                let desc = row.querySelector('[name="f_desc"]').value.trim();
+                
+                let dateDisplay = row.querySelector('[name="f_date"]').value.trim();
+                let date = window.parseDisplayDateToISO(dateDisplay); // تحويل للقياسي للحفظ والفرز
+
+                let amountRaw = row.querySelector('[name="f_amount"]').value.replace(/,/g, '');
+                let refInput = row.querySelector('[name="f_ref"]').value.trim();
+                let amount = Math.abs(parseFloat(amountRaw) || 0);
+
+                if(client && date && date.includes('-') && amount > 0 && refInput) {
+                    let vatRate = 0;
+                    if(source === 'sales' && ['SALE', 'SALE_RET', 'SALE_DISC'].includes(type)) vatRate = 0.15;
+                    if(source === 'purc' && type === 'PURC_VAT') vatRate = 0.15;
+                    let vat = amount * vatRate; let total = amount + vat;
+                    
+                    let id = Date.now() + validCount; // Unique IDs
+                    let entry = { id, type, client, desc, date, amount, vat, total, ref: refInput };
+                    
+                    updates[id] = entry;
+                    validCount++;
+                    row.remove(); // مسح السطر الناجح
+                }
+            });
+
+            if(validCount > 0) {
+                update(ref(db, FIN_PATH), updates).then(() => {
+                    alert(`تم حفظ ${validCount} حركة بنجاح!`);
+                    if(tbody.querySelectorAll('tr.input-row').length === 0) window.addFinanceRow(source);
+                });
+            } else {
+                alert("لم يتم العثور على أسطر مكتملة لحفظها. تأكد من إدخال (التاريخ الصحيح، الاسم، المرجع، والمبلغ).");
             }
+        }
+
+        window.deleteFinanceEntry = function(id) {
+            if(confirm("هل أنت متأكد من حذف هذا القيد؟ سيتم حذفه من كافة السجلات المرتبطة.")) remove(ref(db, FIN_PATH + '/' + id));
         }
 
         window.saveOpeningBalance = function() {
@@ -998,30 +1070,23 @@
             let type = document.getElementById('opBalType').value;
             let amountRaw = document.getElementById('opBalAmount').value.replace(/,/g, '');
             let amount = parseFloat(amountRaw) || 0;
-            
             if(!name) return alert("يرجى كتابة الاسم");
-            
             set(ref(db, BAL_PATH + '/' + cleanKey(name)), { name: name, type: type, amount: amount }).then(() => {
-                closeModal('opBalModal');
-                alert('تم حفظ رصيد الإغلاق بنجاح!');
+                closeModal('opBalModal'); alert('تم حفظ رصيد الإغلاق بنجاح!');
             });
         }
+
+        // --- Filtering and Rendering Ledger ---
 
         function filterFinancesArray() {
             const term = document.getElementById('finSearchInput').value.toLowerCase();
             if (!term) return finances;
-            return finances.filter(f => 
-                (f.client && f.client.toLowerCase().includes(term)) || 
-                (f.ref && f.ref.toLowerCase().includes(term)) ||
-                (f.desc && f.desc.toLowerCase().includes(term))
-            );
+            return finances.filter(f => (f.client && f.client.toLowerCase().includes(term)) || (f.ref && f.ref.toLowerCase().includes(term)) || (f.desc && f.desc.toLowerCase().includes(term)));
         }
 
         window.triggerFinSearch = function() {
             const filtered = filterFinancesArray().sort((a,b) => b.id - a.id);
-            window.renderSalesList(filtered);
-            window.renderPurchasesList(filtered);
-            window.renderVatList(filtered);
+            window.renderSalesList(filtered); window.renderPurchasesList(filtered); window.renderVatList(filtered);
         }
 
         window.renderSalesList = function(filteredData) {
@@ -1034,24 +1099,17 @@
                 else if(f.type === 'SALE_RET' || f.type === 'RETURN') { amountSign = -1; typeBadge = '<span class="badge-status st-late">مرتجع مبيعات</span>'; }
                 else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { amountSign = -1; typeBadge = '<span class="badge-status" style="background:#fffbeb; color:#d97706; border:1px solid #fde68a">إشعار خصم</span>'; }
                 else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { amountSign = -1; typeBadge = '<span class="badge-status st-ok">سداد عميل</span>'; } 
-
                 let colorStyle = amountSign === -1 ? 'color:#ef4444;' : 'color:#1e293b;';
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td width="10%">${f.date}</td>
-                        <td width="13%">${typeBadge}</td>
-                        <td width="16%" style="font-weight:bold">${f.client}</td>
-                        <td width="16%" style="color:#64748b; font-size:12px">${f.desc || '-'}</td>
-                        <td width="12%" style="font-family:monospace; font-weight:bold; color:#475569">${f.ref}</td>
-                        <td width="10%" class="accounting-num" style="${colorStyle}">${window.formatMoney(f.amount * amountSign)}</td>
-                        <td width="8%" class="accounting-num" style="color:#db2777">${window.formatMoney((f.vat || 0) * amountSign)}</td>
-                        <td width="10%" class="accounting-num" style="font-weight:bold; ${colorStyle}">${window.formatMoney(f.total * amountSign)}</td>
-                        <td width="5%">
-                            <button class="btn btn-danger btn-sm" style="padding:4px 8px; margin:auto;" onclick="deleteFinanceEntry(${f.id})"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML += `<tr>
+                    <td style="font-family:'Poppins', monospace;">${window.parseISOToDisplayDate(f.date)}</td><td>${typeBadge}</td><td style="font-weight:bold; word-wrap: break-word;">${f.client}</td>
+                    <td style="color:#64748b; font-size:12px; word-wrap: break-word;">${f.desc || '-'}</td>
+                    <td style="font-family:monospace; font-weight:bold; color:#475569">${f.ref}</td>
+                    <td class="accounting-num" style="${colorStyle}">${window.formatMoney(f.amount * amountSign)}</td>
+                    <td class="accounting-num" style="color:#db2777">${window.formatMoney((f.vat || 0) * amountSign)}</td>
+                    <td class="accounting-num" style="font-weight:bold; ${colorStyle}">${window.formatMoney(f.total * amountSign)}</td>
+                    <td><button class="btn btn-danger btn-sm" style="padding:4px 8px; margin:auto;" onclick="deleteFinanceEntry(${f.id})"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
             });
         }
 
@@ -1061,72 +1119,81 @@
             
             filteredData.filter(f => purcTypes.includes(f.type)).forEach(f => {
                 let amountSign = -1; let typeBadge = '';
-                
                 if(f.type === 'PURC_VAT') { amountSign = 1; typeBadge = '<span class="badge-status" style="background:#fef3c7; color:#b45309; border:1px solid #fde68a">مشتريات ضريبية</span>'; }
                 else if(f.type === 'PURC_NO_VAT') { amountSign = 1; typeBadge = '<span class="badge-status" style="background:#f3f4f6; color:#4b5563; border:1px solid #d1d5db">بدون ضريبة</span>'; }
                 else if(f.type === 'PAY_OUT') { amountSign = -1; typeBadge = '<span class="badge-status" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8">دفعة صادرة</span>'; }
-
                 let colorStyle = amountSign === -1 ? 'color:#ef4444;' : 'color:#1e293b;';
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td width="10%">${f.date}</td>
-                        <td width="13%">${typeBadge}</td>
-                        <td width="16%" style="font-weight:bold">${f.client}</td>
-                        <td width="16%" style="color:#64748b; font-size:12px">${f.desc || '-'}</td>
-                        <td width="12%" style="font-family:monospace; font-weight:bold; color:#475569">${f.ref}</td>
-                        <td width="10%" class="accounting-num" style="${colorStyle}">${window.formatMoney(f.amount * amountSign)}</td>
-                        <td width="8%" class="accounting-num" style="color:#db2777">${window.formatMoney((f.vat || 0) * amountSign)}</td>
-                        <td width="10%" class="accounting-num" style="font-weight:bold; ${colorStyle}">${window.formatMoney(f.total * amountSign)}</td>
-                        <td width="5%">
-                            <button class="btn btn-danger btn-sm" style="padding:4px 8px; margin:auto;" onclick="deleteFinanceEntry(${f.id})"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML += `<tr>
+                    <td style="font-family:'Poppins', monospace;">${window.parseISOToDisplayDate(f.date)}</td><td>${typeBadge}</td><td style="font-weight:bold; word-wrap: break-word;">${f.client}</td>
+                    <td style="color:#64748b; font-size:12px; word-wrap: break-word;">${f.desc || '-'}</td>
+                    <td style="font-family:monospace; font-weight:bold; color:#475569">${f.ref}</td>
+                    <td class="accounting-num" style="${colorStyle}">${window.formatMoney(f.amount * amountSign)}</td>
+                    <td class="accounting-num" style="color:#db2777">${window.formatMoney((f.vat || 0) * amountSign)}</td>
+                    <td class="accounting-num" style="font-weight:bold; ${colorStyle}">${window.formatMoney(f.total * amountSign)}</td>
+                    <td><button class="btn btn-danger btn-sm" style="padding:4px 8px; margin:auto;" onclick="deleteFinanceEntry(${f.id})"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
             });
         }
 
         window.renderVatList = function(filteredData) {
             const tbody = document.getElementById('vatTableBody'); tbody.innerHTML = '';
-            
             filteredData.filter(f => f.vat > 0).forEach(f => {
                 let typeStr = ''; let vatSign = 1;
-
                 if(f.type === 'SALE' || f.type === 'INVOICE') { typeStr = 'فاتورة مبيعات'; vatSign = -1; }
                 else if(f.type === 'SALE_RET' || f.type === 'RETURN') { typeStr = 'مرتجع مبيعات'; vatSign = 1; }
                 else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { typeStr = 'إشعار خصم'; vatSign = 1; }
                 else if(f.type === 'PURC_VAT') { typeStr = 'فاتورة مشتريات'; vatSign = 1; }
-
                 let vColorStyle = vatSign === -1 ? 'color:#ef4444;' : 'color:#10b981;';
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${f.date}</td>
-                        <td style="font-family:monospace; font-weight:bold; color:#be185d">${f.ref}</td>
-                        <td style="font-weight:bold">${f.client}</td>
-                        <td style="color:#64748b; font-size:13px">${f.desc || '-'}</td>
-                        <td style="color:#475569; font-size:13px">${typeStr}</td>
-                        <td class="accounting-num">${window.formatMoney(f.amount * vatSign)}</td>
-                        <td class="accounting-num" style="background:#fce7f3; font-weight:800; ${vColorStyle}">${window.formatMoney(f.vat * vatSign)}</td>
-                    </tr>
-                `;
+                tbody.innerHTML += `<tr>
+                    <td style="font-family:'Poppins', monospace;">${window.parseISOToDisplayDate(f.date)}</td><td style="font-family:monospace; font-weight:bold; color:#be185d">${f.ref}</td>
+                    <td style="font-weight:bold">${f.client}</td><td style="color:#64748b; font-size:13px">${f.desc || '-'}</td>
+                    <td style="color:#475569; font-size:13px">${typeStr}</td><td class="accounting-num">${window.formatMoney(f.amount * vatSign)}</td>
+                    <td class="accounting-num" style="background:#fce7f3; font-weight:800; ${vColorStyle}">${window.formatMoney(f.vat * vatSign)}</td>
+                </tr>`;
             });
+        }
+
+        window.togglePartnersView = function() {
+            const dash = document.getElementById('mainDashboardView'); const partners = document.getElementById('partnersView');
+            if (partners.style.display === 'none') { dash.style.display = 'none'; partners.style.display = 'block'; window.renderPartnersList(); } 
+            else { partners.style.display = 'none'; dash.style.display = 'block'; }
+        }
+
+        window.openOpBalModal = function() {
+            document.getElementById('opBalModal').style.display = 'block';
+            document.getElementById('opBalName').value = ''; document.getElementById('opBalAmount').value = '';
+        }
+
+        window.switchFinTab = function(tab) {
+            activeFinTab = tab;
+            document.getElementById('viewSalesLedger').style.display = 'none';
+            document.getElementById('viewPurchasesLedger').style.display = 'none';
+            document.getElementById('viewVatLedger').style.display = 'none';
+            document.getElementById('tabSales').classList.remove('active');
+            document.getElementById('tabPurchases').classList.remove('active');
+            document.getElementById('tabVat').classList.remove('active');
+
+            if(tab === 'SALES') { document.getElementById('viewSalesLedger').style.display = 'block'; document.getElementById('tabSales').classList.add('active'); } 
+            else if (tab === 'PURCHASES') { document.getElementById('viewPurchasesLedger').style.display = 'block'; document.getElementById('tabPurchases').classList.add('active'); } 
+            else if (tab === 'VAT') { document.getElementById('viewVatLedger').style.display = 'block'; document.getElementById('tabVat').classList.add('active'); }
+        }
+
+        window.openFinanceModal = function() {
+            document.getElementById('financeModal').style.display = 'block';
+            if(document.getElementById('salesInputBody').children.length === 0) window.addFinanceRow('sales');
+            if(document.getElementById('purcInputBody').children.length === 0) window.addFinanceRow('purc');
+            window.switchFinTab('SALES'); 
+            window.triggerFinSearch();
         }
 
         window.renderPartnersList = function() {
             let partners = {};
-            
-            Object.values(openingBalances).forEach(b => { 
-                partners[cleanKey(b.name)] = { name: b.name, type: b.type, opBal: parseFloat(b.amount)||0, sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0 }; 
-            });
-
+            Object.values(openingBalances).forEach(b => { partners[cleanKey(b.name)] = { name: b.name, type: b.type, opBal: parseFloat(b.amount)||0, sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0 }; });
             finances.forEach(f => {
-                if(!f.client) return;
-                let cKey = cleanKey(f.client);
-                if(!partners[cKey]) {
-                    let isSupp = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type);
-                    partners[cKey] = { name: f.client, type: isSupp ? 'SUPPLIER' : 'CLIENT', opBal: 0, sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0 };
-                }
+                if(!f.client) return; let cKey = cleanKey(f.client);
+                if(!partners[cKey]) { let isSupp = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type); partners[cKey] = { name: f.client, type: isSupp ? 'SUPPLIER' : 'CLIENT', opBal: 0, sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0 }; }
                 let p = partners[cKey];
                 if(f.type === 'SALE' || f.type === 'INVOICE') p.sales += f.total;
                 if(f.type === 'SALE_RET' || f.type === 'RETURN') p.returns += f.total;
@@ -1135,227 +1202,68 @@
                 if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') p.purchases += f.total;
                 if(f.type === 'PAY_OUT') p.payOut += f.total;
             });
-
             const container = document.getElementById('partnersCardsContainer'); container.innerHTML = '';
             const term = document.getElementById('partnersSearchInput').value.toLowerCase();
-
             Object.values(partners).forEach(p => {
                 if(term && !p.name.toLowerCase().includes(term) && !p.type.toLowerCase().includes(term)) return;
-                
                 let isClient = p.type === 'CLIENT';
                 let netBalance = isClient ? (p.opBal + p.sales - p.returns - p.discounts - p.payIn) : (p.opBal + p.purchases - p.payOut);
                 let badge = isClient ? `<span class="pc-badge client"><i class="fas fa-user"></i> عميل</span>` : `<span class="pc-badge supplier"><i class="fas fa-truck-loading"></i> مورد</span>`;
                 let cKey = cleanKey(p.name);
-                
-                let statsHtml = isClient ? `
-                    <div class="pc-grid">
-                        <div class="pc-item"><label><i class="fas fa-arrow-down" style="color:#10b981"></i> مبيعات</label><span>${window.formatMoney(p.sales)}</span></div>
-                        <div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مرتجعات</label><span style="color:#ef4444">${window.formatMoney(p.returns)}</span></div>
-                        <div class="pc-item"><label><i class="fas fa-percent" style="color:#d97706"></i> خصومات</label><span style="color:#d97706">${window.formatMoney(p.discounts)}</span></div>
-                        <div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> دفعات مستلمة</label><span>${window.formatMoney(p.payIn)}</span></div>
-                    </div>` : `
-                    <div class="pc-grid">
-                        <div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مشتريات</label><span>${window.formatMoney(p.purchases)}</span></div>
-                        <div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> مدفوعات صادرة</label><span>${window.formatMoney(p.payOut)}</span></div>
-                    </div>`;
-
-                container.innerHTML += `
-                    <div class="partner-card ${isClient ? '' : 'supplier'}" onclick="exportPartnerStatement('${cKey}')">
-                        <div class="download-overlay"><i class="fas fa-file-excel" style="font-size:32px; margin-bottom:10px;"></i> تحميل كشف الحساب</div>
-                        <div>
-                            <div class="pc-header"><h3 class="pc-name">${p.name}</h3>${badge}</div>
-                            ${statsHtml}
-                        </div>
-                        <div>
-                            <div style="font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 5px;">Closing Balance 2025: <span style="color:#0ea5e9; font-family:'Poppins'">${window.formatMoney(p.opBal)}</span></div>
-                            <div class="pc-total"><label>صافي الرصيد الحالي</label><span>${window.formatMoney(netBalance)}</span></div>
-                        </div>
-                    </div>`;
+                let statsHtml = isClient ? `<div class="pc-grid"><div class="pc-item"><label><i class="fas fa-arrow-down" style="color:#10b981"></i> مبيعات</label><span>${window.formatMoney(p.sales)}</span></div><div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مرتجعات</label><span style="color:#ef4444">${window.formatMoney(p.returns)}</span></div><div class="pc-item"><label><i class="fas fa-percent" style="color:#d97706"></i> خصومات</label><span style="color:#d97706">${window.formatMoney(p.discounts)}</span></div><div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> دفعات مستلمة</label><span>${window.formatMoney(p.payIn)}</span></div></div>` : `<div class="pc-grid"><div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مشتريات</label><span>${window.formatMoney(p.purchases)}</span></div><div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> مدفوعات صادرة</label><span>${window.formatMoney(p.payOut)}</span></div></div>`;
+                container.innerHTML += `<div class="partner-card ${isClient ? '' : 'supplier'}" onclick="exportPartnerStatement('${cKey}')"><div class="download-overlay"><i class="fas fa-file-excel" style="font-size:32px; margin-bottom:10px;"></i> تحميل كشف الحساب</div><div><div class="pc-header"><h3 class="pc-name">${p.name}</h3>${badge}</div>${statsHtml}</div><div><div style="font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 5px;">Closing Balance 2025: <span style="color:#0ea5e9; font-family:'Poppins'">${window.formatMoney(p.opBal)}</span></div><div class="pc-total"><label>صافي الرصيد الحالي</label><span>${window.formatMoney(netBalance)}</span></div></div></div>`;
             });
-            
-            if (container.innerHTML === '') {
-                container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #9ca3af; padding: 40px; background: #f8fafc; border-radius: 15px; border: 2px dashed #e2e8f0;"><i class="fas fa-folder-open" style="font-size: 40px; margin-bottom: 15px; color:#cbd5e1;"></i><br>لا توجد بطاقات مطابقة للبحث أو لا يوجد بيانات مسجلة بعد.</div>';
-            }
+            if (container.innerHTML === '') container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #9ca3af; padding: 40px; background: #f8fafc; border-radius: 15px; border: 2px dashed #e2e8f0;"><i class="fas fa-folder-open" style="font-size: 40px; margin-bottom: 15px; color:#cbd5e1;"></i><br>لا توجد بطاقات مطابقة للبحث أو لا يوجد بيانات مسجلة بعد.</div>';
         }
 
-        // --- كشف الحساب الاحترافي ---
         window.exportPartnerStatement = function(partnerKey) {
-            let termName = "";
-            let type = "CLIENT";
-            let opBal = 0;
-            
-            if(openingBalances[partnerKey]) {
-                termName = openingBalances[partnerKey].name;
-                type = openingBalances[partnerKey].type;
-                opBal = parseFloat(openingBalances[partnerKey].amount) || 0;
-            } else {
-                let f = finances.find(x => cleanKey(x.client) === partnerKey);
-                if(f) {
-                    termName = f.client;
-                    type = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type) ? 'SUPPLIER' : 'CLIENT';
-                }
-            }
+            let termName = ""; let type = "CLIENT"; let opBal = 0;
+            if(openingBalances[partnerKey]) { termName = openingBalances[partnerKey].name; type = openingBalances[partnerKey].type; opBal = parseFloat(openingBalances[partnerKey].amount) || 0; } 
+            else { let f = finances.find(x => cleanKey(x.client) === partnerKey); if(f) { termName = f.client; type = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type) ? 'SUPPLIER' : 'CLIENT'; } }
             if(!termName) return;
-
-            // ترتيب العمليات بناءً على التاريخ لضمان دقة الرصيد التراكمي
-            let partnerTxs = finances.filter(f => cleanKey(f.client) === partnerKey).sort((a,b) => {
-                if (a.date === b.date) return a.id - b.id; // ترتيب بالـ ID لو في نفس اليوم
-                return a.date.localeCompare(b.date);
-            });
-
+            let partnerTxs = finances.filter(f => cleanKey(f.client) === partnerKey).sort((a,b) => { if (a.date === b.date) return a.id - b.id; return a.date.localeCompare(b.date); });
             let isClient = type === 'CLIENT';
-            
-            // ستايلات احترافية مع خط Poppins
-            const headSt = "background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px; font-family: 'Poppins', sans-serif; font-size: 14px; text-align:center; vertical-align: middle;";
-            const cellSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle;";
-            const descSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:right; vertical-align: middle;";
-            const numSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle; font-weight: 600; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
-            
-            // إضافة كود لضبط اسم الـ Sheet وتطبيق خط Poppins
-            let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
-            xmlns:x="urn:schemas-microsoft-com:office:excel"
-            xmlns="http://www.w3.org/TR/REC-html40">
-            <head>
-            <meta charset="utf-8">
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-                * { font-family: 'Poppins', sans-serif !important; }
-            </style>
-            </head>
-            <body dir="ltr">
-            <table style="border-collapse:collapse; table-layout: fixed;">
-            <colgroup>
-                <col style="width: 110px;">
-                <col style="width: 140px;">
-                <col style="width: 350px;">
-                <col style="width: 160px;">
-                <col style="width: 130px;">
-                <col style="width: 130px;">
-                <col style="width: 140px;">
-            </colgroup>
-            <tr>
-                <th style="${headSt}">Date</th>
-                <th style="${headSt}">Reference</th>
-                <th style="${headSt}">Description</th>
-                <th style="${headSt}">Transaction Type</th>
-                <th style="${headSt}">Debit</th>
-                <th style="${headSt}">Credit</th>
-                <th style="${headSt}">Balance</th>
-            </tr>
-            <tbody>`;
-            
-            let runBal = opBal;
-            
-            // ألوان الحركات
-            const debColor = "#ef4444"; // أحمر للمدين
-            const credColor = "#10b981"; // أخضر للدائن
-            const balBg = "#f0f9ff"; // خلفية زرقاء فاتحة للرصيد
-            const balColor = "#0369a1"; // أزرق داكن لرقم الرصيد
-
-            h += `<tr>
-                <td style="${cellSt}">2025-01-01</td>
-                <td style="${cellSt}">-</td>
-                <td style="${descSt} font-weight:bold; color:#475569;">Opening Balance (2025)</td>
-                <td style="${cellSt} color:#475569;">Opening Balance</td>
-                <td style="${numSt} color:${debColor};">${isClient && runBal > 0 ? runBal : (!isClient && runBal < 0 ? Math.abs(runBal) : '-')}</td>
-                <td style="${numSt} color:${credColor};">${isClient && runBal < 0 ? Math.abs(runBal) : (!isClient && runBal > 0 ? runBal : '-')}</td>
-                <td style="${numSt} font-weight:bold; background-color:${balBg}; color:${balColor};">${runBal}</td>
-            </tr>`;
-            
+            const headSt = "background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px; font-family: 'Poppins', sans-serif; font-size: 14px; text-align:center; vertical-align: middle;"; const cellSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle;"; const descSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:right; vertical-align: middle;"; const numSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle; font-weight: 600; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
+            let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap'); * { font-family: 'Poppins', sans-serif !important; }</style></head><body dir="ltr"><table style="border-collapse:collapse; table-layout: fixed;"><colgroup><col style="width: 110px;"><col style="width: 140px;"><col style="width: 350px;"><col style="width: 160px;"><col style="width: 130px;"><col style="width: 130px;"><col style="width: 140px;"></colgroup><tr><th style="${headSt}">Date</th><th style="${headSt}">Reference</th><th style="${headSt}">Description</th><th style="${headSt}">Transaction Type</th><th style="${headSt}">Debit</th><th style="${headSt}">Credit</th><th style="${headSt}">Balance</th></tr><tbody>`;
+            let runBal = opBal; const debColor = "#ef4444"; const credColor = "#10b981"; const balBg = "#f0f9ff"; const balColor = "#0369a1";
+            h += `<tr><td style="${cellSt}">01/01/2025</td><td style="${cellSt}">-</td><td style="${descSt} font-weight:bold; color:#475569;">Opening Balance (2025)</td><td style="${cellSt} color:#475569;">Opening Balance</td><td style="${numSt} color:${debColor};">${isClient && runBal > 0 ? runBal : (!isClient && runBal < 0 ? Math.abs(runBal) : '-')}</td><td style="${numSt} color:${credColor};">${isClient && runBal < 0 ? Math.abs(runBal) : (!isClient && runBal > 0 ? runBal : '-')}</td><td style="${numSt} font-weight:bold; background-color:${balBg}; color:${balColor};">${runBal}</td></tr>`;
             let idx = 1;
             partnerTxs.forEach(f => {
-                let amountSign = 1;
-                let isDebit = false;
-                let isCredit = false;
-                
-                if(f.type === 'SALE' || f.type === 'INVOICE') { amountSign = 1; isDebit = true; } 
-                else if(f.type === 'SALE_RET' || f.type === 'RETURN') { amountSign = -1; isCredit = true; } 
-                else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { amountSign = -1; isCredit = true; }
-                else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { amountSign = -1; isCredit = true; }
-                
-                else if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') { amountSign = 1; isCredit = true; } 
-                else if(f.type === 'PAY_OUT') { amountSign = -1; isDebit = true; } 
-
-                runBal += (f.total * amountSign);
-                
-                let debVal = isDebit ? f.total : 0;
-                let credVal = isCredit ? f.total : 0;
-                
-                let typeText = f.type;
-                if(f.type === 'SALE' || f.type === 'INVOICE') typeText = 'Sales Invoice';
-                else if(f.type === 'SALE_RET' || f.type === 'RETURN') typeText = 'Sales Return';
-                else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') typeText = 'Discount';
-                else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') typeText = 'Payment Received';
-                else if(f.type === 'PURC_VAT') typeText = 'Purchase Invoice (VAT)';
-                else if(f.type === 'PURC_NO_VAT') typeText = 'Purchase Invoice';
-                else if(f.type === 'PAY_OUT') typeText = 'Payment Sent';
-
-                let bg = (idx % 2 === 0) ? "#f8fafc" : "#ffffff";
-                idx++;
-
-                h += `<tr style="background-color:${bg}">
-                    <td style="${cellSt} mso-number-format:'\@'">${f.date}</td>
-                    <td style="${cellSt} mso-number-format:'\@'">${f.ref}</td>
-                    <td style="${descSt}">${f.desc || '-'}</td>
-                    <td style="${cellSt}">${typeText}</td>
-                    <td style="${numSt} color:${debColor};">${debVal > 0 ? debVal : '-'}</td>
-                    <td style="${numSt} color:${credColor};">${credVal > 0 ? credVal : '-'}</td>
-                    <td style="${numSt} font-weight:bold; background-color:${balBg}; color:${balColor};">${runBal}</td>
-                </tr>`;
+                let amountSign = 1; let isDebit = false; let isCredit = false;
+                if(f.type === 'SALE' || f.type === 'INVOICE') { amountSign = 1; isDebit = true; } else if(f.type === 'SALE_RET' || f.type === 'RETURN') { amountSign = -1; isCredit = true; } else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { amountSign = -1; isCredit = true; } else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { amountSign = -1; isCredit = true; } else if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') { amountSign = 1; isCredit = true; } else if(f.type === 'PAY_OUT') { amountSign = -1; isDebit = true; } 
+                runBal += (f.total * amountSign); let debVal = isDebit ? f.total : 0; let credVal = isCredit ? f.total : 0;
+                let typeText = f.type; if(f.type === 'SALE' || f.type === 'INVOICE') typeText = 'Sales Invoice'; else if(f.type === 'SALE_RET' || f.type === 'RETURN') typeText = 'Sales Return'; else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') typeText = 'Discount'; else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') typeText = 'Payment Received'; else if(f.type === 'PURC_VAT') typeText = 'Purchase Invoice (VAT)'; else if(f.type === 'PURC_NO_VAT') typeText = 'Purchase Invoice'; else if(f.type === 'PAY_OUT') typeText = 'Payment Sent';
+                let bg = (idx % 2 === 0) ? "#f8fafc" : "#ffffff"; idx++;
+                h += `<tr style="background-color:${bg}"><td style="${cellSt} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellSt} mso-number-format:'\@'">${f.ref}</td><td style="${descSt}">${f.desc || '-'}</td><td style="${cellSt}">${typeText}</td><td style="${numSt} color:${debColor};">${debVal > 0 ? debVal : '-'}</td><td style="${numSt} color:${credColor};">${credVal > 0 ? credVal : '-'}</td><td style="${numSt} font-weight:bold; background-color:${balBg}; color:${balColor};">${runBal}</td></tr>`;
             });
-            
-            h += `<tr><td colspan="7" style="border:none; height:15px;"></td></tr>
-                  <tr>
-                    <td colspan="6" style="${descSt} font-weight:bold; background-color:#0f172a; color:#ffffff; text-align:right;">Final Net Balance:</td>
-                    <td style="${numSt} font-weight:bold; background-color:#1e40af; color:#ffffff; font-size:15px;">${runBal}</td>
-                  </tr>
-            </tbody></table></body></html>`;
-            
-            // تسمية الملف الديناميكية (اسم العميل + SOA + التاريخ)
-            let today = new Date().toISOString().split('T')[0];
-            window.downloadExcel(h, `${termName} SOA ${today}.xls`);
+            h += `<tr><td colspan="7" style="border:none; height:15px;"></td></tr><tr><td colspan="6" style="${descSt} font-weight:bold; background-color:#0f172a; color:#ffffff; text-align:right;">Final Net Balance:</td><td style="${numSt} font-weight:bold; background-color:#1e40af; color:#ffffff; font-size:15px;">${runBal}</td></tr></tbody></table></body></html>`;
+            window.downloadExcel(h, `${termName} SOA ${new Date().toISOString().split('T')[0]}.xls`);
         }
 
         window.exportCurrentLedger = function() {
-            const headerStyle = "background-color: #f1f5f9; font-weight: bold; border: 1px solid #000000; padding: 5px; text-align: center;";
-            const cellStyle = "border: 1px solid #000000; padding: 5px; text-align: center;";
-            const numStyle = "border: 1px solid #000000; padding: 5px; text-align: center; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
-
+            const headerStyle = "background-color: #f1f5f9; font-weight: bold; border: 1px solid #000000; padding: 5px; text-align: center;"; const cellStyle = "border: 1px solid #000000; padding: 5px; text-align: center;"; const numStyle = "border: 1px solid #000000; padding: 5px; text-align: center; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
             const filteredData = filterFinancesArray().sort((a,b) => b.id - a.id);
-
             if (activeFinTab === 'SALES') {
                 let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل المبيعات والمقبوضات</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">النوع</th><th style="${headerStyle}">العميل</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">المرجع</th><th style="${headerStyle}">المبلغ الأساسي</th><th style="${headerStyle}">الضريبة (VAT)</th><th style="${headerStyle}">الإجمالي</th></tr></thead><tbody>`;
                 const salesTypes = ['SALE', 'SALE_RET', 'SALE_DISC', 'PAY_IN', 'INVOICE', 'RETURN', 'DISCOUNT', 'PAYMENT'];
-                
-                filteredData.filter(f => salesTypes.includes(f.type)).forEach(f => { 
-                    let sign = (f.type === 'SALE' || f.type === 'INVOICE') ? 1 : -1;
-                    h += `<tr><td style="${cellStyle}">${f.date}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle}">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td></tr>`; 
-                });
-                h += `</tbody></table></body></html>`;
-                window.downloadExcel(h, 'Sales_Ledger.xls');
-                
+                filteredData.filter(f => salesTypes.includes(f.type)).forEach(f => { let sign = (f.type === 'SALE' || f.type === 'INVOICE') ? 1 : -1; h += `<tr><td style="${cellStyle} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle} mso-number-format:'\@'">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td></tr>`; });
+                h += `</tbody></table></body></html>`; window.downloadExcel(h, 'Sales_Ledger.xls');
             } else if (activeFinTab === 'PURCHASES') {
                 let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل المشتريات والمدفوعات</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">النوع</th><th style="${headerStyle}">المورد</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">المرجع</th><th style="${headerStyle}">المبلغ الأساسي</th><th style="${headerStyle}">الضريبة (VAT)</th><th style="${headerStyle}">الإجمالي</th></tr></thead><tbody>`;
                 const purcTypes = ['PURC_VAT', 'PURC_NO_VAT', 'PAY_OUT'];
-                
-                filteredData.filter(f => purcTypes.includes(f.type)).forEach(f => { 
-                    let sign = (f.type === 'PAY_OUT') ? -1 : 1;
-                    h += `<tr><td style="${cellStyle}">${f.date}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle}">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td></tr>`; 
-                });
-                h += `</tbody></table></body></html>`;
-                window.downloadExcel(h, 'Purchases_Ledger.xls');
-                
+                filteredData.filter(f => purcTypes.includes(f.type)).forEach(f => { let sign = (f.type === 'PAY_OUT') ? -1 : 1; h += `<tr><td style="${cellStyle} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle} mso-number-format:'\@'">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td></tr>`; });
+                h += `</tbody></table></body></html>`; window.downloadExcel(h, 'Purchases_Ledger.xls');
             } else if (activeFinTab === 'VAT') {
                 let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل ضريبة القيمة المضافة (VAT)</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">رقم المرجع</th><th style="${headerStyle}">الاسم</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">نوع الحركة</th><th style="${headerStyle}">المبلغ الأساسي الخاضع</th><th style="${headerStyle}">قيمة الضريبة (VAT)</th></tr></thead><tbody>`;
-                
-                filteredData.filter(f => f.vat > 0).forEach(f => { 
-                    let vatSign = (f.type === 'SALE' || f.type === 'INVOICE') ? -1 : 1;
-                    h += `<tr><td style="${cellStyle}">${f.date}</td><td style="${cellStyle}">${f.ref}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle}">${f.type}</td><td style="${numStyle}">${f.amount * vatSign}</td><td style="${numStyle}">${f.vat * vatSign}</td></tr>`; 
-                });
-                h += `</tbody></table></body></html>`;
-                window.downloadExcel(h, 'VAT_Ledger.xls');
+                filteredData.filter(f => f.vat > 0).forEach(f => { let vatSign = (f.type === 'SALE' || f.type === 'INVOICE') ? -1 : 1; h += `<tr><td style="${cellStyle} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellStyle} mso-number-format:'\@'">${f.ref}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle}">${f.type}</td><td style="${numStyle}">${f.amount * vatSign}</td><td style="${numStyle}">${f.vat * vatSign}</td></tr>`; });
+                h += `</tbody></table></body></html>`; window.downloadExcel(h, 'VAT_Ledger.xls');
             }
         }
+
+        // Initialize First Rows
+        window.addFinanceRow('sales');
+        window.addFinanceRow('purc');
+
     </script>
 </body>
 </html>
