@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1280, user-scalable=yes">
     <title>Lolo ERP</title>
-    <link rel="icon" type="image/png" href="https://i.postimg.cc/fygrLmWS/Logo.png">
+    <link rel="icon" type="image/png" href="https://pasteboard.co/1iuXXfd2FjuZ.png">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -1178,7 +1178,7 @@
             }
         }
 
-        // --- كشف الحساب الاحترافي بالإنجليزية ---
+        // --- كشف الحساب الاحترافي ---
         window.exportPartnerStatement = function(partnerKey) {
             let termName = "";
             let type = "CLIENT";
@@ -1197,36 +1197,42 @@
             }
             if(!termName) return;
 
-            let partnerTxs = finances.filter(f => cleanKey(f.client) === partnerKey).sort((a,b) => a.id - b.id);
+            // ترتيب العمليات بناءً على التاريخ لضمان دقة الرصيد التراكمي
+            let partnerTxs = finances.filter(f => cleanKey(f.client) === partnerKey).sort((a,b) => {
+                if (a.date === b.date) return a.id - b.id; // ترتيب بالـ ID لو في نفس اليوم
+                return a.date.localeCompare(b.date);
+            });
+
             let isClient = type === 'CLIENT';
             
-            // تحديد استايلات احترافية
-            const headSt = "background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px; font-family: 'Segoe UI', sans-serif; text-align:center; vertical-align: middle;";
-            const cellSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Segoe UI', sans-serif; text-align:center; vertical-align: middle;";
-            const descSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Segoe UI', sans-serif; text-align:right; vertical-align: middle;";
-            const numSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Segoe UI', sans-serif; text-align:center; vertical-align: middle; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
+            // ستايلات احترافية مع خط Poppins
+            const headSt = "background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px; font-family: 'Poppins', sans-serif; font-size: 14px; text-align:center; vertical-align: middle;";
+            const cellSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle;";
+            const descSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:right; vertical-align: middle;";
+            const numSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle; font-weight: 600; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
             
-            // إضافة Colgroup للتحكم في عرض الأعمدة حتى لا تكون عريضة جداً
-            let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel">
-            <head><meta charset="utf-8"></head>
+            // إضافة كود لضبط اسم الـ Sheet وتطبيق خط Poppins
+            let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:x="urn:schemas-microsoft-com:office:excel"
+            xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+            <meta charset="utf-8">
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+                * { font-family: 'Poppins', sans-serif !important; }
+            </style>
+            </head>
             <body dir="ltr">
             <table style="border-collapse:collapse; table-layout: fixed;">
             <colgroup>
-                <col style="width: 100px;">
-                <col style="width: 120px;">
-                <col style="width: 300px;">
-                <col style="width: 150px;">
-                <col style="width: 120px;">
-                <col style="width: 120px;">
+                <col style="width: 110px;">
+                <col style="width: 140px;">
+                <col style="width: 350px;">
+                <col style="width: 160px;">
                 <col style="width: 130px;">
+                <col style="width: 130px;">
+                <col style="width: 140px;">
             </colgroup>
-            <tr>
-                <td colspan="7" style="font-size:24px; font-weight:bold; color:#0f172a; text-align:center; padding:20px 0; border:none; background:#f8fafc; font-family:'Segoe UI'">
-                    Statement of Account<br>
-                    <span style="color:#2563eb; font-size: 20px;">${termName}</span>
-                </td>
-            </tr>
-            <tr><td colspan="7" style="border:none; height:10px;"></td></tr>
             <tr>
                 <th style="${headSt}">Date</th>
                 <th style="${headSt}">Reference</th>
@@ -1240,14 +1246,20 @@
             
             let runBal = opBal;
             
+            // ألوان الحركات
+            const debColor = "#ef4444"; // أحمر للمدين
+            const credColor = "#10b981"; // أخضر للدائن
+            const balBg = "#f0f9ff"; // خلفية زرقاء فاتحة للرصيد
+            const balColor = "#0369a1"; // أزرق داكن لرقم الرصيد
+
             h += `<tr>
                 <td style="${cellSt}">2025-01-01</td>
                 <td style="${cellSt}">-</td>
                 <td style="${descSt} font-weight:bold; color:#475569;">Opening Balance (2025)</td>
                 <td style="${cellSt} color:#475569;">Opening Balance</td>
-                <td style="${numSt} color:#dc2626;">${isClient && runBal > 0 ? runBal : (!isClient && runBal < 0 ? Math.abs(runBal) : '-')}</td>
-                <td style="${numSt} color:#16a34a;">${isClient && runBal < 0 ? Math.abs(runBal) : (!isClient && runBal > 0 ? runBal : '-')}</td>
-                <td style="${numSt} font-weight:bold; background-color:#e2e8f0; color:#0f172a;">${runBal}</td>
+                <td style="${numSt} color:${debColor};">${isClient && runBal > 0 ? runBal : (!isClient && runBal < 0 ? Math.abs(runBal) : '-')}</td>
+                <td style="${numSt} color:${credColor};">${isClient && runBal < 0 ? Math.abs(runBal) : (!isClient && runBal > 0 ? runBal : '-')}</td>
+                <td style="${numSt} font-weight:bold; background-color:${balBg}; color:${balColor};">${runBal}</td>
             </tr>`;
             
             let idx = 1;
@@ -1286,19 +1298,22 @@
                     <td style="${cellSt} mso-number-format:'\@'">${f.ref}</td>
                     <td style="${descSt}">${f.desc || '-'}</td>
                     <td style="${cellSt}">${typeText}</td>
-                    <td style="${numSt} color:#dc2626;">${debVal > 0 ? debVal : '-'}</td>
-                    <td style="${numSt} color:#16a34a;">${credVal > 0 ? credVal : '-'}</td>
-                    <td style="${numSt} font-weight:bold; background-color:#e2e8f0; color:#0f172a;">${runBal}</td>
+                    <td style="${numSt} color:${debColor};">${debVal > 0 ? debVal : '-'}</td>
+                    <td style="${numSt} color:${credColor};">${credVal > 0 ? credVal : '-'}</td>
+                    <td style="${numSt} font-weight:bold; background-color:${balBg}; color:${balColor};">${runBal}</td>
                 </tr>`;
             });
             
-            h += `<tr><td colspan="7" style="border:none; height:10px;"></td></tr>
+            h += `<tr><td colspan="7" style="border:none; height:15px;"></td></tr>
                   <tr>
-                    <td colspan="6" style="${descSt} font-weight:bold; background-color:#0f172a; color:white; text-align:right;">Final Net Balance:</td>
-                    <td style="${numSt} font-weight:bold; background-color:#1e293b; color:white;">${runBal}</td>
+                    <td colspan="6" style="${descSt} font-weight:bold; background-color:#0f172a; color:#ffffff; text-align:right;">Final Net Balance:</td>
+                    <td style="${numSt} font-weight:bold; background-color:#1e40af; color:#ffffff; font-size:15px;">${runBal}</td>
                   </tr>
             </tbody></table></body></html>`;
-            window.downloadExcel(h, 'Statement_' + termName + '.xls');
+            
+            // تسمية الملف الديناميكية (اسم العميل + SOA + التاريخ)
+            let today = new Date().toISOString().split('T')[0];
+            window.downloadExcel(h, `${termName} SOA ${today}.xls`);
         }
 
         window.exportCurrentLedger = function() {
