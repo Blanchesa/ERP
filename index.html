@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1280, user-scalable=yes">
-    <title>Beauty Co. System</title>
+    <title>Lolo ERP</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/fygrLmWS/Logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -13,11 +14,11 @@
             --primary-color: #ec4899;
             --primary-dark: #be185d;
             --pink-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            --blue-gradient: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
             --bg-color: #fff1f2;
             --text-main: #1f2937;
         }
 
-        /* --- Typography Updates (Bold & Clear) --- */
         body {
             font-family: 'Poppins', 'Cairo', sans-serif;
             font-weight: 600;
@@ -32,12 +33,10 @@
 
         h1, h2, h3, h4, h5, h6 { font-weight: 800; letter-spacing: -0.5px; }
         
-        /* --- Remove Number Input Arrows (Spinners) --- */
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
-        /* --- Header --- */
         .glass-header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -66,37 +65,39 @@
         }
         .stat-pill:hover { transform: translateY(-2px); }
 
-        /* --- Controls --- */
-        .controls-area { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+        .controls-area { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
 
-        .search-wrapper { position: relative; flex-grow: 1; max-width: 400px; }
-        .search-wrapper input {
+        .search-wrapper { position: relative; flex-grow: 1; max-width: 300px; }
+        .search-wrapper input, .search-input-style {
             width: 100%; box-sizing: border-box; padding: 15px 50px 15px 20px; border-radius: 15px;
             border: 2px solid white; background: white;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); font-family: inherit; font-size: 15px; font-weight: 600;
         }
-        .search-wrapper input:focus { outline: none; border-color: var(--primary-color); }
+        .search-wrapper input:focus, .search-input-style:focus { outline: none; border-color: var(--primary-color); }
         .search-wrapper i { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #ec4899; }
 
         .btn {
-            padding: 12px 25px; border: none; border-radius: 15px; cursor: pointer;
+            padding: 12px 20px; border: none; border-radius: 15px; cursor: pointer;
             font-weight: 700; font-family: inherit; transition: all 0.3s ease;
             display: flex; align-items: center; gap: 8px; font-size: 14px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); white-space: nowrap;
         }
         .btn:hover { transform: translateY(-3px); filter: brightness(1.05); }
 
         .btn-gradient { background: var(--pink-gradient); color: white; }
+        .btn-blue-gradient { background: var(--blue-gradient); color: white; }
         .btn-excel { background: #10b981; color: white; }
         .btn-warning { background: #f59e0b; color: white; }
         .btn-danger { background: #ef4444; color: white; }
         .btn-purple { background: #8b5cf6; color: white; }
         .btn-blue { background: #3b82f6; color: white; }
+        .btn-cyan { background: #0ea5e9; color: white; }
+        .btn-outline { background: white; border: 2px solid #e5e7eb; color: #4b5563; }
+        .btn-outline:hover { border-color: #cbd5e1; background: #f8fafc; }
         
         .btn-tab { padding: 12px 20px; border-radius: 12px 12px 0 0; background: #f1f5f9; color: #475569; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; box-shadow: none; font-size: 14px; }
         .btn-tab.active { background: #3b82f6; color: white; }
 
-        /* --- Cards --- */
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
 
         .order-card {
@@ -123,7 +124,6 @@
         .stat-box label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
         .stat-box val { font-weight: 800; font-size: 16px; color: #374151; }
 
-        /* --- Modals --- */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); z-index: 1000; overflow-y: auto; }
         .modal-content {
             background: white; width: 90%; max-width: 1200px; margin: 40px auto; border-radius: 25px;
@@ -132,48 +132,44 @@
         .modal-header { padding: 25px 35px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; background: #fffbff; border-radius: 25px 25px 0 0; }
         .modal-body { padding: 35px; }
 
-        /* --- Google Sheets Style Table --- */
         .sheet-table-container {
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            overflow-x: auto;
             background: white;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .sheet-table { width: 100%; min-width: 1150px; border-collapse: collapse; font-size: 14px; font-family: 'Poppins', 'Cairo', sans-serif; }
-        .finance-table { min-width: 1450px; } 
+        .sheet-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: 'Poppins', 'Cairo', sans-serif; table-layout: auto; }
         
         .sheet-table thead { position: sticky; top: 0; z-index: 10; background: white; }
-        .sheet-table thead tr:first-child th { background: #e2e8f0; color: #1e293b; font-weight: 800; text-align: center; padding: 15px; border-bottom: 2px solid #cbd5e1; border-right: 1px solid #cbd5e1; }
+        .sheet-table thead tr:first-child th { background: #e2e8f0; color: #1e293b; font-weight: 800; text-align: center; padding: 12px 8px; border-bottom: 2px solid #cbd5e1; border-right: 1px solid #cbd5e1; white-space: nowrap;}
         
-        /* --- Input Row styling --- */
         .input-row td { 
             background-color: #f8fafc !important; 
             border-bottom: 4px solid #94a3b8 !important; 
             border-right: 1px solid #e2e8f0; 
-            height: 60px; 
+            height: 50px; 
+            padding: 0;
         }
         .input-row.sales-mode td { border-bottom: 4px solid #10b981 !important; background-color: #f0fdf4 !important; }
         .input-row.purc-mode td { border-bottom: 4px solid #ef4444 !important; background-color: #fef2f2 !important; }
         
-        .sheet-table tbody td { padding: 0; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; height: 50px; position: relative; text-align: center; }
+        .sheet-table tbody td { padding: 5px; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; position: relative; text-align: center; }
         .sheet-table tbody tr:nth-child(odd) { background-color: #ffffff; }
         .sheet-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
         .sheet-table tbody tr:hover { background-color: #e0f2fe; }
 
-        .cell-input { width: 100%; height: 100%; border: none; background: transparent; padding: 0 12px; font-family: inherit; font-size: 14px; font-weight: 700; color: #1e293b; text-align: center; outline: none; box-sizing: border-box; }
-        .cell-input:focus { box-shadow: inset 0 0 0 3px #3b82f6; background: #fff; }
-        .cell-read-only { padding: 10px; display: block; color: #475569; font-weight: 600; text-align: center;}
+        .cell-input { width: 100%; height: 100%; min-height: 40px; border: none; background: transparent; padding: 0 5px; font-family: inherit; font-size: 13px; font-weight: 700; color: #1e293b; text-align: center; outline: none; box-sizing: border-box; }
+        .cell-input:focus { box-shadow: inset 0 0 0 2px #3b82f6; background: #fff; }
+        .cell-read-only { padding: 5px; display: block; color: #475569; font-weight: 600; text-align: center;}
         
-        /* التنسيق المحاسبي للأرقام */
         .accounting-num { 
             text-align: center !important; 
             direction: ltr !important; 
             font-family: 'Poppins', monospace !important; 
             font-variant-numeric: tabular-nums; 
             font-weight: 800; 
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .input-group label { font-size: 13px; font-weight: 800; color: #4b5563; display: block; margin-bottom: 8px; }
@@ -182,7 +178,7 @@
 
         @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        .badge-status { padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 90px;}
+        .badge-status { padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 80px;}
         .st-late { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
         .st-today { background: #fffbeb; color: #f59e0b; border: 1px solid #fde68a; }
         .st-ok { background: #ecfdf5; color: #10b981; border: 1px solid #a7f3d0; }
@@ -206,31 +202,42 @@
 
         input:focus { outline: none !important; }
 
-        /* --- Partner Cards (Clients & Suppliers) --- */
+        /* --- Partner Cards Styling --- */
         .partner-card {
-            background: white; border-radius: 20px; padding: 20px;
+            background: white; border-radius: 20px; padding: 25px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e5e7eb;
-            transition: 0.3s; position: relative; overflow: hidden;
+            transition: 0.3s; position: relative; overflow: hidden; cursor: pointer;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
-        .partner-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15); border-color: #bfdbfe; }
-        .partner-card.supplier:hover { box-shadow: 0 10px 25px rgba(239, 68, 68, 0.15); border-color: #fecaca; }
+        .partner-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25); border-color: #bfdbfe; }
+        .partner-card.supplier:hover { box-shadow: 0 10px 25px rgba(239, 68, 68, 0.25); border-color: #fecaca; }
 
-        .pc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; }
-        .pc-name { font-size: 18px; font-weight: 800; color: #1e293b; margin: 0; }
-        .pc-badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+        .partner-card .download-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; transition: 0.3s; z-index: 5;
+            font-size: 16px; font-weight: 800; color: #0ea5e9; backdrop-filter: blur(5px);
+        }
+        .partner-card.supplier .download-overlay { color: #ef4444; }
+        .partner-card:hover .download-overlay { opacity: 1; }
+
+        .pc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f3f4f6; padding-bottom: 15px; }
+        .pc-name { font-size: 19px; font-weight: 800; color: #1e293b; margin: 0; display: flex; align-items: center; gap: 8px;}
+        .pc-badge { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;}
         .pc-badge.client { background: #eff6ff; color: #2563eb; }
         .pc-badge.supplier { background: #fef2f2; color: #dc2626; }
 
-        .pc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; color: #475569; margin-bottom: 15px; }
-        .pc-item { background: #f8fafc; padding: 8px; border-radius: 8px; text-align: center; border: 1px solid #f1f5f9; }
-        .pc-item label { display: block; font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 3px; }
-        .pc-item span { font-weight: 800; color: #1e293b; }
+        .pc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 13px; margin-bottom: 20px; }
+        .pc-item { background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid #f1f5f9; display: flex; flex-direction: column; justify-content: center; }
+        .pc-item label { font-size: 11px; color: #64748b; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+        .pc-item span { font-weight: 800; color: #1e293b; font-size: 14px; font-family: 'Poppins', monospace;}
 
-        .pc-total { background: #f0fdf4; padding: 12px; border-radius: 10px; text-align: center; border: 1px dashed #86efac; }
-        .partner-card.supplier .pc-total { background: #fff1f2; border-color: #fca5a5; }
-        .pc-total label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 3px; color: #166534; }
+        .pc-total { background: #f0fdf4; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #bbf7d0; display: flex; justify-content: space-between; align-items: center;}
+        .partner-card.supplier .pc-total { background: #fff1f2; border-color: #fecaca; }
+        .pc-total label { font-size: 13px; font-weight: 800; color: #166534; margin: 0;}
         .partner-card.supplier .pc-total label { color: #991b1b; }
-        .pc-total span { font-size: 18px; font-weight: 800; color: #15803d; }
+        .pc-total span { font-size: 20px; font-weight: 800; color: #15803d; font-family: 'Poppins', monospace; }
         .partner-card.supplier .pc-total span { color: #b91c1c; }
     </style>
 </head>
@@ -243,7 +250,7 @@
 
     <header class="glass-header">
         <div class="brand-section">
-            <h1><i class="fas fa-spa"></i> Lolo Logistics </h1>
+            <h1><i class="fas fa-spa"></i> Lolo ERP </h1>
             <small style="color: #6b7280; font-size: 14px; font-weight: 600;">نظام إدارة الطلبات المتكامل</small>
         </div>
         <div class="stats-bar" style="display:flex; gap:15px">
@@ -253,21 +260,70 @@
         </div>
     </header>
 
-    <div class="controls-area">
-        <div class="search-wrapper">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="بحث باسم العميل، رقم PO..." onkeyup="renderList()">
+    <div id="mainDashboardView">
+        <div class="controls-area">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="بحث باسم العميل، رقم PO..." onkeyup="renderList()">
+            </div>
+            <div class="action-buttons" style="display:flex; gap:8px; flex-wrap:wrap; justify-content: flex-end;">
+                <button class="btn btn-cyan" onclick="togglePartnersView()"><i class="fas fa-users"></i> العملاء والموردين</button>
+                <button class="btn btn-blue" onclick="openFinanceModal()"><i class="fas fa-calculator"></i> الإدارة المالية</button>
+                <button class="btn btn-purple" onclick="openProductsModal()"><i class="fas fa-tags"></i> إدارة المنتجات</button>
+                <button class="btn btn-warning" onclick="exportShortagesToExcel()"><i class="fas fa-exclamation-triangle"></i> تقرير النواقص</button>
+                <button class="btn btn-excel" onclick="exportMainListToExcel()"><i class="fas fa-file-excel"></i> تقرير الطلبات</button>
+                <button class="btn btn-gradient" onclick="openCreateModal()"><i class="fas fa-plus"></i> طلب جديد</button>
+            </div>
         </div>
-        <div class="action-buttons" style="display:flex; gap:10px;">
-            <button class="btn btn-blue" onclick="openFinanceModal()"><i class="fas fa-calculator"></i> إدارة الحسابات</button>
-            <button class="btn btn-purple" onclick="openProductsModal()"><i class="fas fa-tags"></i> إدارة المنتجات</button>
-            <button class="btn btn-warning" onclick="exportShortagesToExcel()"><i class="fas fa-exclamation-triangle"></i> تقرير النواقص</button>
-            <button class="btn btn-excel" onclick="exportMainListToExcel()"><i class="fas fa-file-excel"></i> تقرير الطلبات</button>
-            <button class="btn btn-gradient" onclick="openCreateModal()"><i class="fas fa-plus"></i> طلب جديد</button>
-        </div>
+
+        <div class="cards-grid" id="ordersList"></div>
     </div>
 
-    <div class="cards-grid" id="ordersList"></div>
+    <div id="partnersView" style="display: none;">
+        <div class="glass-header" style="margin-bottom: 25px; border-radius: 20px; padding: 15px 30px;">
+            <div style="display:flex; align-items:center; gap:20px;">
+                <button class="btn btn-outline" style="border-radius: 50%; padding: 12px 15px;" onclick="togglePartnersView()"><i class="fas fa-arrow-right"></i></button>
+                <h2 style="margin:0; color:#1e293b; display:flex; align-items:center; gap:10px;"><i class="fas fa-users" style="color:#0ea5e9"></i> دليل العملاء والموردين</h2>
+            </div>
+            <div style="display:flex; gap:15px; align-items:center;">
+                <div style="position: relative; width: 350px;">
+                    <i class="fas fa-search" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #0ea5e9;"></i>
+                    <input type="text" id="partnersSearchInput" class="search-input-style" placeholder="بحث في البطاقات (الاسم، النوع)..." onkeyup="renderPartnersList()" style="padding: 12px 40px 12px 15px;">
+                </div>
+                <button class="btn btn-blue-gradient" onclick="openOpBalModal()"><i class="fas fa-plus-circle"></i> إضافة رصيد إغلاق 2025</button>
+            </div>
+        </div>
+        <div class="cards-grid" id="partnersCardsContainer"></div>
+    </div>
+
+    <div id="opBalModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 style="margin:0; color:#1e293b"><i class="fas fa-wallet" style="color:#2563eb"></i> تسجيل رصيد إغلاق 2025</h3>
+                <div onclick="closeModal('opBalModal')" style="cursor:pointer; font-size:24px; color:#94a3b8;">×</div>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="input-group">
+                    <label>الاسم (عميل / مورد)</label>
+                    <input type="text" id="opBalName" placeholder="اختر من القائمة أو اكتب اسماً جديداً..." oninput="handleNameInput(this)">
+                </div>
+                <div class="input-group">
+                    <label>النوع</label>
+                    <select id="opBalType">
+                        <option value="CLIENT">عميل (Client)</option>
+                        <option value="SUPPLIER">مورد (Supplier)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>رصيد الإغلاق (2025)</label>
+                    <input type="text" id="opBalAmount" class="accounting-num" placeholder="0.00" oninput="formatLiveMoney(this)">
+                </div>
+                <button class="btn btn-blue-gradient" style="justify-content: center; padding: 15px; font-size: 16px; margin-top: 10px;" onclick="saveOpeningBalance()">
+                    <i class="fas fa-save"></i> حفظ الرصيد
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div id="productsModal" class="modal">
         <div class="modal-content" style="max-width: 800px;">
@@ -422,21 +478,18 @@
     <datalist id="finNamesList"></datalist>
 
     <div id="financeModal" class="modal">
-        <div class="modal-content" style="max-width: 1450px; padding:0;">
+        <div class="modal-content" style="max-width: 98%; padding:0;">
             <div class="modal-header" style="border-radius: 25px 25px 0 0;">
                 <h3 style="margin:0; color:#374151"><i class="fas fa-file-invoice-dollar" style="color:#3b82f6"></i> الإدارة المالية وحسابات الضرائب</h3>
                 <div onclick="closeModal('financeModal')" style="cursor:pointer; font-size:24px;">×</div>
             </div>
             
             <div class="modal-body" style="padding-top: 20px;">
-                
                 <div style="display:flex; justify-content: space-between; align-items: flex-end; margin-bottom:15px; border-bottom:2px solid #e2e8f0; padding-bottom:5px; flex-wrap: wrap; gap: 15px;">
-                    
                     <div style="display:flex; gap:5px; align-items: flex-end; height: 100%;">
                         <button id="tabSales" class="btn-tab active" onclick="switchFinTab('SALES')"><i class="fas fa-arrow-down" style="color:#10b981"></i> المبيعات</button>
                         <button id="tabPurchases" class="btn-tab" onclick="switchFinTab('PURCHASES')"><i class="fas fa-arrow-up" style="color:#ef4444"></i> المشتريات</button>
                         <button id="tabVat" class="btn-tab" onclick="switchFinTab('VAT')"><i class="fas fa-percent" style="color:#8b5cf6"></i> الضريبة (VAT)</button>
-                        <button id="tabPartners" class="btn-tab" onclick="switchFinTab('PARTNERS')"><i class="fas fa-users" style="color:#0ea5e9"></i> العملاء والموردين</button>
                     </div>
                     
                     <div style="display:flex; gap:15px; align-items: center; margin-bottom: 5px;">
@@ -452,20 +505,19 @@
                 </div>
                 
                 <div id="viewSalesLedger">
-                    <div class="sheet-table-container" style="max-height: 600px; overflow-y: auto;">
+                    <div class="sheet-table-container">
                         <table class="sheet-table finance-table">
                             <thead>
                                 <tr>
-                                    <th width="9%">التاريخ</th>
-                                    <th width="12%">نوع الحركة</th>
-                                    <th width="15%">اسم العميل</th>
-                                    <th width="15%">الوصف / البيان</th>
-                                    <th width="10%">رقم المرجع</th>
-                                    <th width="9%">المبلغ الأساسي</th>
+                                    <th width="10%">التاريخ</th>
+                                    <th width="13%">نوع الحركة</th>
+                                    <th width="16%">اسم العميل</th>
+                                    <th width="16%">الوصف / البيان</th>
+                                    <th width="12%">رقم المرجع</th>
+                                    <th width="10%">المبلغ الأساسي</th>
                                     <th width="8%">الضريبة</th>
-                                    <th width="9%">الإجمالي</th>
-                                    <th width="10%" style="background:#f1f5f9; color:#0f172a;">الرصيد التراكمي</th>
-                                    <th width="3%">إجراء</th>
+                                    <th width="10%">الإجمالي</th>
+                                    <th width="5%">إجراء</th>
                                 </tr>
                                 <tr class="input-row sales-mode">
                                     <td><input type="date" id="salesDate" class="cell-input" style="color: #166534;"></td>
@@ -483,7 +535,6 @@
                                     <td><input type="text" id="salesAmount" class="cell-input accounting-num" placeholder="0.00" oninput="formatLiveMoney(this, 'sales')" style="color: #166534;"></td>
                                     <td><input type="text" id="salesVat" class="cell-input accounting-num" style="color:#db2777;" readonly placeholder="0.00"></td>
                                     <td><input type="text" id="salesTotal" class="cell-input accounting-num" style="color:#1d4ed8;" readonly placeholder="0.00"></td>
-                                    <td><input type="text" class="cell-input" disabled style="background:#f8fafc"></td>
                                     <td>
                                         <button class="btn btn-blue btn-sm" style="margin:auto; padding:6px 12px; border-radius:8px;" onclick="saveFinanceEntry('sales')">
                                             <i class="fas fa-plus"></i> حفظ
@@ -491,26 +542,29 @@
                                     </td>
                                 </tr>
                             </thead>
-                            <tbody id="salesTableBody"></tbody>
                         </table>
+                        <div style="max-height: 500px; overflow-y: auto;">
+                            <table class="sheet-table finance-table" style="margin-top: -1px;">
+                                <tbody id="salesTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
                 <div id="viewPurchasesLedger" style="display: none;">
-                    <div class="sheet-table-container" style="max-height: 600px; overflow-y: auto;">
+                    <div class="sheet-table-container">
                         <table class="sheet-table finance-table">
                             <thead>
                                 <tr>
-                                    <th width="9%">التاريخ</th>
-                                    <th width="12%">نوع الحركة</th>
-                                    <th width="15%">اسم المورد</th>
-                                    <th width="15%">الوصف / البيان</th>
-                                    <th width="10%">رقم المرجع</th>
-                                    <th width="9%">المبلغ الأساسي</th>
+                                    <th width="10%">التاريخ</th>
+                                    <th width="13%">نوع الحركة</th>
+                                    <th width="16%">اسم المورد</th>
+                                    <th width="16%">الوصف / البيان</th>
+                                    <th width="12%">رقم المرجع</th>
+                                    <th width="10%">المبلغ الأساسي</th>
                                     <th width="8%">الضريبة</th>
-                                    <th width="9%">الإجمالي</th>
-                                    <th width="10%" style="background:#f1f5f9; color:#0f172a;">الرصيد التراكمي</th>
-                                    <th width="3%">إجراء</th>
+                                    <th width="10%">الإجمالي</th>
+                                    <th width="5%">إجراء</th>
                                 </tr>
                                 <tr class="input-row purc-mode">
                                     <td><input type="date" id="purcDate" class="cell-input" style="color: #991b1b;"></td>
@@ -527,7 +581,6 @@
                                     <td><input type="text" id="purcAmount" class="cell-input accounting-num" placeholder="0.00" oninput="formatLiveMoney(this, 'purc')" style="color: #991b1b;"></td>
                                     <td><input type="text" id="purcVat" class="cell-input accounting-num" style="color:#db2777;" readonly placeholder="0.00"></td>
                                     <td><input type="text" id="purcTotal" class="cell-input accounting-num" style="color:#1d4ed8;" readonly placeholder="0.00"></td>
-                                    <td><input type="text" class="cell-input" disabled style="background:#f8fafc"></td>
                                     <td>
                                         <button class="btn btn-blue btn-sm" style="margin:auto; padding:6px 12px; border-radius:8px; background:#ef4444;" onclick="saveFinanceEntry('purc')">
                                             <i class="fas fa-plus"></i> حفظ
@@ -535,8 +588,12 @@
                                     </td>
                                 </tr>
                             </thead>
-                            <tbody id="purchasesTableBody"></tbody>
                         </table>
+                        <div style="max-height: 500px; overflow-y: auto;">
+                            <table class="sheet-table finance-table" style="margin-top: -1px;">
+                                <tbody id="purchasesTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -561,34 +618,10 @@
                         </table>
                     </div>
                 </div>
-
-                <div id="viewPartnersLedger" style="display: none;">
-                    <div style="background: white; padding: 20px; border-radius: 15px; border: 1px solid #e5e7eb; margin-bottom: 25px; display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
-                        <div class="input-group" style="flex: 1; min-width: 200px;">
-                            <label>الاسم (عميل / مورد)</label>
-                            <input type="text" id="opBalName" placeholder="اختر أو اكتب الاسم..." oninput="handleNameInput(this)">
-                        </div>
-                        <div class="input-group" style="flex: 1; min-width: 150px;">
-                            <label>النوع</label>
-                            <select id="opBalType">
-                                <option value="CLIENT">عميل (Client)</option>
-                                <option value="SUPPLIER">مورد (Supplier)</option>
-                            </select>
-                        </div>
-                        <div class="input-group" style="flex: 1; min-width: 150px;">
-                            <label>رصيد إغلاق 2025</label>
-                            <input type="text" id="opBalAmount" class="accounting-num" placeholder="0.00" oninput="formatLiveMoney(this)">
-                        </div>
-                        <button class="btn btn-blue" style="height: 46px;" onclick="saveOpeningBalance()">
-                            <i class="fas fa-save"></i> حفظ الرصيد
-                        </button>
-                    </div>
-                    <div class="cards-grid" id="partnersCardsContainer"></div>
-                </div>
-
             </div>
         </div>
     </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -614,7 +647,6 @@
         let globalProducts = {}; 
         let finances = [];
         let openingBalances = {};
-        let txBalancesMap = {};
         let currentId = null;
         let activeFinTab = 'SALES';
 
@@ -624,6 +656,7 @@
                 closeModal('detailsModal'); 
                 closeModal('productsModal');
                 closeModal('financeModal');
+                closeModal('opBalModal');
             }
         });
 
@@ -648,10 +681,12 @@
             const data = snapshot.val();
             finances = data ? Object.values(data) : [];
             window.updateNameSuggestions(); 
-            window.updateAllBalances();
+            
             if(document.getElementById('financeModal').style.display === 'block') {
-                if(activeFinTab === 'PARTNERS') window.renderPartnersList();
-                else window.triggerFinSearch();
+                window.triggerFinSearch();
+            }
+            if(document.getElementById('partnersView').style.display === 'block') {
+                window.renderPartnersList();
             }
         });
 
@@ -659,10 +694,12 @@
         onValue(ref(db, BAL_PATH), (snapshot) => {
             const data = snapshot.val();
             openingBalances = data || {};
-            window.updateAllBalances();
+            
             if(document.getElementById('financeModal').style.display === 'block') {
-                if(activeFinTab === 'PARTNERS') window.renderPartnersList();
-                else window.triggerFinSearch();
+                window.triggerFinSearch();
+            }
+            if(document.getElementById('partnersView').style.display === 'block') {
+                window.renderPartnersList();
             }
         });
 
@@ -674,7 +711,6 @@
 
         window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
         
-        // Accounting Format (Negative in Parentheses)
         window.formatMoney = function(a) { 
             let num = parseFloat(a) || 0;
             if (num === 0) return '0.00';
@@ -682,7 +718,6 @@
             return num < 0 ? `(${formatted})` : formatted;
         }
 
-        // Live formatting while typing
         window.formatLiveMoney = function(input, source) {
             let cursor = input.selectionStart;
             let oldLength = input.value.length;
@@ -699,7 +734,7 @@
             if(source === 'purc') window.updatePurchasesCalc();
         }
 
-        // --- Products & Orders Functions ---
+        // --- Products & Orders ---
         window.openProductsModal = function() { document.getElementById('productsModal').style.display = 'block'; window.renderProductsList(); }
         window.saveSingleProduct = function() {
             const code = document.getElementById('prodCodeInput').value.trim(); const name = document.getElementById('prodNameInput').value.trim();
@@ -796,8 +831,6 @@
         window.exportMainListToExcel = function() { let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل الطلبات</h3><table border="1"><thead><tr style="background:#fce7f3"><th>PO</th><th>العميل</th><th>الموقع</th><th>التاريخ</th><th>الحالة</th><th>القيمة المطلوبة (PO)</th><th>القيمة المعتمدة (Inv)</th><th>الفرق</th></tr></thead><tbody>`; orders.forEach(o => { const t = calculateOrderTotals(o.items); h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${o.location||''}</td><td>${o.deliveryDate}</td><td>${o.status}</td><td>${t.reqTotal.toFixed(2)}</td><td>${t.delTotal.toFixed(2)}</td><td>${(t.reqTotal - t.delTotal).toFixed(2)}</td></tr>`; }); h += `</tbody></table></body></html>`; window.downloadExcel(h, 'All_Orders.xls'); }
         window.exportShortagesToExcel = function() { let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>النواقص</h3><table border="1"><thead><tr style="background:#fee2e2"><th>PO</th><th>العميل</th><th>المنتج</th><th>مطلوب</th><th>متوفر</th><th>خسارة</th></tr></thead><tbody>`; orders.forEach(o => { if(o.items) o.items.forEach(i => { if(i.reqQty > i.availQty) h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${i.name}</td><td>${i.reqQty}</td><td>${i.availQty}</td><td>${((i.reqQty-i.availQty)*i.price).toFixed(2)}</td></tr>`; }); }); h += `</tbody></table></body></html>`; window.downloadExcel(h, 'Shortages.xls'); }
 
-        // --- NEW Finance Functions ---
-        
         window.handleNameInput = function(input) {
             if(input.value.trim().length > 0) {
                 input.setAttribute('list', 'finNamesList');
@@ -817,17 +850,36 @@
             }
         }
 
+        // --- إدارة عرض قسم العملاء والموردين ---
+        window.togglePartnersView = function() {
+            const dash = document.getElementById('mainDashboardView');
+            const partners = document.getElementById('partnersView');
+            
+            if (partners.style.display === 'none') {
+                dash.style.display = 'none';
+                partners.style.display = 'block';
+                window.renderPartnersList();
+            } else {
+                partners.style.display = 'none';
+                dash.style.display = 'block';
+            }
+        }
+
+        window.openOpBalModal = function() {
+            document.getElementById('opBalModal').style.display = 'block';
+            document.getElementById('opBalName').value = '';
+            document.getElementById('opBalAmount').value = '';
+        }
+
         window.switchFinTab = function(tab) {
             activeFinTab = tab;
             document.getElementById('viewSalesLedger').style.display = 'none';
             document.getElementById('viewPurchasesLedger').style.display = 'none';
             document.getElementById('viewVatLedger').style.display = 'none';
-            document.getElementById('viewPartnersLedger').style.display = 'none';
             
             document.getElementById('tabSales').classList.remove('active');
             document.getElementById('tabPurchases').classList.remove('active');
             document.getElementById('tabVat').classList.remove('active');
-            document.getElementById('tabPartners').classList.remove('active');
 
             if(tab === 'SALES') {
                 document.getElementById('viewSalesLedger').style.display = 'block';
@@ -838,10 +890,6 @@
             } else if (tab === 'VAT') {
                 document.getElementById('viewVatLedger').style.display = 'block';
                 document.getElementById('tabVat').classList.add('active');
-            } else if (tab === 'PARTNERS') {
-                document.getElementById('viewPartnersLedger').style.display = 'block';
-                document.getElementById('tabPartners').classList.add('active');
-                window.renderPartnersList();
             }
         }
 
@@ -954,41 +1002,11 @@
             if(!name) return alert("يرجى كتابة الاسم");
             
             set(ref(db, BAL_PATH + '/' + cleanKey(name)), { name: name, type: type, amount: amount }).then(() => {
-                document.getElementById('opBalName').value = ''; document.getElementById('opBalAmount').value = '';
+                closeModal('opBalModal');
                 alert('تم حفظ رصيد الإغلاق بنجاح!');
             });
         }
 
-        window.updateAllBalances = function() {
-            txBalancesMap = {}; 
-            let currentBals = {};
-            
-            Object.values(openingBalances).forEach(b => { 
-                currentBals[cleanKey(b.name)] = parseFloat(b.amount) || 0; 
-            });
-
-            // حساب الرصيد من الأقدم للأحدث للحركات
-            let sortedFinances = [...finances].sort((a,b) => a.id - b.id);
-            sortedFinances.forEach(f => {
-                if(!f.client) return;
-                let cKey = cleanKey(f.client);
-                
-                if(currentBals[cKey] === undefined) { currentBals[cKey] = 0; }
-                
-                let amountSign = 1;
-                // للعميل: المبيعات تزيد الرصيد، المستلم يقلله
-                // للمورد: المشتريات تزيد الرصيد المستحق، المدفوع يقلله
-                if(f.type === 'SALE' || f.type === 'INVOICE') amountSign = 1;
-                else if(f.type === 'SALE_RET' || f.type === 'SALE_DISC' || f.type === 'PAY_IN' || f.type === 'RETURN' || f.type === 'DISCOUNT' || f.type === 'PAYMENT') amountSign = -1;
-                else if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') amountSign = 1;
-                else if(f.type === 'PAY_OUT') amountSign = -1;
-
-                currentBals[cKey] += (f.total * amountSign);
-                txBalancesMap[f.id] = currentBals[cKey];
-            });
-        }
-
-        // Global Search Filter
         function filterFinancesArray() {
             const term = document.getElementById('finSearchInput').value.toLowerCase();
             if (!term) return finances;
@@ -1000,10 +1018,6 @@
         }
 
         window.triggerFinSearch = function() {
-            if (activeFinTab === 'PARTNERS') {
-                window.renderPartnersList();
-                return;
-            }
             const filtered = filterFinancesArray().sort((a,b) => b.id - a.id);
             window.renderSalesList(filtered);
             window.renderPurchasesList(filtered);
@@ -1025,16 +1039,15 @@
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>${f.date}</td>
-                        <td>${typeBadge}</td>
-                        <td style="font-weight:bold">${f.client}</td>
-                        <td style="color:#64748b; font-size:13px">${f.desc || '-'}</td>
-                        <td style="font-family:monospace; font-weight:bold; color:#475569">${f.ref}</td>
-                        <td class="accounting-num" style="${colorStyle}">${window.formatMoney(f.amount * amountSign)}</td>
-                        <td class="accounting-num" style="color:#db2777">${window.formatMoney((f.vat || 0) * amountSign)}</td>
-                        <td class="accounting-num" style="font-weight:bold; ${colorStyle}">${window.formatMoney(f.total * amountSign)}</td>
-                        <td class="accounting-num" style="background:#f8fafc; font-weight:800; color:#0f172a">${window.formatMoney(txBalancesMap[f.id] || 0)}</td>
-                        <td>
+                        <td width="10%">${f.date}</td>
+                        <td width="13%">${typeBadge}</td>
+                        <td width="16%" style="font-weight:bold">${f.client}</td>
+                        <td width="16%" style="color:#64748b; font-size:12px">${f.desc || '-'}</td>
+                        <td width="12%" style="font-family:monospace; font-weight:bold; color:#475569">${f.ref}</td>
+                        <td width="10%" class="accounting-num" style="${colorStyle}">${window.formatMoney(f.amount * amountSign)}</td>
+                        <td width="8%" class="accounting-num" style="color:#db2777">${window.formatMoney((f.vat || 0) * amountSign)}</td>
+                        <td width="10%" class="accounting-num" style="font-weight:bold; ${colorStyle}">${window.formatMoney(f.total * amountSign)}</td>
+                        <td width="5%">
                             <button class="btn btn-danger btn-sm" style="padding:4px 8px; margin:auto;" onclick="deleteFinanceEntry(${f.id})"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
@@ -1057,16 +1070,15 @@
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>${f.date}</td>
-                        <td>${typeBadge}</td>
-                        <td style="font-weight:bold">${f.client}</td>
-                        <td style="color:#64748b; font-size:13px">${f.desc || '-'}</td>
-                        <td style="font-family:monospace; font-weight:bold; color:#475569">${f.ref}</td>
-                        <td class="accounting-num" style="${colorStyle}">${window.formatMoney(f.amount * amountSign)}</td>
-                        <td class="accounting-num" style="color:#db2777">${window.formatMoney((f.vat || 0) * amountSign)}</td>
-                        <td class="accounting-num" style="font-weight:bold; ${colorStyle}">${window.formatMoney(f.total * amountSign)}</td>
-                        <td class="accounting-num" style="background:#f8fafc; font-weight:800; color:#0f172a">${window.formatMoney(txBalancesMap[f.id] || 0)}</td>
-                        <td>
+                        <td width="10%">${f.date}</td>
+                        <td width="13%">${typeBadge}</td>
+                        <td width="16%" style="font-weight:bold">${f.client}</td>
+                        <td width="16%" style="color:#64748b; font-size:12px">${f.desc || '-'}</td>
+                        <td width="12%" style="font-family:monospace; font-weight:bold; color:#475569">${f.ref}</td>
+                        <td width="10%" class="accounting-num" style="${colorStyle}">${window.formatMoney(f.amount * amountSign)}</td>
+                        <td width="8%" class="accounting-num" style="color:#db2777">${window.formatMoney((f.vat || 0) * amountSign)}</td>
+                        <td width="10%" class="accounting-num" style="font-weight:bold; ${colorStyle}">${window.formatMoney(f.total * amountSign)}</td>
+                        <td width="5%">
                             <button class="btn btn-danger btn-sm" style="padding:4px 8px; margin:auto;" onclick="deleteFinanceEntry(${f.id})"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
@@ -1103,12 +1115,11 @@
 
         window.renderPartnersList = function() {
             let partners = {};
-            // تجهيز بيانات الأرصدة الافتتاحية
+            
             Object.values(openingBalances).forEach(b => { 
                 partners[cleanKey(b.name)] = { name: b.name, type: b.type, opBal: parseFloat(b.amount)||0, sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0 }; 
             });
 
-            // حساب التراكمي من الحركات
             finances.forEach(f => {
                 if(!f.client) return;
                 let cKey = cleanKey(f.client);
@@ -1126,42 +1137,170 @@
             });
 
             const container = document.getElementById('partnersCardsContainer'); container.innerHTML = '';
-            const term = document.getElementById('finSearchInput').value.toLowerCase();
+            const term = document.getElementById('partnersSearchInput').value.toLowerCase();
 
             Object.values(partners).forEach(p => {
-                if(term && !p.name.toLowerCase().includes(term)) return;
+                if(term && !p.name.toLowerCase().includes(term) && !p.type.toLowerCase().includes(term)) return;
                 
                 let isClient = p.type === 'CLIENT';
                 let netBalance = isClient ? (p.opBal + p.sales - p.returns - p.discounts - p.payIn) : (p.opBal + p.purchases - p.payOut);
-                let badge = isClient ? `<span class="pc-badge client">عميل</span>` : `<span class="pc-badge supplier">مورد</span>`;
+                let badge = isClient ? `<span class="pc-badge client"><i class="fas fa-user"></i> عميل</span>` : `<span class="pc-badge supplier"><i class="fas fa-truck-loading"></i> مورد</span>`;
+                let cKey = cleanKey(p.name);
                 
                 let statsHtml = isClient ? `
                     <div class="pc-grid">
-                        <div class="pc-item"><label>مبيعات 2026</label><span>${window.formatMoney(p.sales)}</span></div>
-                        <div class="pc-item"><label>مرتجعات وخصم</label><span>${window.formatMoney(p.returns + p.discounts)}</span></div>
-                        <div class="pc-item"><label>المدفوعات المستلمة</label><span>${window.formatMoney(p.payIn)}</span></div>
-                        <div class="pc-item"><label>رصيد إغلاق 2025</label><span style="color:#0ea5e9">${window.formatMoney(p.opBal)}</span></div>
+                        <div class="pc-item"><label><i class="fas fa-arrow-down" style="color:#10b981"></i> مبيعات</label><span>${window.formatMoney(p.sales)}</span></div>
+                        <div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مرتجعات</label><span style="color:#ef4444">${window.formatMoney(p.returns)}</span></div>
+                        <div class="pc-item"><label><i class="fas fa-percent" style="color:#d97706"></i> خصومات</label><span style="color:#d97706">${window.formatMoney(p.discounts)}</span></div>
+                        <div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> دفعات مستلمة</label><span>${window.formatMoney(p.payIn)}</span></div>
                     </div>` : `
                     <div class="pc-grid">
-                        <div class="pc-item"><label>مشتريات 2026</label><span>${window.formatMoney(p.purchases)}</span></div>
-                        <div class="pc-item"><label>المدفوعات الصادرة</label><span>${window.formatMoney(p.payOut)}</span></div>
-                        <div class="pc-item" style="grid-column: span 2;"><label>رصيد إغلاق 2025</label><span style="color:#0ea5e9">${window.formatMoney(p.opBal)}</span></div>
+                        <div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مشتريات</label><span>${window.formatMoney(p.purchases)}</span></div>
+                        <div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> مدفوعات صادرة</label><span>${window.formatMoney(p.payOut)}</span></div>
                     </div>`;
 
                 container.innerHTML += `
-                    <div class="partner-card ${isClient ? '' : 'supplier'}">
-                        <div class="pc-header"><h3 class="pc-name">${p.name}</h3>${badge}</div>
-                        ${statsHtml}
-                        <div class="pc-total"><label>صافي الرصيد الحالي</label><span>${window.formatMoney(netBalance)}</span></div>
+                    <div class="partner-card ${isClient ? '' : 'supplier'}" onclick="exportPartnerStatement('${cKey}')">
+                        <div class="download-overlay"><i class="fas fa-file-excel" style="font-size:32px; margin-bottom:10px;"></i> تحميل كشف الحساب</div>
+                        <div>
+                            <div class="pc-header"><h3 class="pc-name">${p.name}</h3>${badge}</div>
+                            ${statsHtml}
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 5px;">Closing Balance 2025: <span style="color:#0ea5e9; font-family:'Poppins'">${window.formatMoney(p.opBal)}</span></div>
+                            <div class="pc-total"><label>صافي الرصيد الحالي</label><span>${window.formatMoney(netBalance)}</span></div>
+                        </div>
                     </div>`;
             });
             
             if (container.innerHTML === '') {
-                container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #9ca3af; padding: 40px; background: #f9fafb; border-radius: 15px; border: 1px dashed #e5e7eb;">لا توجد بطاقات مطابقة للبحث أو لا يوجد عملاء وموردين مسجلين بعد.</div>';
+                container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #9ca3af; padding: 40px; background: #f8fafc; border-radius: 15px; border: 2px dashed #e2e8f0;"><i class="fas fa-folder-open" style="font-size: 40px; margin-bottom: 15px; color:#cbd5e1;"></i><br>لا توجد بطاقات مطابقة للبحث أو لا يوجد بيانات مسجلة بعد.</div>';
             }
         }
 
-        // Export Function
+        // --- كشف الحساب الاحترافي بالإنجليزية ---
+        window.exportPartnerStatement = function(partnerKey) {
+            let termName = "";
+            let type = "CLIENT";
+            let opBal = 0;
+            
+            if(openingBalances[partnerKey]) {
+                termName = openingBalances[partnerKey].name;
+                type = openingBalances[partnerKey].type;
+                opBal = parseFloat(openingBalances[partnerKey].amount) || 0;
+            } else {
+                let f = finances.find(x => cleanKey(x.client) === partnerKey);
+                if(f) {
+                    termName = f.client;
+                    type = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type) ? 'SUPPLIER' : 'CLIENT';
+                }
+            }
+            if(!termName) return;
+
+            let partnerTxs = finances.filter(f => cleanKey(f.client) === partnerKey).sort((a,b) => a.id - b.id);
+            let isClient = type === 'CLIENT';
+            
+            // تحديد استايلات احترافية
+            const headSt = "background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px; font-family: 'Segoe UI', sans-serif; text-align:center; vertical-align: middle;";
+            const cellSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Segoe UI', sans-serif; text-align:center; vertical-align: middle;";
+            const descSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Segoe UI', sans-serif; text-align:right; vertical-align: middle;";
+            const numSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Segoe UI', sans-serif; text-align:center; vertical-align: middle; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
+            
+            // إضافة Colgroup للتحكم في عرض الأعمدة حتى لا تكون عريضة جداً
+            let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel">
+            <head><meta charset="utf-8"></head>
+            <body dir="ltr">
+            <table style="border-collapse:collapse; table-layout: fixed;">
+            <colgroup>
+                <col style="width: 100px;">
+                <col style="width: 120px;">
+                <col style="width: 300px;">
+                <col style="width: 150px;">
+                <col style="width: 120px;">
+                <col style="width: 120px;">
+                <col style="width: 130px;">
+            </colgroup>
+            <tr>
+                <td colspan="7" style="font-size:24px; font-weight:bold; color:#0f172a; text-align:center; padding:20px 0; border:none; background:#f8fafc; font-family:'Segoe UI'">
+                    Statement of Account<br>
+                    <span style="color:#2563eb; font-size: 20px;">${termName}</span>
+                </td>
+            </tr>
+            <tr><td colspan="7" style="border:none; height:10px;"></td></tr>
+            <tr>
+                <th style="${headSt}">Date</th>
+                <th style="${headSt}">Reference</th>
+                <th style="${headSt}">Description</th>
+                <th style="${headSt}">Transaction Type</th>
+                <th style="${headSt}">Debit</th>
+                <th style="${headSt}">Credit</th>
+                <th style="${headSt}">Balance</th>
+            </tr>
+            <tbody>`;
+            
+            let runBal = opBal;
+            
+            h += `<tr>
+                <td style="${cellSt}">2025-01-01</td>
+                <td style="${cellSt}">-</td>
+                <td style="${descSt} font-weight:bold; color:#475569;">Opening Balance (2025)</td>
+                <td style="${cellSt} color:#475569;">Opening Balance</td>
+                <td style="${numSt} color:#dc2626;">${isClient && runBal > 0 ? runBal : (!isClient && runBal < 0 ? Math.abs(runBal) : '-')}</td>
+                <td style="${numSt} color:#16a34a;">${isClient && runBal < 0 ? Math.abs(runBal) : (!isClient && runBal > 0 ? runBal : '-')}</td>
+                <td style="${numSt} font-weight:bold; background-color:#e2e8f0; color:#0f172a;">${runBal}</td>
+            </tr>`;
+            
+            let idx = 1;
+            partnerTxs.forEach(f => {
+                let amountSign = 1;
+                let isDebit = false;
+                let isCredit = false;
+                
+                if(f.type === 'SALE' || f.type === 'INVOICE') { amountSign = 1; isDebit = true; } 
+                else if(f.type === 'SALE_RET' || f.type === 'RETURN') { amountSign = -1; isCredit = true; } 
+                else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { amountSign = -1; isCredit = true; }
+                else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { amountSign = -1; isCredit = true; }
+                
+                else if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') { amountSign = 1; isCredit = true; } 
+                else if(f.type === 'PAY_OUT') { amountSign = -1; isDebit = true; } 
+
+                runBal += (f.total * amountSign);
+                
+                let debVal = isDebit ? f.total : 0;
+                let credVal = isCredit ? f.total : 0;
+                
+                let typeText = f.type;
+                if(f.type === 'SALE' || f.type === 'INVOICE') typeText = 'Sales Invoice';
+                else if(f.type === 'SALE_RET' || f.type === 'RETURN') typeText = 'Sales Return';
+                else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') typeText = 'Discount';
+                else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') typeText = 'Payment Received';
+                else if(f.type === 'PURC_VAT') typeText = 'Purchase Invoice (VAT)';
+                else if(f.type === 'PURC_NO_VAT') typeText = 'Purchase Invoice';
+                else if(f.type === 'PAY_OUT') typeText = 'Payment Sent';
+
+                let bg = (idx % 2 === 0) ? "#f8fafc" : "#ffffff";
+                idx++;
+
+                h += `<tr style="background-color:${bg}">
+                    <td style="${cellSt} mso-number-format:'\@'">${f.date}</td>
+                    <td style="${cellSt} mso-number-format:'\@'">${f.ref}</td>
+                    <td style="${descSt}">${f.desc || '-'}</td>
+                    <td style="${cellSt}">${typeText}</td>
+                    <td style="${numSt} color:#dc2626;">${debVal > 0 ? debVal : '-'}</td>
+                    <td style="${numSt} color:#16a34a;">${credVal > 0 ? credVal : '-'}</td>
+                    <td style="${numSt} font-weight:bold; background-color:#e2e8f0; color:#0f172a;">${runBal}</td>
+                </tr>`;
+            });
+            
+            h += `<tr><td colspan="7" style="border:none; height:10px;"></td></tr>
+                  <tr>
+                    <td colspan="6" style="${descSt} font-weight:bold; background-color:#0f172a; color:white; text-align:right;">Final Net Balance:</td>
+                    <td style="${numSt} font-weight:bold; background-color:#1e293b; color:white;">${runBal}</td>
+                  </tr>
+            </tbody></table></body></html>`;
+            window.downloadExcel(h, 'Statement_' + termName + '.xls');
+        }
+
         window.exportCurrentLedger = function() {
             const headerStyle = "background-color: #f1f5f9; font-weight: bold; border: 1px solid #000000; padding: 5px; text-align: center;";
             const cellStyle = "border: 1px solid #000000; padding: 5px; text-align: center;";
@@ -1170,23 +1309,23 @@
             const filteredData = filterFinancesArray().sort((a,b) => b.id - a.id);
 
             if (activeFinTab === 'SALES') {
-                let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل المبيعات والمقبوضات</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">النوع</th><th style="${headerStyle}">العميل</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">المرجع</th><th style="${headerStyle}">المبلغ الأساسي</th><th style="${headerStyle}">الضريبة (VAT)</th><th style="${headerStyle}">الإجمالي</th><th style="${headerStyle}">الرصيد التراكمي</th></tr></thead><tbody>`;
+                let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل المبيعات والمقبوضات</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">النوع</th><th style="${headerStyle}">العميل</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">المرجع</th><th style="${headerStyle}">المبلغ الأساسي</th><th style="${headerStyle}">الضريبة (VAT)</th><th style="${headerStyle}">الإجمالي</th></tr></thead><tbody>`;
                 const salesTypes = ['SALE', 'SALE_RET', 'SALE_DISC', 'PAY_IN', 'INVOICE', 'RETURN', 'DISCOUNT', 'PAYMENT'];
                 
                 filteredData.filter(f => salesTypes.includes(f.type)).forEach(f => { 
                     let sign = (f.type === 'SALE' || f.type === 'INVOICE') ? 1 : -1;
-                    h += `<tr><td style="${cellStyle}">${f.date}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle}">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td><td style="${numStyle}">${txBalancesMap[f.id] || 0}</td></tr>`; 
+                    h += `<tr><td style="${cellStyle}">${f.date}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle}">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td></tr>`; 
                 });
                 h += `</tbody></table></body></html>`;
                 window.downloadExcel(h, 'Sales_Ledger.xls');
                 
             } else if (activeFinTab === 'PURCHASES') {
-                let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل المشتريات والمدفوعات</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">النوع</th><th style="${headerStyle}">المورد</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">المرجع</th><th style="${headerStyle}">المبلغ الأساسي</th><th style="${headerStyle}">الضريبة (VAT)</th><th style="${headerStyle}">الإجمالي</th><th style="${headerStyle}">الرصيد التراكمي</th></tr></thead><tbody>`;
+                let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل المشتريات والمدفوعات</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">النوع</th><th style="${headerStyle}">المورد</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">المرجع</th><th style="${headerStyle}">المبلغ الأساسي</th><th style="${headerStyle}">الضريبة (VAT)</th><th style="${headerStyle}">الإجمالي</th></tr></thead><tbody>`;
                 const purcTypes = ['PURC_VAT', 'PURC_NO_VAT', 'PAY_OUT'];
                 
                 filteredData.filter(f => purcTypes.includes(f.type)).forEach(f => { 
                     let sign = (f.type === 'PAY_OUT') ? -1 : 1;
-                    h += `<tr><td style="${cellStyle}">${f.date}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle}">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td><td style="${numStyle}">${txBalancesMap[f.id] || 0}</td></tr>`; 
+                    h += `<tr><td style="${cellStyle}">${f.date}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle}">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td></tr>`; 
                 });
                 h += `</tbody></table></body></html>`;
                 window.downloadExcel(h, 'Purchases_Ledger.xls');
