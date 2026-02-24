@@ -102,25 +102,44 @@
 
         .order-card {
             background: white; border-radius: 20px; padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid white; transition: 0.3s; cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: 0.3s; cursor: pointer;
             position: relative; overflow: hidden; display: flex; flex-direction: column;
         }
-        .order-card:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(236, 72, 153, 0.25); border-color: #fce7f3; }
+
+        /* تنسيق الطلبات الجديدة والمكتملة */
+        .order-card.status-new {
+            background: #fffbeb;
+            border: 2px solid #fde68a;
+        }
+        .order-card.status-done {
+            background: #ecfdf5;
+            border: 2px solid #a7f3d0;
+        }
+        .order-card.status-new:hover {
+            transform: translateY(-8px); 
+            border-color: #f59e0b;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.25);
+        }
+        .order-card.status-done:hover {
+            transform: translateY(-8px); 
+            border-color: #10b981;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.25);
+        }
 
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         
         .po-badge {
-            background: #fdf2f8; color: #db2777; padding: 6px 12px;
+            background: white; color: #db2777; padding: 6px 12px;
             border-radius: 8px; font-size: 14px; font-weight: 800; border: 1px solid #fbcfe8;
         }
 
         .client-name { font-size: 20px; font-weight: 800; margin: 10px 0 5px 0; color: #1f2937; }
         .location-text { color: #6b7280; font-size: 13px; display: flex; align-items: center; gap: 6px; font-weight: 600; }
 
-        .progress-container { margin-top: 20px; background: #f3f4f6; height: 8px; border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--pink-gradient); border-radius: 10px; transition: width 1s ease; }
+        .progress-container { margin-top: 20px; background: #e5e7eb; height: 8px; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
         
-        .card-stats { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f3f4f6; flex-grow: 1; }
+        .card-stats { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.05); flex-grow: 1; }
         .stat-box label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
         .stat-box val { font-weight: 800; font-size: 16px; color: #374151; }
 
@@ -179,9 +198,9 @@
         @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
         .badge-status { padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 80px;}
-        .st-late { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
-        .st-today { background: #fffbeb; color: #f59e0b; border: 1px solid #fde68a; }
-        .st-ok { background: #ecfdf5; color: #10b981; border: 1px solid #a7f3d0; }
+        .st-late { background: white; color: #ef4444; border: 1px solid #fecaca; }
+        .st-today { background: white; color: #f59e0b; border: 1px solid #fde68a; }
+        .st-ok { background: white; color: #10b981; border: 1px solid #a7f3d0; }
 
         .file-box { background: #fff; border-radius: 15px; padding: 15px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 10px; }
         .file-box h4 { margin: 0; color: #db2777; font-size: 14px; font-weight: 800; border-bottom: 1px solid #fce7f3; padding-bottom: 8px; }
@@ -254,8 +273,8 @@
             <small style="color: #6b7280; font-size: 14px; font-weight: 600;">نظام إدارة الطلبات المتكامل</small>
         </div>
         <div class="stats-bar" style="display:flex; gap:15px">
-            <div class="stat-pill"><i class="fas fa-box" style="color:#3b82f6"></i> <span id="statTotal">0</span> اجمالى الطلبات</div>
-            <div class="stat-pill"><i class="fas fa-clock" style="color:#f59e0b"></i> <span id="statPending">0</span> قيد العمل</div>
+            <div class="stat-pill"><i class="fas fa-box" style="color:#3b82f6"></i> <span id="statTotal">0</span> إجمالى الطلبات</div>
+            <div class="stat-pill"><i class="fas fa-clock" style="color:#f59e0b"></i> <span id="statPending">0</span> قيد المراجعة</div>
             <div class="stat-pill"><i class="fas fa-check-circle" style="color:#10b981"></i> <span id="statDone">0</span> مكتمل</div>
         </div>
     </header>
@@ -442,7 +461,7 @@
 
                 <div style="display:flex; justify-content:flex-end; margin-bottom:15px;">
                     <button class="btn btn-excel" id="btnExport" onclick="exportToExcel()" style="padding:8px 20px;">
-                        <i class="fas fa-file-invoice-dollar"></i> تحميل Excel للمحاسبة
+                        <i class="fas fa-file-invoice-dollar"></i> تحميل Excel للطلب
                     </button>
                 </div>
 
@@ -469,7 +488,6 @@
                     <div class="file-box"><h4><i class="fas fa-stamp"></i> Stamped</h4><div id="fileArea_stamped"></div></div>
                 </div>
 
-                <div id="completedView" style="display: none;"></div>
                 <div id="actionArea" style="margin-top: 30px;"></div>
             </div>
         </div>
@@ -682,8 +700,8 @@
 
         function updateStats() {
             document.getElementById('statTotal').innerText = orders.length;
-            document.getElementById('statPending').innerText = orders.filter(o => o.status !== 'DONE').length;
-            document.getElementById('statDone').innerText = orders.filter(o => o.status === 'DONE').length;
+            document.getElementById('statPending').innerText = orders.filter(o => o.status === 'NEW').length;
+            document.getElementById('statDone').innerText = orders.filter(o => o.status !== 'NEW').length;
         }
 
         window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
@@ -851,15 +869,13 @@
             if(items) items.forEach(item => { reqSubtotal += ((parseInt(item.reqQty)||0) * (parseFloat(item.price)||0)); delSubtotal += ((parseInt(item.availQty)||0) * (parseFloat(item.price)||0)); });
             return { reqTotal: reqSubtotal * 1.15, delTotal: delSubtotal * 1.15 };
         }
+
+        // تم اختصار الحالات لتبسيط المسار
         function getStatusInfo(status) {
-            switch(status) { 
-                case 'NEW': return { text: 'مراجعة المخزون', pct: '25%' }; 
-                case 'STOCK_CHECKED': return { text: 'إصدار العرض', pct: '50%' }; 
-                case 'QUOTE_ISSUED': return { text: 'إصدار الفاتورة', pct: '75%' }; 
-                case 'DONE': return { text: 'مكتمل', pct: '100%' }; 
-                default: return { text: '-', pct: '0%' }; 
-            }
+            if (status === 'NEW') return { text: 'مراجعة وتأكيد الكميات', pct: '50%' };
+            return { text: 'مكتمل', pct: '100%' };
         }
+
         window.renderList = function() {
             const grid = document.getElementById('ordersList'); grid.innerHTML = ''; const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             orders.filter(o => (o.client || '').toLowerCase().includes(searchTerm) || (o.poNumber || '').toLowerCase().includes(searchTerm)).slice().reverse().forEach(o => {
@@ -870,7 +886,7 @@
                 let hasInvoice = o.files && o.files.invoice && o.files.invoice.length > 0;
                 
                 if(hasQuote || hasInvoice) {
-                    quickActions += `<div style="display:flex; gap:10px; margin-top:15px; padding-top:15px; border-top:1px dashed #e5e7eb;">`;
+                    quickActions += `<div style="display:flex; gap:10px; margin-top:15px; padding-top:15px; border-top:1px dashed rgba(0,0,0,0.05);">`;
                     if(hasQuote) {
                         const qFile = o.files.quote[0];
                         quickActions += `<a href="${qFile.data}" download="${qFile.name}" onclick="event.stopPropagation()" style="background:#fffbeb; color:#d97706; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid #fde68a; flex:1; justify-content:center; transition:0.3s;" onmouseover="this.style.filter='brightness(0.95)'" onmouseout="this.style.filter='none'"><i class="fas fa-file-invoice"></i> تحميل العرض</a>`;
@@ -882,9 +898,14 @@
                     quickActions += `</div>`;
                 }
 
-                grid.innerHTML += `<div class="order-card" onclick="openDetails(${o.id})"><div class="card-header"><span class="po-badge">${o.poNumber}</span><span class="badge-status ${d.class}"><i class="fas ${d.icon}"></i> ${d.days}</span></div><h3 class="client-name">${o.client}</h3><div class="location-text"><i class="fas fa-map-marker-alt" style="color:#ec4899"></i> ${o.location || 'غير محدد'}</div><div class="progress-container"><div class="progress-fill" style="width: ${st.pct}; background: ${o.status === 'DONE' ? '#10b981' : 'var(--pink-gradient)'}"></div></div><div style="font-size:12px; margin-top:5px; color:#6b7280; font-weight:700">${st.text} (${st.pct})</div><div class="card-stats"><div class="stat-box"><label>قيمة الطلب</label><div style="height:2px"></div><val>${formatMoney(t.reqTotal)}</val></div><div class="stat-box"><label>تاريخ التسليم</label><div style="height:2px"></div><val>${o.deliveryDate}</val></div></div>${quickActions}</div>`;
+                const isNew = o.status === 'NEW';
+                const cardClass = isNew ? 'status-new' : 'status-done';
+                const progressColor = isNew ? '#f59e0b' : '#10b981';
+
+                grid.innerHTML += `<div class="order-card ${cardClass}" onclick="openDetails(${o.id})"><div class="card-header"><span class="po-badge">${o.poNumber}</span><span class="badge-status ${d.class}"><i class="fas ${d.icon}"></i> ${d.days}</span></div><h3 class="client-name">${o.client}</h3><div class="location-text"><i class="fas fa-map-marker-alt" style="color:#ec4899"></i> ${o.location || 'غير محدد'}</div><div class="progress-container"><div class="progress-fill" style="width: ${st.pct}; background: ${progressColor}"></div></div><div style="font-size:12px; margin-top:5px; color:#6b7280; font-weight:700">${st.text}</div><div class="card-stats"><div class="stat-box"><label>قيمة الطلب</label><div style="height:2px"></div><val>${formatMoney(t.reqTotal)}</val></div><div class="stat-box"><label>تاريخ التسليم</label><div style="height:2px"></div><val>${o.deliveryDate}</val></div></div>${quickActions}</div>`;
             });
         }
+        
         window.openDetails = function(id) { 
             currentId = id; const order = orders.find(o => o.id === id); if(!order) return; 
             document.getElementById('editableDeliveryDate').value = order.deliveryDate; 
@@ -894,72 +915,52 @@
             const tableContainer = document.getElementById('tableContainer'); 
             const filesContainer = document.getElementById('filesContainer'); 
             const actionArea = document.getElementById('actionArea'); 
-            const completedView = document.getElementById('completedView'); 
             const btnExport = document.getElementById('btnExport'); 
             
             modalHeader.style.display = 'flex'; 
             tableContainer.style.display = 'block'; 
             actionArea.style.display = 'block'; 
-            completedView.style.display = 'none'; 
             filesContainer.style.display = 'grid'; 
             window.renderAllFilesSections(order); 
             
-            if (order.status === 'NEW') { 
+            const isDone = order.status !== 'NEW';
+
+            if (!isDone) { 
                 summaryBox.style.display = 'none'; 
                 btnExport.style.display = 'none'; 
-                document.getElementById('detailTitle').innerText = "📦 مراجعة المخزون"; 
+                document.getElementById('detailTitle').innerText = "📦 مراجعة وتأكيد الكميات"; 
                 document.getElementById('detailSub').innerText = order.client; 
-            } else if (order.status === 'STOCK_CHECKED') { 
+            } else { 
                 summaryBox.style.display = 'grid'; 
                 btnExport.style.display = 'inline-block'; 
                 window.updateFinancialSummary(order); 
-                document.getElementById('detailTitle').innerText = "المراجعة المالية (إصدار العرض)"; 
-                document.getElementById('detailSub').innerText = order.client; 
-            } else if (order.status === 'QUOTE_ISSUED') { 
-                summaryBox.style.display = 'grid'; 
-                btnExport.style.display = 'inline-block'; 
-                window.updateFinancialSummary(order); 
-                document.getElementById('detailTitle').innerText = "الفوترة (إصدار الفاتورة)"; 
-                document.getElementById('detailSub').innerText = order.client; 
-            } else if (order.status === 'DONE') { 
-                summaryBox.style.display = 'grid'; 
-                tableContainer.style.display = 'none'; 
-                btnExport.style.display = 'inline-block'; 
-                completedView.style.display = 'block'; 
-                renderCompletedView(order, completedView); 
-                document.getElementById('detailTitle').innerText = "تم إكمال الطلب";
+                document.getElementById('detailTitle').innerText = "✅ طلب مكتمل"; 
                 document.getElementById('detailSub').innerText = order.client; 
             } 
             
-            if (order.status !== 'DONE') { 
-                const tbody = document.getElementById('detailsTableBody'); 
-                tbody.innerHTML = ''; 
-                if(order.items) { 
-                    order.items.forEach((item, index) => { 
+            const tbody = document.getElementById('detailsTableBody'); 
+            tbody.innerHTML = ''; 
+            if(order.items) { 
+                order.items.forEach((item, index) => { 
+                    if (!isDone) {
                         tbody.innerHTML += `<tr data-index="${index}"><td><span class="cell-read-only cell-code">${item.barcode}</span></td><td><span class="cell-read-only txt-right">${item.name}</span></td><td><span class="cell-read-only cell-qty" style="color:#64748b">${item.reqQty}</span></td><td><input type="number" class="cell-input cell-qty" value="${item.availQty}" onchange="recalcTotalsLive()"></td><td><span class="cell-read-only">${item.price}</span></td><td><input type="text" class="cell-input txt-right cell-notes" value="${item.notes || ''}" placeholder="..."></td></tr>`; 
-                    }); 
-                } 
+                    } else {
+                        // وضع القراءة فقط للطلب المكتمل
+                        tbody.innerHTML += `<tr data-index="${index}"><td><span class="cell-read-only cell-code">${item.barcode}</span></td><td><span class="cell-read-only txt-right">${item.name}</span></td><td><span class="cell-read-only cell-qty" style="color:#64748b">${item.reqQty}</span></td><td><span class="cell-read-only cell-qty" style="color:#1d4ed8; font-weight:800">${item.availQty}</span></td><td><span class="cell-read-only">${item.price}</span></td><td><span class="cell-read-only txt-right" style="color:#92400e">${item.notes || '-'}</span></td></tr>`;
+                    }
+                }); 
             } 
             renderActionArea(order); 
             document.getElementById('detailsModal').style.display = 'block'; 
         }
 
-        function renderCompletedView(order, container) { 
-            const t = calculateOrderTotals(order.items); 
-            container.innerHTML = `<div style="background:linear-gradient(to bottom, #ecfdf5, white); border-radius:20px; padding:40px; text-align:center; border:1px solid #d1fae5; margin-bottom: 20px;"><i class="fas fa-check-circle" style="font-size:70px; color:#10b981; margin-bottom:20px; box-shadow:0 10px 20px rgba(16,185,129,0.2); border-radius:50%;"></i><h2 style="color:#065f46; margin:0;">تم إكمال الطلب بنجاح</h2><p style="color:#6b7280;">${order.client}</p><div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:15px; margin-top:30px;"><div class="stat-box"><div>PO</div><strong>${order.poNumber}</strong></div><div class="stat-box"><div>الإجمالي</div><strong>${formatMoney(t.delTotal)}</strong></div><div class="stat-box"><div>الفاتورة</div><strong>${order.finalInvoice || '-'}</strong></div><div class="stat-box"><div>التاريخ</div><strong>${order.completionDate ? new Date(order.completionDate).toLocaleDateString() : '-'}</strong></div></div></div>`; 
-        }
-
         function renderActionArea(order) { 
             const area = document.getElementById('actionArea'); 
             area.innerHTML = ''; 
-            const btnStyle = "width:100%; padding:15px; border-radius:12px; font-size:16px; margin-top:10px; font-weight:800"; 
+            const isDone = order.status !== 'NEW';
             
-            if(order.status === 'NEW') { 
-                area.innerHTML = `<div style="background:#eff6ff; padding:20px; border-radius:15px; border:1px solid #dbeafe;"><p style="color:#1e40af; margin-top:0"><strong>📦 المستودع:</strong> يرجى مطابقة الكميات المتوفرة في العمود الأزرق.</p><button class="btn btn-gradient" style="${btnStyle}" onclick="updateStatus('STOCK_CHECKED')">✅ تأكيد الكميات وحفظ</button></div>`; 
-            } else if(order.status === 'STOCK_CHECKED') { 
-                area.innerHTML = `<div style="background:#fffbeb; padding:20px; border-radius:15px; border:1px solid #fde68a;"><p style="color:#92400e; margin-top:0"><strong>💼 المحاسبة:</strong> إصدار عرض السعر</p><input type="text" id="quoteRefInput" placeholder="رقم عرض السعر (Q-xxxx)" value="${order.quotationRef || ''}" style="width:100%; box-sizing: border-box; padding:12px; margin-bottom:10px; border:1px solid #d1d5db; border-radius:10px; text-align: center;"> <button class="btn btn-warning" style="${btnStyle}" onclick="updateStatus('QUOTE_ISSUED')">📤 إصدار العرض وحفظ</button></div>`; 
-            } else if(order.status === 'QUOTE_ISSUED') { 
-                area.innerHTML = `<div style="background:#faf5ff; padding:20px; border-radius:15px; border:1px solid #e9d5ff;"><p style="color:#6b21a8; margin-top:0"><strong>🧾 الفوترة:</strong> إصدار الفاتورة النهائية</p><input type="text" id="finalInv" placeholder="رقم الفاتورة (INV-xxxx)" style="width:100%; box-sizing: border-box; padding:12px; margin-bottom:10px; border:1px solid #d1d5db; border-radius:10px; text-align: center;"> <button class="btn btn-gradient" style="${btnStyle}" onclick="updateStatus('DONE')">💵 إصدار الفاتورة وإكمال الطلب</button></div>`; 
+            if(!isDone) { 
+                area.innerHTML = `<div style="background:#eff6ff; padding:20px; border-radius:15px; border:1px solid #dbeafe;"><p style="color:#1e40af; margin-top:0; font-size:15px;"><strong>📦 المستودع:</strong> يرجى مطابقة الكميات المتوفرة في العمود الأزرق ثم التأكيد. (تأكيد الكميات سيحول الطلب إلى "مكتمل" مباشرة للتمكن من رفع الفواتير)</p><button class="btn btn-gradient" style="width:100%; padding:15px; border-radius:12px; font-size:16px; margin-top:10px; font-weight:800; justify-content:center;" onclick="updateStatus('DONE')">✅ تأكيد الكميات وإكمال الطلب</button></div>`; 
             }
         }
 
@@ -973,19 +974,16 @@
         
         window.updateStatus = function(s) { 
             const o = orders.find(x => x.id === currentId); 
-            document.querySelectorAll('#detailsTableBody tr').forEach(r => { 
-                const i = r.getAttribute('data-index'); 
-                const qtyInput = r.querySelector('input[type="number"]'); 
-                const noteInput = r.querySelector('input[type="text"]'); 
-                if(qtyInput) o.items[i].availQty = qtyInput.value; 
-                if(noteInput) o.items[i].notes = noteInput.value; 
-            }); 
-            if(s === 'QUOTE_ISSUED') o.quotationRef = document.getElementById('quoteRefInput').value; 
-            if(s === 'DONE') {
-                const finalInvInput = document.getElementById('finalInv');
-                if(finalInvInput) o.finalInvoice = finalInvInput.value; 
+            if(o.status === 'NEW') {
+                document.querySelectorAll('#detailsTableBody tr').forEach(r => { 
+                    const i = r.getAttribute('data-index'); 
+                    const qtyInput = r.querySelector('input[type="number"]'); 
+                    const noteInput = r.querySelector('input[type="text"]'); 
+                    if(qtyInput) o.items[i].availQty = qtyInput.value; 
+                    if(noteInput) o.items[i].notes = noteInput.value; 
+                }); 
                 o.completionDate = new Date().toISOString();
-            } 
+            }
             if(document.getElementById('editableDeliveryDate').value) o.deliveryDate = document.getElementById('editableDeliveryDate').value; 
             o.status = s; 
             update(ref(db, DB_PATH + '/' + o.id), o); 
@@ -1014,7 +1012,6 @@
             <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr><td style="${headerStyle}">رقم الـ PO</td> <td style="${cellStyle}">${o.poNumber}</td><td style="${headerStyle}">اسم العميل</td> <td style="${cellStyle}">${o.client}</td><td></td><td></td><td></td></tr>
             <tr><td style="${headerStyle}">تاريخ التسليم</td> <td style="${cellStyle}">${o.deliveryDate}</td><td style="${headerStyle}">موقع التسليم</td> <td style="${cellStyle}">${o.location || '-'}</td><td></td><td></td><td></td></tr>
-            <tr><td style="${headerStyle}">رقم عرض السعر</td> <td style="${cellStyle}">${o.quotationRef || 'N/A'}</td><td style="${headerStyle}">رقم الفاتورة</td> <td style="${cellStyle}">${o.finalInvoice || 'N/A'}</td><td></td><td></td><td></td></tr>
             </table><br><table border="1" style="border-collapse: collapse; width:100%"><thead style="background-color: #fce7f3;">
             <tr><th style="${headerStyle}">الباركود (Code)</th><th style="${headerStyle}">المنتج (Item)</th><th style="${headerStyle}">الكمية المطلوبة (Req)</th><th style="${headerStyle}">الكمية المتوفرة (Avail)</th><th style="${headerStyle}">السعر (Price)</th><th style="${headerStyle}">الإجمالي (Total)</th><th style="${headerStyle}">ملاحظات (Notes)</th></tr></thead><tbody>`; 
             if(o.items) { 
