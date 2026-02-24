@@ -272,7 +272,7 @@
                 <button class="btn btn-purple" onclick="openProductsModal()"><i class="fas fa-tags"></i> إدارة المنتجات</button>
                 <button class="btn btn-warning" onclick="exportShortagesToExcel()"><i class="fas fa-exclamation-triangle"></i> تقرير النواقص</button>
                 <button class="btn btn-excel" onclick="exportMainListToExcel()"><i class="fas fa-file-excel"></i> تقرير الطلبات</button>
-                <button class="btn btn-gradient" onclick="openCreateModal()"><i class="fas fa-plus"></i> طلب جديد</button>
+                <button class="btn btn-gradient" onclick="checkPasswordAndExecute(openCreateModal)"><i class="fas fa-plus"></i> طلب جديد</button>
             </div>
         </div>
 
@@ -432,7 +432,7 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-danger btn-sm" onclick="deleteCurrentOrder()"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="checkPasswordAndExecute(deleteCurrentOrder)"><i class="fas fa-trash"></i></button>
                     <div onclick="closeModal('detailsModal')" style="cursor:pointer; font-size:28px; margin-right:15px; color:#9ca3af">×</div>
                 </div>
             </div>
@@ -640,6 +640,16 @@
         let currentId = null;
         let activeFinTab = 'SALES';
 
+        // إضافة دالة التحقق من كلمة المرور
+        window.checkPasswordAndExecute = function(callback) {
+            let pwd = prompt("هذا الإجراء مخصص للمحاسب/الإدارة المالية فقط. يرجى إدخال كلمة المرور:");
+            if (pwd === "200200") {
+                callback();
+            } else if (pwd !== null) {
+                alert("كلمة المرور غير صحيحة! لا تملك صلاحية لتنفيذ هذا الإجراء.");
+            }
+        }
+
         document.addEventListener('keydown', (e) => { 
             if(e.key==="Escape"){ 
                 closeModal('createModal'); 
@@ -708,7 +718,6 @@
             try { input.setSelectionRange(cursor + (newLength - oldLength), cursor + (newLength - oldLength)); } catch(e){}
         }
 
-        // --- Date Parsing and Formatting (Smart Paste & Typing - 4 Digits) ---
         window.parseDisplayDateToISO = function(val) {
             if(!val) return '';
             let parts = val.split('/');
@@ -716,7 +725,7 @@
                 let d = parts[0].padStart(2, '0');
                 let m = parts[1].padStart(2, '0');
                 let y = parts[2].length === 2 ? '20' + parts[2] : parts[2];
-                return `${y}-${m}-${d}`; // YYYY-MM-DD
+                return `${y}-${m}-${d}`; 
             }
             return val;
         }
@@ -725,10 +734,10 @@
             if(!val || !val.includes('-')) return val;
             let parts = val.split('-');
             if(parts.length === 3) {
-                let y = parts[0]; // الاحتفاظ بـ 4 أرقام
+                let y = parts[0]; 
                 let m = parts[1];
                 let d = parts[2];
-                return `${d}/${m}/${y}`; // DD/MM/YYYY
+                return `${d}/${m}/${y}`; 
             }
             return val;
         }
@@ -746,7 +755,7 @@
                 }
             } else {
                 val = val.replace(/[^0-9]/g, '');
-                if (val.length > 8) val = val.slice(0, 8); // 8 أرقام بحد أقصى
+                if (val.length > 8) val = val.slice(0, 8); 
                 if (val.length >= 5) {
                     let d = val.slice(0, 2);
                     let m = val.slice(2, 4);
@@ -759,7 +768,6 @@
             input.value = val;
         }
 
-        // --- Products & Orders Logic ---
         window.openProductsModal = function() { document.getElementById('productsModal').style.display = 'block'; window.renderProductsList(); }
         window.saveSingleProduct = function() {
             const code = document.getElementById('prodCodeInput').value.trim(); const name = document.getElementById('prodNameInput').value.trim();
@@ -837,7 +845,24 @@
         }
         window.openDetails = function(id) { currentId = id; const order = orders.find(o => o.id === id); if(!order) return; document.getElementById('editableDeliveryDate').value = order.deliveryDate; document.getElementById('creationDateText').innerText = new Date(order.id).toLocaleDateString('en-GB'); const modalHeader = document.getElementById('headerDateContainer'); const summaryBox = document.getElementById('financialSummary'); const tableContainer = document.getElementById('tableContainer'); const filesContainer = document.getElementById('filesContainer'); const actionArea = document.getElementById('actionArea'); const completedView = document.getElementById('completedView'); const btnExport = document.getElementById('btnExport'); modalHeader.style.display = 'flex'; tableContainer.style.display = 'block'; actionArea.style.display = 'block'; completedView.style.display = 'none'; filesContainer.style.display = 'grid'; window.renderAllFilesSections(order); if (order.status === 'NEW' || order.status === 'QUOTE_ISSUED') { summaryBox.style.display = 'none'; btnExport.style.display = 'none'; document.getElementById('detailTitle').innerText = order.status === 'NEW' ? "📦 مراجعة المخزون" : "🚚 تجهيز الطلب"; document.getElementById('detailSub').innerText = order.client; } else if (order.status === 'STOCK_CHECKED' || order.status === 'DELIVERY_CONFIRMED') { summaryBox.style.display = 'grid'; btnExport.style.display = 'inline-block'; window.updateFinancialSummary(order); document.getElementById('detailTitle').innerText = "المراجعة المالية"; document.getElementById('detailSub').innerText = order.client; } else if (order.status === 'INVOICED') { summaryBox.style.display = 'none'; tableContainer.style.display = 'none'; btnExport.style.display = 'none'; document.getElementById('detailTitle').innerText = "إغلاق الطلب"; document.getElementById('detailSub').innerText = "يرجى رفع النسخة المختومة"; } else if (order.status === 'DONE') { summaryBox.style.display = 'none'; tableContainer.style.display = 'none'; filesContainer.style.display = 'none'; actionArea.style.display = 'none'; btnExport.style.display = 'none'; completedView.style.display = 'block'; renderCompletedView(order, completedView); } if (order.status !== 'INVOICED' && order.status !== 'DONE') { const tbody = document.getElementById('detailsTableBody'); tbody.innerHTML = ''; if(order.items) { order.items.forEach((item, index) => { tbody.innerHTML += `<tr data-index="${index}"><td><span class="cell-read-only cell-code">${item.barcode}</span></td><td><span class="cell-read-only txt-right">${item.name}</span></td><td><span class="cell-read-only cell-qty" style="color:#64748b">${item.reqQty}</span></td><td><input type="number" class="cell-input cell-qty" value="${item.availQty}" onchange="recalcTotalsLive()"></td><td><span class="cell-read-only">${item.price}</span></td><td><input type="text" class="cell-input txt-right cell-notes" value="${item.notes || ''}" placeholder="..."></td></tr>`; }); } } renderActionArea(order); document.getElementById('detailsModal').style.display = 'block'; }
         function renderCompletedView(order, container) { const t = calculateOrderTotals(order.items); let filesHtml = ''; const cats = [{id:'po', t:'PO'}, {id:'quote', t:'Quote'}, {id:'invoice', t:'Invoice'}, {id:'stamped', t:'Stamped'}]; cats.forEach(c => { const list = (order.files && order.files[c.id]) ? order.files[c.id] : []; if(list.length > 0) { filesHtml += `<div style="background:white; padding:10px; border-radius:10px; border:1px solid #e5e7eb"><h5 style="margin:0 0 5px 0;">${c.t}</h5>` + list.map(f => `<a href="${f.data}" download="${f.name}" class="file-item" style="color:#ec4899; text-decoration:none; display:flex; align-items:center; gap:5px;"><i class="fas fa-download"></i> ${f.name.substring(0,20)}</a>`).join('') + `</div>`; } }); container.innerHTML = `<div style="background:linear-gradient(to bottom, #ecfdf5, white); border-radius:20px; padding:40px; text-align:center; border:1px solid #d1fae5;"><i class="fas fa-check-circle" style="font-size:70px; color:#10b981; margin-bottom:20px; box-shadow:0 10px 20px rgba(16,185,129,0.2); border-radius:50%;"></i><h2 style="color:#065f46; margin:0;">تم إكمال الطلب بنجاح</h2><p style="color:#6b7280;">${order.client}</p><div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:15px; margin:30px 0;"><div class="stat-box"><div>PO</div><strong>${order.poNumber}</strong></div><div class="stat-box"><div>الإجمالي</div><strong>${formatMoney(t.delTotal)}</strong></div><div class="stat-box"><div>الفاتورة</div><strong>${order.finalInvoice || '-'}</strong></div><div class="stat-box"><div>التاريخ</div><strong>${new Date(order.completionDate).toLocaleDateString()}</strong></div></div><h4 style="text-align:right; border-bottom:1px solid #e5e7eb; padding-bottom:10px; color:#374151">📂 أرشيف الملفات</h4><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">${filesHtml}</div></div>`; }
-        function renderActionArea(order) { const area = document.getElementById('actionArea'); area.innerHTML = ''; const btnStyle = "width:100%; padding:15px; border-radius:12px; font-size:16px; margin-top:10px; font-weight:800"; if(order.status === 'NEW') { area.innerHTML = `<div style="background:#eff6ff; padding:20px; border-radius:15px; border:1px solid #dbeafe;"><p style="color:#1e40af; margin-top:0"><strong>📦 المستودع:</strong> يرجى مطابقة الكميات المتوفرة في العمود الأزرق.</p><button class="btn btn-gradient" style="${btnStyle}" onclick="updateStatus('STOCK_CHECKED')">✅ تأكيد الكميات وحفظ</button></div>`; } else if(order.status === 'STOCK_CHECKED') { area.innerHTML = `<div style="background:#fffbeb; padding:20px; border-radius:15px; border:1px solid #fde68a;"><p style="color:#92400e; margin-top:0"><strong>💼 المحاسبة:</strong> إصدار عرض السعر</p><input type="text" id="quoteRefInput" placeholder="رقم عرض السعر (Q-xxxx)" value="${order.quotationRef || ''}" style="width:100%; box-sizing: border-box; padding:12px; margin-bottom:10px; border:1px solid #d1d5db; border-radius:10px; text-align: center;"> <button class="btn btn-warning" style="${btnStyle}" onclick="updateStatus('QUOTE_ISSUED')">📤 إصدار العرض وحفظ</button></div>`; } else if(order.status === 'QUOTE_ISSUED') { area.innerHTML = `<div style="background:#f0fdf4; padding:20px; border-radius:15px; border:1px solid #bbf7d0;"><p style="color:#166534; margin-top:0"><strong>🚚 التسليم:</strong> تأكيد خروج البضاعة</p><button class="btn btn-excel" style="${btnStyle}" onclick="updateStatus('DELIVERY_CONFIRMED')">🤝 تم التسليم للعميل</button></div>`; } else if(order.status === 'DELIVERY_CONFIRMED') { area.innerHTML = `<div style="background:#faf5ff; padding:20px; border-radius:15px; border:1px solid #e9d5ff;"><p style="color:#6b21a8; margin-top:0"><strong>🧾 الفوترة:</strong> إصدار الفاتورة النهائية</p><input type="text" id="finalInv" placeholder="رقم الفاتورة (INV-xxxx)" style="width:100%; box-sizing: border-box; padding:12px; margin-bottom:10px; border:1px solid #d1d5db; border-radius:10px; text-align: center;"> <button class="btn btn-gradient" style="${btnStyle}" onclick="updateStatus('INVOICED')">💵 إصدار الفاتورة</button></div>`; } else if(order.status === 'INVOICED') { area.innerHTML = `<button class="btn btn-gradient" style="${btnStyle}; height:100px;" onclick="document.getElementById('stampedFileHidden').click()"><div style="display:flex; flex-direction:column; align-items:center; gap:8px;"><i class="fas fa-file-upload" style="font-size:28px;"></i><span>رفع المختومة وإغلاق الطلب نهائياً</span></div></button><input type="file" id="stampedFileHidden" style="display:none" onchange="handleStampedUploadAndClose(this)">`; } }
+        function renderActionArea(order) { 
+            const area = document.getElementById('actionArea'); 
+            area.innerHTML = ''; 
+            const btnStyle = "width:100%; padding:15px; border-radius:12px; font-size:16px; margin-top:10px; font-weight:800"; 
+            
+            // تعديل: إضافة حماية كلمة المرور على الخطوات (عدا تأكيد المخزون)
+            if(order.status === 'NEW') { 
+                area.innerHTML = `<div style="background:#eff6ff; padding:20px; border-radius:15px; border:1px solid #dbeafe;"><p style="color:#1e40af; margin-top:0"><strong>📦 المستودع:</strong> يرجى مطابقة الكميات المتوفرة في العمود الأزرق.</p><button class="btn btn-gradient" style="${btnStyle}" onclick="updateStatus('STOCK_CHECKED')">✅ تأكيد الكميات وحفظ</button></div>`; 
+            } else if(order.status === 'STOCK_CHECKED') { 
+                area.innerHTML = `<div style="background:#fffbeb; padding:20px; border-radius:15px; border:1px solid #fde68a;"><p style="color:#92400e; margin-top:0"><strong>💼 المحاسبة:</strong> إصدار عرض السعر</p><input type="text" id="quoteRefInput" placeholder="رقم عرض السعر (Q-xxxx)" value="${order.quotationRef || ''}" style="width:100%; box-sizing: border-box; padding:12px; margin-bottom:10px; border:1px solid #d1d5db; border-radius:10px; text-align: center;"> <button class="btn btn-warning" style="${btnStyle}" onclick="checkPasswordAndExecute(() => updateStatus('QUOTE_ISSUED'))">📤 إصدار العرض وحفظ</button></div>`; 
+            } else if(order.status === 'QUOTE_ISSUED') { 
+                area.innerHTML = `<div style="background:#f0fdf4; padding:20px; border-radius:15px; border:1px solid #bbf7d0;"><p style="color:#166534; margin-top:0"><strong>🚚 التسليم:</strong> تأكيد خروج البضاعة</p><button class="btn btn-excel" style="${btnStyle}" onclick="checkPasswordAndExecute(() => updateStatus('DELIVERY_CONFIRMED'))">🤝 تم التسليم للعميل</button></div>`; 
+            } else if(order.status === 'DELIVERY_CONFIRMED') { 
+                area.innerHTML = `<div style="background:#faf5ff; padding:20px; border-radius:15px; border:1px solid #e9d5ff;"><p style="color:#6b21a8; margin-top:0"><strong>🧾 الفوترة:</strong> إصدار الفاتورة النهائية</p><input type="text" id="finalInv" placeholder="رقم الفاتورة (INV-xxxx)" style="width:100%; box-sizing: border-box; padding:12px; margin-bottom:10px; border:1px solid #d1d5db; border-radius:10px; text-align: center;"> <button class="btn btn-gradient" style="${btnStyle}" onclick="checkPasswordAndExecute(() => updateStatus('INVOICED'))">💵 إصدار الفاتورة</button></div>`; 
+            } else if(order.status === 'INVOICED') { 
+                area.innerHTML = `<button class="btn btn-gradient" style="${btnStyle}; height:100px;" onclick="checkPasswordAndExecute(() => document.getElementById('stampedFileHidden').click())"><div style="display:flex; flex-direction:column; align-items:center; gap:8px;"><i class="fas fa-file-upload" style="font-size:28px;"></i><span>رفع المختومة وإغلاق الطلب نهائياً</span></div></button><input type="file" id="stampedFileHidden" style="display:none" onchange="handleStampedUploadAndClose(this)">`; 
+            } 
+        }
         window.recalcTotalsLive = function() { const order = orders.find(o => o.id === currentId); document.querySelectorAll('#detailsTableBody tr').forEach(row => { const idx = row.getAttribute('data-index'); const qtyInput = row.querySelector('input[type="number"]'); const noteInput = row.querySelector('input[type="text"]'); if(qtyInput) order.items[idx].availQty = qtyInput.value; if(noteInput) order.items[idx].notes = noteInput.value; }); if (document.getElementById('financialSummary').style.display !== 'none') window.updateFinancialSummary(order); }
         window.updateFinancialSummary = function(order) { const t = calculateOrderTotals(order.items); document.getElementById('financialSummary').innerHTML = `<div style="background:white; padding:15px; border-radius:15px; text-align:center; border:1px solid #f3f4f6"><div style="font-size:12px; color:#6b7280;">قيمة الطلب الأصلية</div><div style="font-weight:800; font-size:20px; font-family:'Poppins'">${formatMoney(t.reqTotal)}</div></div><div style="background:var(--pink-gradient); color:white; padding:15px; border-radius:15px; text-align:center; box-shadow:0 10px 15px -3px rgba(236, 72, 153, 0.3);"><div style="font-size:12px; opacity:0.9;">القيمة المعتمدة (الفاتورة)</div><div style="font-weight:800; font-size:20px; font-family:'Poppins'">${formatMoney(t.delTotal)}</div></div>`; }
         window.openCreateModal = function() { document.getElementById('newClient').value = ''; document.getElementById('newPONumber').value = ''; document.getElementById('newLocation').value = ''; document.getElementById('newDate').value = ''; document.getElementById('newPOFiles').value = ''; document.getElementById('bulkBarcodes').value = ''; document.getElementById('entryTableBody').innerHTML = ''; document.getElementById('createModal').style.display = 'block'; }
@@ -1030,7 +1055,7 @@
                 let desc = row.querySelector('[name="f_desc"]').value.trim();
                 
                 let dateDisplay = row.querySelector('[name="f_date"]').value.trim();
-                let date = window.parseDisplayDateToISO(dateDisplay); // تحويل للقياسي للحفظ والفرز
+                let date = window.parseDisplayDateToISO(dateDisplay); 
 
                 let amountRaw = row.querySelector('[name="f_amount"]').value.replace(/,/g, '');
                 let refInput = row.querySelector('[name="f_ref"]').value.trim();
@@ -1042,12 +1067,12 @@
                     if(source === 'purc' && type === 'PURC_VAT') vatRate = 0.15;
                     let vat = amount * vatRate; let total = amount + vat;
                     
-                    let id = Date.now() + validCount; // Unique IDs
+                    let id = Date.now() + validCount; 
                     let entry = { id, type, client, desc, date, amount, vat, total, ref: refInput };
                     
                     updates[id] = entry;
                     validCount++;
-                    row.remove(); // مسح السطر الناجح
+                    row.remove(); 
                 }
             });
 
