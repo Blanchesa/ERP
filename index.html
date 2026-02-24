@@ -103,7 +103,7 @@
         .order-card {
             background: white; border-radius: 20px; padding: 25px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid white; transition: 0.3s; cursor: pointer;
-            position: relative; overflow: hidden;
+            position: relative; overflow: hidden; display: flex; flex-direction: column;
         }
         .order-card:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(236, 72, 153, 0.25); border-color: #fce7f3; }
 
@@ -120,7 +120,7 @@
         .progress-container { margin-top: 20px; background: #f3f4f6; height: 8px; border-radius: 10px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--pink-gradient); border-radius: 10px; transition: width 1s ease; }
         
-        .card-stats { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f3f4f6; }
+        .card-stats { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f3f4f6; flex-grow: 1; }
         .stat-box label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
         .stat-box val { font-weight: 800; font-size: 16px; color: #374151; }
 
@@ -272,7 +272,7 @@
                 <button class="btn btn-purple" onclick="openProductsModal()"><i class="fas fa-tags"></i> إدارة المنتجات</button>
                 <button class="btn btn-warning" onclick="exportShortagesToExcel()"><i class="fas fa-exclamation-triangle"></i> تقرير النواقص</button>
                 <button class="btn btn-excel" onclick="exportMainListToExcel()"><i class="fas fa-file-excel"></i> تقرير الطلبات</button>
-                <button class="btn btn-gradient" onclick="checkPasswordAndExecute(openCreateModal)"><i class="fas fa-plus"></i> طلب جديد</button>
+                <button class="btn btn-gradient" onclick="openCreateModal()"><i class="fas fa-plus"></i> طلب جديد</button>
             </div>
         </div>
 
@@ -432,7 +432,7 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-danger btn-sm" onclick="checkPasswordAndExecute(deleteCurrentOrder)"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteCurrentOrder()"><i class="fas fa-trash"></i></button>
                     <div onclick="closeModal('detailsModal')" style="cursor:pointer; font-size:28px; margin-right:15px; color:#9ca3af">×</div>
                 </div>
             </div>
@@ -469,8 +469,8 @@
                     <div class="file-box"><h4><i class="fas fa-stamp"></i> Stamped</h4><div id="fileArea_stamped"></div></div>
                 </div>
 
-                <div id="actionArea" style="margin-top: 30px;"></div>
                 <div id="completedView" style="display: none;"></div>
+                <div id="actionArea" style="margin-top: 30px;"></div>
             </div>
         </div>
     </div>
@@ -640,16 +640,6 @@
         let currentId = null;
         let activeFinTab = 'SALES';
 
-        // إضافة دالة التحقق من كلمة المرور
-        window.checkPasswordAndExecute = function(callback) {
-            let pwd = prompt("هذا الإجراء مخصص للمحاسب/الإدارة المالية فقط. يرجى إدخال كلمة المرور:");
-            if (pwd === "200200") {
-                callback();
-            } else if (pwd !== null) {
-                alert("كلمة المرور غير صحيحة! لا تملك صلاحية لتنفيذ هذا الإجراء.");
-            }
-        }
-
         document.addEventListener('keydown', (e) => { 
             if(e.key==="Escape"){ 
                 closeModal('createModal'); 
@@ -800,6 +790,34 @@
             }
             if(container.innerHTML === '') container.innerHTML = '<div style="padding:20px; text-align:center; color:#999;">لا توجد نتائج</div>';
         }
+
+        window.handleBarcodeChange = function(input) {
+            const row = input.closest('tr');
+            const code = input.value.trim();
+            const nameInput = row.querySelector('input[name="name"]');
+            
+            if (code) {
+                const cleanCode = cleanKey(code);
+                const isKnown = globalProducts.hasOwnProperty(cleanCode);
+                
+                if (isKnown) {
+                    nameInput.value = globalProducts[cleanCode];
+                    nameInput.readOnly = true;
+                    nameInput.placeholder = "";
+                    row.classList.remove('unknown-row');
+                    row.style.border = "";
+                } else {
+                    nameInput.value = "";
+                    nameInput.readOnly = false;
+                    nameInput.placeholder = "يرجى كتابة الاسم هنا";
+                    row.classList.add('unknown-row');
+                }
+            } else {
+                nameInput.value = "";
+                nameInput.readOnly = false;
+            }
+        }
+
         window.generateRowsFromPaste = function() {
             const text = document.getElementById('bulkBarcodes').value; if(!text) return;
             const tbody = document.getElementById('entryTableBody'); tbody.innerHTML = '';
@@ -808,7 +826,7 @@
                 if(code) {
                     const isKnown = globalProducts.hasOwnProperty(cleanKey(code)); const prodName = isKnown ? globalProducts[cleanKey(code)] : '';
                     const tr = document.createElement('tr'); if(!isKnown) tr.classList.add('unknown-row');
-                    tr.innerHTML = `<td><input type="text" name="code" class="cell-input cell-code" value="${code}" readonly></td><td><input type="text" name="name" class="cell-input txt-right" value="${prodName}" placeholder="${isKnown ? '' : 'يرجى كتابة الاسم هنا'}" ${isKnown ? 'readonly' : ''}></td><td><input type="number" name="qty" class="cell-input cell-qty" placeholder="0"></td><td><input type="number" name="price" class="cell-input" placeholder="0.00"></td><td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()" style="margin:auto; padding:5px 10px;">×</button></td>`;
+                    tr.innerHTML = `<td><input type="text" name="code" class="cell-input cell-code" value="${code}" oninput="handleBarcodeChange(this)"></td><td><input type="text" name="name" class="cell-input txt-right" value="${prodName}" placeholder="${isKnown ? '' : 'يرجى كتابة الاسم هنا'}" ${isKnown ? 'readonly' : ''}></td><td><input type="number" name="qty" class="cell-input cell-qty" placeholder="0"></td><td><input type="number" name="price" class="cell-input" placeholder="0.00"></td><td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()" style="margin:auto; padding:5px 10px;">×</button></td>`;
                     tbody.appendChild(tr);
                 }
             });
@@ -834,42 +852,146 @@
             return { reqTotal: reqSubtotal * 1.15, delTotal: delSubtotal * 1.15 };
         }
         function getStatusInfo(status) {
-            switch(status) { case 'NEW': return { text: 'مراجعة المخزون', pct: '20%' }; case 'STOCK_CHECKED': return { text: 'إصدار العرض', pct: '40%' }; case 'QUOTE_ISSUED': return { text: 'تجهيز التسليم', pct: '60%' }; case 'DELIVERY_CONFIRMED': return { text: 'إصدار الفاتورة', pct: '80%' }; case 'INVOICED': return { text: 'انتظار الختم', pct: '90%' }; case 'DONE': return { text: 'مكتمل', pct: '100%' }; default: return { text: '-', pct: '0%' }; }
+            switch(status) { 
+                case 'NEW': return { text: 'مراجعة المخزون', pct: '25%' }; 
+                case 'STOCK_CHECKED': return { text: 'إصدار العرض', pct: '50%' }; 
+                case 'QUOTE_ISSUED': return { text: 'إصدار الفاتورة', pct: '75%' }; 
+                case 'DONE': return { text: 'مكتمل', pct: '100%' }; 
+                default: return { text: '-', pct: '0%' }; 
+            }
         }
         window.renderList = function() {
             const grid = document.getElementById('ordersList'); grid.innerHTML = ''; const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             orders.filter(o => (o.client || '').toLowerCase().includes(searchTerm) || (o.poNumber || '').toLowerCase().includes(searchTerm)).slice().reverse().forEach(o => {
                 const t = calculateOrderTotals(o.items); const d = getDaysRemaining(o.deliveryDate); const st = getStatusInfo(o.status);
-                grid.innerHTML += `<div class="order-card" onclick="openDetails(${o.id})"><div class="card-header"><span class="po-badge">${o.poNumber}</span><span class="badge-status ${d.class}"><i class="fas ${d.icon}"></i> ${d.days}</span></div><h3 class="client-name">${o.client}</h3><div class="location-text"><i class="fas fa-map-marker-alt" style="color:#ec4899"></i> ${o.location || 'غير محدد'}</div><div class="progress-container"><div class="progress-fill" style="width: ${st.pct}; background: ${o.status === 'DONE' ? '#10b981' : 'var(--pink-gradient)'}"></div></div><div style="font-size:12px; margin-top:5px; color:#6b7280; font-weight:700">${st.text} (${st.pct})</div><div class="card-stats"><div class="stat-box"><label>قيمة الطلب</label><div style="height:2px"></div><val>${formatMoney(t.reqTotal)}</val></div><div class="stat-box"><label>تاريخ التسليم</label><div style="height:2px"></div><val>${o.deliveryDate}</val></div></div></div>`;
+                
+                let quickActions = '';
+                let hasQuote = o.files && o.files.quote && o.files.quote.length > 0;
+                let hasInvoice = o.files && o.files.invoice && o.files.invoice.length > 0;
+                
+                if(hasQuote || hasInvoice) {
+                    quickActions += `<div style="display:flex; gap:10px; margin-top:15px; padding-top:15px; border-top:1px dashed #e5e7eb;">`;
+                    if(hasQuote) {
+                        const qFile = o.files.quote[0];
+                        quickActions += `<a href="${qFile.data}" download="${qFile.name}" onclick="event.stopPropagation()" style="background:#fffbeb; color:#d97706; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid #fde68a; flex:1; justify-content:center; transition:0.3s;" onmouseover="this.style.filter='brightness(0.95)'" onmouseout="this.style.filter='none'"><i class="fas fa-file-invoice"></i> تحميل العرض</a>`;
+                    }
+                    if(hasInvoice) {
+                        const iFile = o.files.invoice[0];
+                        quickActions += `<a href="${iFile.data}" download="${iFile.name}" onclick="event.stopPropagation()" style="background:#eff6ff; color:#2563eb; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid #bfdbfe; flex:1; justify-content:center; transition:0.3s;" onmouseover="this.style.filter='brightness(0.95)'" onmouseout="this.style.filter='none'"><i class="fas fa-file-invoice-dollar"></i> تحميل الفاتورة</a>`;
+                    }
+                    quickActions += `</div>`;
+                }
+
+                grid.innerHTML += `<div class="order-card" onclick="openDetails(${o.id})"><div class="card-header"><span class="po-badge">${o.poNumber}</span><span class="badge-status ${d.class}"><i class="fas ${d.icon}"></i> ${d.days}</span></div><h3 class="client-name">${o.client}</h3><div class="location-text"><i class="fas fa-map-marker-alt" style="color:#ec4899"></i> ${o.location || 'غير محدد'}</div><div class="progress-container"><div class="progress-fill" style="width: ${st.pct}; background: ${o.status === 'DONE' ? '#10b981' : 'var(--pink-gradient)'}"></div></div><div style="font-size:12px; margin-top:5px; color:#6b7280; font-weight:700">${st.text} (${st.pct})</div><div class="card-stats"><div class="stat-box"><label>قيمة الطلب</label><div style="height:2px"></div><val>${formatMoney(t.reqTotal)}</val></div><div class="stat-box"><label>تاريخ التسليم</label><div style="height:2px"></div><val>${o.deliveryDate}</val></div></div>${quickActions}</div>`;
             });
         }
-        window.openDetails = function(id) { currentId = id; const order = orders.find(o => o.id === id); if(!order) return; document.getElementById('editableDeliveryDate').value = order.deliveryDate; document.getElementById('creationDateText').innerText = new Date(order.id).toLocaleDateString('en-GB'); const modalHeader = document.getElementById('headerDateContainer'); const summaryBox = document.getElementById('financialSummary'); const tableContainer = document.getElementById('tableContainer'); const filesContainer = document.getElementById('filesContainer'); const actionArea = document.getElementById('actionArea'); const completedView = document.getElementById('completedView'); const btnExport = document.getElementById('btnExport'); modalHeader.style.display = 'flex'; tableContainer.style.display = 'block'; actionArea.style.display = 'block'; completedView.style.display = 'none'; filesContainer.style.display = 'grid'; window.renderAllFilesSections(order); if (order.status === 'NEW' || order.status === 'QUOTE_ISSUED') { summaryBox.style.display = 'none'; btnExport.style.display = 'none'; document.getElementById('detailTitle').innerText = order.status === 'NEW' ? "📦 مراجعة المخزون" : "🚚 تجهيز الطلب"; document.getElementById('detailSub').innerText = order.client; } else if (order.status === 'STOCK_CHECKED' || order.status === 'DELIVERY_CONFIRMED') { summaryBox.style.display = 'grid'; btnExport.style.display = 'inline-block'; window.updateFinancialSummary(order); document.getElementById('detailTitle').innerText = "المراجعة المالية"; document.getElementById('detailSub').innerText = order.client; } else if (order.status === 'INVOICED') { summaryBox.style.display = 'none'; tableContainer.style.display = 'none'; btnExport.style.display = 'none'; document.getElementById('detailTitle').innerText = "إغلاق الطلب"; document.getElementById('detailSub').innerText = "يرجى رفع النسخة المختومة"; } else if (order.status === 'DONE') { summaryBox.style.display = 'none'; tableContainer.style.display = 'none'; filesContainer.style.display = 'none'; actionArea.style.display = 'none'; btnExport.style.display = 'none'; completedView.style.display = 'block'; renderCompletedView(order, completedView); } if (order.status !== 'INVOICED' && order.status !== 'DONE') { const tbody = document.getElementById('detailsTableBody'); tbody.innerHTML = ''; if(order.items) { order.items.forEach((item, index) => { tbody.innerHTML += `<tr data-index="${index}"><td><span class="cell-read-only cell-code">${item.barcode}</span></td><td><span class="cell-read-only txt-right">${item.name}</span></td><td><span class="cell-read-only cell-qty" style="color:#64748b">${item.reqQty}</span></td><td><input type="number" class="cell-input cell-qty" value="${item.availQty}" onchange="recalcTotalsLive()"></td><td><span class="cell-read-only">${item.price}</span></td><td><input type="text" class="cell-input txt-right cell-notes" value="${item.notes || ''}" placeholder="..."></td></tr>`; }); } } renderActionArea(order); document.getElementById('detailsModal').style.display = 'block'; }
-        function renderCompletedView(order, container) { const t = calculateOrderTotals(order.items); let filesHtml = ''; const cats = [{id:'po', t:'PO'}, {id:'quote', t:'Quote'}, {id:'invoice', t:'Invoice'}, {id:'stamped', t:'Stamped'}]; cats.forEach(c => { const list = (order.files && order.files[c.id]) ? order.files[c.id] : []; if(list.length > 0) { filesHtml += `<div style="background:white; padding:10px; border-radius:10px; border:1px solid #e5e7eb"><h5 style="margin:0 0 5px 0;">${c.t}</h5>` + list.map(f => `<a href="${f.data}" download="${f.name}" class="file-item" style="color:#ec4899; text-decoration:none; display:flex; align-items:center; gap:5px;"><i class="fas fa-download"></i> ${f.name.substring(0,20)}</a>`).join('') + `</div>`; } }); container.innerHTML = `<div style="background:linear-gradient(to bottom, #ecfdf5, white); border-radius:20px; padding:40px; text-align:center; border:1px solid #d1fae5;"><i class="fas fa-check-circle" style="font-size:70px; color:#10b981; margin-bottom:20px; box-shadow:0 10px 20px rgba(16,185,129,0.2); border-radius:50%;"></i><h2 style="color:#065f46; margin:0;">تم إكمال الطلب بنجاح</h2><p style="color:#6b7280;">${order.client}</p><div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:15px; margin:30px 0;"><div class="stat-box"><div>PO</div><strong>${order.poNumber}</strong></div><div class="stat-box"><div>الإجمالي</div><strong>${formatMoney(t.delTotal)}</strong></div><div class="stat-box"><div>الفاتورة</div><strong>${order.finalInvoice || '-'}</strong></div><div class="stat-box"><div>التاريخ</div><strong>${new Date(order.completionDate).toLocaleDateString()}</strong></div></div><h4 style="text-align:right; border-bottom:1px solid #e5e7eb; padding-bottom:10px; color:#374151">📂 أرشيف الملفات</h4><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">${filesHtml}</div></div>`; }
+        window.openDetails = function(id) { 
+            currentId = id; const order = orders.find(o => o.id === id); if(!order) return; 
+            document.getElementById('editableDeliveryDate').value = order.deliveryDate; 
+            document.getElementById('creationDateText').innerText = new Date(order.id).toLocaleDateString('en-GB'); 
+            const modalHeader = document.getElementById('headerDateContainer'); 
+            const summaryBox = document.getElementById('financialSummary'); 
+            const tableContainer = document.getElementById('tableContainer'); 
+            const filesContainer = document.getElementById('filesContainer'); 
+            const actionArea = document.getElementById('actionArea'); 
+            const completedView = document.getElementById('completedView'); 
+            const btnExport = document.getElementById('btnExport'); 
+            
+            modalHeader.style.display = 'flex'; 
+            tableContainer.style.display = 'block'; 
+            actionArea.style.display = 'block'; 
+            completedView.style.display = 'none'; 
+            filesContainer.style.display = 'grid'; 
+            window.renderAllFilesSections(order); 
+            
+            if (order.status === 'NEW') { 
+                summaryBox.style.display = 'none'; 
+                btnExport.style.display = 'none'; 
+                document.getElementById('detailTitle').innerText = "📦 مراجعة المخزون"; 
+                document.getElementById('detailSub').innerText = order.client; 
+            } else if (order.status === 'STOCK_CHECKED') { 
+                summaryBox.style.display = 'grid'; 
+                btnExport.style.display = 'inline-block'; 
+                window.updateFinancialSummary(order); 
+                document.getElementById('detailTitle').innerText = "المراجعة المالية (إصدار العرض)"; 
+                document.getElementById('detailSub').innerText = order.client; 
+            } else if (order.status === 'QUOTE_ISSUED') { 
+                summaryBox.style.display = 'grid'; 
+                btnExport.style.display = 'inline-block'; 
+                window.updateFinancialSummary(order); 
+                document.getElementById('detailTitle').innerText = "الفوترة (إصدار الفاتورة)"; 
+                document.getElementById('detailSub').innerText = order.client; 
+            } else if (order.status === 'DONE') { 
+                summaryBox.style.display = 'grid'; 
+                tableContainer.style.display = 'none'; 
+                btnExport.style.display = 'inline-block'; 
+                completedView.style.display = 'block'; 
+                renderCompletedView(order, completedView); 
+                document.getElementById('detailTitle').innerText = "تم إكمال الطلب";
+                document.getElementById('detailSub').innerText = order.client; 
+            } 
+            
+            if (order.status !== 'DONE') { 
+                const tbody = document.getElementById('detailsTableBody'); 
+                tbody.innerHTML = ''; 
+                if(order.items) { 
+                    order.items.forEach((item, index) => { 
+                        tbody.innerHTML += `<tr data-index="${index}"><td><span class="cell-read-only cell-code">${item.barcode}</span></td><td><span class="cell-read-only txt-right">${item.name}</span></td><td><span class="cell-read-only cell-qty" style="color:#64748b">${item.reqQty}</span></td><td><input type="number" class="cell-input cell-qty" value="${item.availQty}" onchange="recalcTotalsLive()"></td><td><span class="cell-read-only">${item.price}</span></td><td><input type="text" class="cell-input txt-right cell-notes" value="${item.notes || ''}" placeholder="..."></td></tr>`; 
+                    }); 
+                } 
+            } 
+            renderActionArea(order); 
+            document.getElementById('detailsModal').style.display = 'block'; 
+        }
+
+        function renderCompletedView(order, container) { 
+            const t = calculateOrderTotals(order.items); 
+            container.innerHTML = `<div style="background:linear-gradient(to bottom, #ecfdf5, white); border-radius:20px; padding:40px; text-align:center; border:1px solid #d1fae5; margin-bottom: 20px;"><i class="fas fa-check-circle" style="font-size:70px; color:#10b981; margin-bottom:20px; box-shadow:0 10px 20px rgba(16,185,129,0.2); border-radius:50%;"></i><h2 style="color:#065f46; margin:0;">تم إكمال الطلب بنجاح</h2><p style="color:#6b7280;">${order.client}</p><div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:15px; margin-top:30px;"><div class="stat-box"><div>PO</div><strong>${order.poNumber}</strong></div><div class="stat-box"><div>الإجمالي</div><strong>${formatMoney(t.delTotal)}</strong></div><div class="stat-box"><div>الفاتورة</div><strong>${order.finalInvoice || '-'}</strong></div><div class="stat-box"><div>التاريخ</div><strong>${order.completionDate ? new Date(order.completionDate).toLocaleDateString() : '-'}</strong></div></div></div>`; 
+        }
+
         function renderActionArea(order) { 
             const area = document.getElementById('actionArea'); 
             area.innerHTML = ''; 
             const btnStyle = "width:100%; padding:15px; border-radius:12px; font-size:16px; margin-top:10px; font-weight:800"; 
             
-            // تعديل: إضافة حماية كلمة المرور على الخطوات (عدا تأكيد المخزون)
             if(order.status === 'NEW') { 
                 area.innerHTML = `<div style="background:#eff6ff; padding:20px; border-radius:15px; border:1px solid #dbeafe;"><p style="color:#1e40af; margin-top:0"><strong>📦 المستودع:</strong> يرجى مطابقة الكميات المتوفرة في العمود الأزرق.</p><button class="btn btn-gradient" style="${btnStyle}" onclick="updateStatus('STOCK_CHECKED')">✅ تأكيد الكميات وحفظ</button></div>`; 
             } else if(order.status === 'STOCK_CHECKED') { 
-                area.innerHTML = `<div style="background:#fffbeb; padding:20px; border-radius:15px; border:1px solid #fde68a;"><p style="color:#92400e; margin-top:0"><strong>💼 المحاسبة:</strong> إصدار عرض السعر</p><input type="text" id="quoteRefInput" placeholder="رقم عرض السعر (Q-xxxx)" value="${order.quotationRef || ''}" style="width:100%; box-sizing: border-box; padding:12px; margin-bottom:10px; border:1px solid #d1d5db; border-radius:10px; text-align: center;"> <button class="btn btn-warning" style="${btnStyle}" onclick="checkPasswordAndExecute(() => updateStatus('QUOTE_ISSUED'))">📤 إصدار العرض وحفظ</button></div>`; 
+                area.innerHTML = `<div style="background:#fffbeb; padding:20px; border-radius:15px; border:1px solid #fde68a;"><p style="color:#92400e; margin-top:0"><strong>💼 المحاسبة:</strong> إصدار عرض السعر</p><input type="text" id="quoteRefInput" placeholder="رقم عرض السعر (Q-xxxx)" value="${order.quotationRef || ''}" style="width:100%; box-sizing: border-box; padding:12px; margin-bottom:10px; border:1px solid #d1d5db; border-radius:10px; text-align: center;"> <button class="btn btn-warning" style="${btnStyle}" onclick="updateStatus('QUOTE_ISSUED')">📤 إصدار العرض وحفظ</button></div>`; 
             } else if(order.status === 'QUOTE_ISSUED') { 
-                area.innerHTML = `<div style="background:#f0fdf4; padding:20px; border-radius:15px; border:1px solid #bbf7d0;"><p style="color:#166534; margin-top:0"><strong>🚚 التسليم:</strong> تأكيد خروج البضاعة</p><button class="btn btn-excel" style="${btnStyle}" onclick="checkPasswordAndExecute(() => updateStatus('DELIVERY_CONFIRMED'))">🤝 تم التسليم للعميل</button></div>`; 
-            } else if(order.status === 'DELIVERY_CONFIRMED') { 
-                area.innerHTML = `<div style="background:#faf5ff; padding:20px; border-radius:15px; border:1px solid #e9d5ff;"><p style="color:#6b21a8; margin-top:0"><strong>🧾 الفوترة:</strong> إصدار الفاتورة النهائية</p><input type="text" id="finalInv" placeholder="رقم الفاتورة (INV-xxxx)" style="width:100%; box-sizing: border-box; padding:12px; margin-bottom:10px; border:1px solid #d1d5db; border-radius:10px; text-align: center;"> <button class="btn btn-gradient" style="${btnStyle}" onclick="checkPasswordAndExecute(() => updateStatus('INVOICED'))">💵 إصدار الفاتورة</button></div>`; 
-            } else if(order.status === 'INVOICED') { 
-                area.innerHTML = `<button class="btn btn-gradient" style="${btnStyle}; height:100px;" onclick="checkPasswordAndExecute(() => document.getElementById('stampedFileHidden').click())"><div style="display:flex; flex-direction:column; align-items:center; gap:8px;"><i class="fas fa-file-upload" style="font-size:28px;"></i><span>رفع المختومة وإغلاق الطلب نهائياً</span></div></button><input type="file" id="stampedFileHidden" style="display:none" onchange="handleStampedUploadAndClose(this)">`; 
-            } 
+                area.innerHTML = `<div style="background:#faf5ff; padding:20px; border-radius:15px; border:1px solid #e9d5ff;"><p style="color:#6b21a8; margin-top:0"><strong>🧾 الفوترة:</strong> إصدار الفاتورة النهائية</p><input type="text" id="finalInv" placeholder="رقم الفاتورة (INV-xxxx)" style="width:100%; box-sizing: border-box; padding:12px; margin-bottom:10px; border:1px solid #d1d5db; border-radius:10px; text-align: center;"> <button class="btn btn-gradient" style="${btnStyle}" onclick="updateStatus('DONE')">💵 إصدار الفاتورة وإكمال الطلب</button></div>`; 
+            }
         }
+
         window.recalcTotalsLive = function() { const order = orders.find(o => o.id === currentId); document.querySelectorAll('#detailsTableBody tr').forEach(row => { const idx = row.getAttribute('data-index'); const qtyInput = row.querySelector('input[type="number"]'); const noteInput = row.querySelector('input[type="text"]'); if(qtyInput) order.items[idx].availQty = qtyInput.value; if(noteInput) order.items[idx].notes = noteInput.value; }); if (document.getElementById('financialSummary').style.display !== 'none') window.updateFinancialSummary(order); }
         window.updateFinancialSummary = function(order) { const t = calculateOrderTotals(order.items); document.getElementById('financialSummary').innerHTML = `<div style="background:white; padding:15px; border-radius:15px; text-align:center; border:1px solid #f3f4f6"><div style="font-size:12px; color:#6b7280;">قيمة الطلب الأصلية</div><div style="font-weight:800; font-size:20px; font-family:'Poppins'">${formatMoney(t.reqTotal)}</div></div><div style="background:var(--pink-gradient); color:white; padding:15px; border-radius:15px; text-align:center; box-shadow:0 10px 15px -3px rgba(236, 72, 153, 0.3);"><div style="font-size:12px; opacity:0.9;">القيمة المعتمدة (الفاتورة)</div><div style="font-weight:800; font-size:20px; font-family:'Poppins'">${formatMoney(t.delTotal)}</div></div>`; }
         window.openCreateModal = function() { document.getElementById('newClient').value = ''; document.getElementById('newPONumber').value = ''; document.getElementById('newLocation').value = ''; document.getElementById('newDate').value = ''; document.getElementById('newPOFiles').value = ''; document.getElementById('bulkBarcodes').value = ''; document.getElementById('entryTableBody').innerHTML = ''; document.getElementById('createModal').style.display = 'block'; }
+        
         window.processAndSaveOrder = function() { const client = document.getElementById('newClient').value; const poNum = document.getElementById('newPONumber').value; if(!client || !poNum) return alert("يرجى ملء البيانات الأساسية"); let items = []; let newProductsToSave = {}; let missingNames = false; document.querySelectorAll('#entryTableBody tr').forEach(row => { const code = row.querySelector('input[name="code"]').value; const name = row.querySelector('input[name="name"]').value; const qty = row.querySelector('input[name="qty"]').value || '0'; const price = row.querySelector('input[name="price"]').value || '0'; if(code) { if(!name.trim()) { missingNames = true; row.style.border = "2px solid red"; } const cleanCode = cleanKey(code); if(!globalProducts[cleanCode] && name.trim()) { newProductsToSave[cleanCode] = name.trim(); } items.push({ barcode: code, name: name.trim(), reqQty: qty, price: price.replace(/,/g,''), availQty: qty, notes: '' }); } }); if(missingNames) return alert("يوجد منتجات بدون أسماء (باللون الأحمر)."); if(items.length === 0) return alert("القائمة فارغة!"); if(Object.keys(newProductsToSave).length > 0) update(ref(db, PROD_PATH), newProductsToSave); const newOrder = { id: Date.now(), poNumber: poNum, client: client, location: document.getElementById('newLocation').value, deliveryDate: document.getElementById('newDate').value, items: items, status: 'NEW', files: { po:[], quote:[], invoice:[], stamped:[] } }; const fileInput = document.getElementById('newPOFiles'); if (fileInput.files.length > 0) processFiles(fileInput.files, (fs) => { newOrder.files.po = fs; set(ref(db, DB_PATH + '/' + newOrder.id), newOrder).then(() => { closeModal('createModal'); }); }); else set(ref(db, DB_PATH + '/' + newOrder.id), newOrder).then(() => { closeModal('createModal'); }); }
+        
         function processFiles(list, cb) { let p=[]; let arr=Array.from(list); let c=0; arr.forEach(f=>{ const r=new FileReader(); r.onload=e=>{ p.push({name:f.name, data:e.target.result}); c++; if(c===arr.length) cb(p); }; r.readAsDataURL(f); }); }
-        window.updateStatus = function(s) { const o = orders.find(x => x.id === currentId); document.querySelectorAll('#detailsTableBody tr').forEach(r => { const i = r.getAttribute('data-index'); const qtyInput = r.querySelector('input[type="number"]'); const noteInput = r.querySelector('input[type="text"]'); if(qtyInput) o.items[i].availQty = qtyInput.value; if(noteInput) o.items[i].notes = noteInput.value; }); if(s === 'QUOTE_ISSUED') o.quotationRef = document.getElementById('quoteRefInput').value; if(s === 'INVOICED') o.finalInvoice = document.getElementById('finalInv').value; if(document.getElementById('editableDeliveryDate').value) o.deliveryDate = document.getElementById('editableDeliveryDate').value; o.status = s; update(ref(db, DB_PATH + '/' + o.id), o); closeModal('detailsModal'); }
-        window.handleStampedUploadAndClose = function(input) { if(input.files.length > 0) { processFiles(input.files, (fs) => { const o = orders.find(x => x.id === currentId); if(!o.files) o.files={}; o.files.stamped = fs; o.status = 'DONE'; o.completionDate = new Date().toISOString(); update(ref(db, DB_PATH + '/' + o.id), o); closeModal('detailsModal'); }); } }
+        
+        window.updateStatus = function(s) { 
+            const o = orders.find(x => x.id === currentId); 
+            document.querySelectorAll('#detailsTableBody tr').forEach(r => { 
+                const i = r.getAttribute('data-index'); 
+                const qtyInput = r.querySelector('input[type="number"]'); 
+                const noteInput = r.querySelector('input[type="text"]'); 
+                if(qtyInput) o.items[i].availQty = qtyInput.value; 
+                if(noteInput) o.items[i].notes = noteInput.value; 
+            }); 
+            if(s === 'QUOTE_ISSUED') o.quotationRef = document.getElementById('quoteRefInput').value; 
+            if(s === 'DONE') {
+                const finalInvInput = document.getElementById('finalInv');
+                if(finalInvInput) o.finalInvoice = finalInvInput.value; 
+                o.completionDate = new Date().toISOString();
+            } 
+            if(document.getElementById('editableDeliveryDate').value) o.deliveryDate = document.getElementById('editableDeliveryDate').value; 
+            o.status = s; 
+            update(ref(db, DB_PATH + '/' + o.id), o); 
+            closeModal('detailsModal'); 
+        }
+        
         window.updateDateInstant = function() { const d = document.getElementById('editableDeliveryDate').value; if(currentId && d) update(ref(db, DB_PATH + '/' + currentId), { deliveryDate: d }); }
         window.deleteCurrentOrder = function() { if(confirm("هل أنت متأكد؟")) { remove(ref(db, DB_PATH + '/' + currentId)); closeModal('detailsModal'); } }
         window.renderAllFilesSections = function(o) { ['po','quote','invoice','stamped'].forEach(t => renderFilesType(o,t)); }
@@ -877,7 +999,35 @@
         window.uplFile = function(inp, t) { processFiles(inp.files, (fs) => { const o=orders.find(x=>x.id===currentId); if(!o.files)o.files={}; if(!o.files[t])o.files[t]=[]; o.files[t]=[...o.files[t], ...fs]; update(ref(db, DB_PATH + '/' + o.id), o); renderFilesType(o,t); }); }
         window.delFile = function(t, i) { const o=orders.find(x=>x.id===currentId); o.files[t].splice(i,1); update(ref(db, DB_PATH + '/' + o.id), o); renderFilesType(o,t); }
         window.downloadExcel = function(h, f) { const b = new Blob([h], {type: 'application/vnd.ms-excel'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = f; a.click(); }
-        window.exportToExcel = function() { const o = orders.find(x => x.id === currentId); const t = calculateOrderTotals(o.items); const headerStyle = "background-color: #fce7f3; font-weight: bold; border: 1px solid #000000; padding: 5px;"; const cellStyle = "border: 1px solid #000000; padding: 5px; text-align: center;"; const titleStyle = "font-size: 18px; font-weight: bold; color: #be185d; text-align:center; padding: 10px;"; let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><table style="width:100%; font-family: Calibri, sans-serif;"><tr><td colspan="4" style="${titleStyle}">تقرير تفاصيل الطلب (PO Details)</td></tr><tr><td colspan="4"></td></tr><tr><td style="${headerStyle}">رقم الـ PO</td> <td style="${cellStyle}">${o.poNumber}</td><td style="${headerStyle}">اسم العميل</td> <td style="${cellStyle}">${o.client}</td></tr><tr><td style="${headerStyle}">تاريخ التسليم</td> <td style="${cellStyle}">${o.deliveryDate}</td><td style="${headerStyle}">موقع التسليم</td> <td style="${cellStyle}">${o.location || '-'}</td></tr><tr><td style="${headerStyle}">رقم عرض السعر</td> <td style="${cellStyle}">${o.quotationRef || 'N/A'}</td><td style="${headerStyle}">رقم الفاتورة</td> <td style="${cellStyle}">${o.finalInvoice || 'N/A'}</td></tr></table><br><table border="1" style="border-collapse: collapse; width:100%"><thead style="background-color: #fce7f3;"><tr><th style="${headerStyle}">الباركود (Code)</th><th style="${headerStyle}">المنتج (Item)</th><th style="${headerStyle}">الكمية المطلوبة (Req)</th><th style="${headerStyle}">الكمية المتوفرة (Avail)</th><th style="${headerStyle}">السعر (Price)</th><th style="${headerStyle}">الإجمالي (Total)</th><th style="${headerStyle}">ملاحظات (Notes)</th></tr></thead><tbody>`; if(o.items) { o.items.forEach(i => { let rowBg = (i.reqQty != i.availQty) ? 'background-color: #ffff00;' : ''; h += `<tr style="${rowBg}"><td style="${cellStyle} mso-number-format:'\@'">${i.barcode}</td><td style="${cellStyle}">${i.name}</td><td style="${cellStyle}">${i.reqQty}</td><td style="${cellStyle} ${rowBg}">${i.availQty}</td><td style="${cellStyle}">${i.price}</td><td style="${cellStyle}">${(i.availQty*i.price).toFixed(2)}</td><td style="${cellStyle}">${i.notes}</td></tr>`; }); } h += `<tr><td colspan="5" style="${headerStyle} text-align:right;">الإجمالي الكلي (Grand Total)</td><td style="${cellStyle} background-color: #fce7f3; font-weight:bold">${t.delTotal.toFixed(2)}</td><td></td></tr></tbody></table></body></html>`; window.downloadExcel(h, `${o.poNumber} - ${o.client}.xls`); }
+        
+        window.exportToExcel = function() { 
+            const o = orders.find(x => x.id === currentId); 
+            const t = calculateOrderTotals(o.items); 
+            const headerStyle = "background-color: #fce7f3; font-weight: bold; border: 1px solid #000000; padding: 5px;"; 
+            const cellStyle = "border: 1px solid #000000; padding: 5px; text-align: center;"; 
+            const titleStyle = "font-size: 18px; font-weight: bold; color: #be185d; text-align:center; padding: 10px;"; 
+            
+            let safeLoc = o.location ? o.location.trim() : 'بدون موقع';
+            
+            let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><table style="width:100%; font-family: Calibri, sans-serif;">
+            <tr><td style="${titleStyle}">تقرير تفاصيل الطلب (PO Details)</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td style="${headerStyle}">رقم الـ PO</td> <td style="${cellStyle}">${o.poNumber}</td><td style="${headerStyle}">اسم العميل</td> <td style="${cellStyle}">${o.client}</td><td></td><td></td><td></td></tr>
+            <tr><td style="${headerStyle}">تاريخ التسليم</td> <td style="${cellStyle}">${o.deliveryDate}</td><td style="${headerStyle}">موقع التسليم</td> <td style="${cellStyle}">${o.location || '-'}</td><td></td><td></td><td></td></tr>
+            <tr><td style="${headerStyle}">رقم عرض السعر</td> <td style="${cellStyle}">${o.quotationRef || 'N/A'}</td><td style="${headerStyle}">رقم الفاتورة</td> <td style="${cellStyle}">${o.finalInvoice || 'N/A'}</td><td></td><td></td><td></td></tr>
+            </table><br><table border="1" style="border-collapse: collapse; width:100%"><thead style="background-color: #fce7f3;">
+            <tr><th style="${headerStyle}">الباركود (Code)</th><th style="${headerStyle}">المنتج (Item)</th><th style="${headerStyle}">الكمية المطلوبة (Req)</th><th style="${headerStyle}">الكمية المتوفرة (Avail)</th><th style="${headerStyle}">السعر (Price)</th><th style="${headerStyle}">الإجمالي (Total)</th><th style="${headerStyle}">ملاحظات (Notes)</th></tr></thead><tbody>`; 
+            if(o.items) { 
+                o.items.forEach(i => { 
+                    let rowBg = (i.reqQty != i.availQty) ? 'background-color: #ffff00;' : ''; 
+                    h += `<tr style="${rowBg}"><td style="${cellStyle} mso-number-format:'\@'">${i.barcode}</td><td style="${cellStyle}">${i.name}</td><td style="${cellStyle}">${i.reqQty}</td><td style="${cellStyle} ${rowBg}">${i.availQty}</td><td style="${cellStyle}">${i.price}</td><td style="${cellStyle}">${(i.availQty*i.price).toFixed(2)}</td><td style="${cellStyle}">${i.notes}</td></tr>`; 
+                }); 
+            } 
+            h += `<tr><td style="${headerStyle}">الإجمالي الكلي (Grand Total)</td><td></td><td></td><td></td><td></td><td style="${cellStyle} background-color: #fce7f3; font-weight:bold">${t.delTotal.toFixed(2)}</td><td></td></tr></tbody></table></body></html>`; 
+            
+            window.downloadExcel(h, `${o.client} - ${safeLoc} - ${o.poNumber}.xls`); 
+        }
+
         window.exportMainListToExcel = function() { let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل الطلبات</h3><table border="1"><thead><tr style="background:#fce7f3"><th>PO</th><th>العميل</th><th>الموقع</th><th>التاريخ</th><th>الحالة</th><th>القيمة المطلوبة (PO)</th><th>القيمة المعتمدة (Inv)</th><th>الفرق</th></tr></thead><tbody>`; orders.forEach(o => { const t = calculateOrderTotals(o.items); h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${o.location||''}</td><td>${o.deliveryDate}</td><td>${o.status}</td><td>${t.reqTotal.toFixed(2)}</td><td>${t.delTotal.toFixed(2)}</td><td>${(t.reqTotal - t.delTotal).toFixed(2)}</td></tr>`; }); h += `</tbody></table></body></html>`; window.downloadExcel(h, 'All_Orders.xls'); }
         window.exportShortagesToExcel = function() { let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>النواقص</h3><table border="1"><thead><tr style="background:#fee2e2"><th>PO</th><th>العميل</th><th>المنتج</th><th>مطلوب</th><th>متوفر</th><th>خسارة</th></tr></thead><tbody>`; orders.forEach(o => { if(o.items) o.items.forEach(i => { if(i.reqQty > i.availQty) h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${i.name}</td><td>${i.reqQty}</td><td>${i.availQty}</td><td>${((i.reqQty-i.availQty)*i.price).toFixed(2)}</td></tr>`; }); }); h += `</tbody></table></body></html>`; window.downloadExcel(h, 'Shortages.xls'); }
 
@@ -1100,8 +1250,6 @@
                 closeModal('opBalModal'); alert('تم حفظ رصيد الإغلاق بنجاح!');
             });
         }
-
-        // --- Filtering and Rendering Ledger ---
 
         function filterFinancesArray() {
             const term = document.getElementById('finSearchInput').value.toLowerCase();
