@@ -107,8 +107,6 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* تنسيق الطلبات الجديدة (قيد المراجعة) */
-        /* 🔴 تنسيق الطلبات الجديدة (قيد المراجعة) بخلفية حمراء قوية 🔴 */
         .order-card.status-new {
             background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
             border: none;
@@ -119,13 +117,11 @@
             box-shadow: 0 15px 30px rgba(239, 68, 68, 0.5);
         }
 
-        /* عكس ألوان النصوص داخل الكارت الأحمر لتصبح بيضاء */
         .order-card.status-new .client-name,
         .order-card.status-new .stat-box val {
             color: #ffffff !important;
         }
 
-        /* النصوص الفرعية (مثل الموقع وعناوين الأرقام) بلون وردي فاتح لراحة العين */
         .order-card.status-new .location-text,
         .order-card.status-new .stat-box label,
         .order-card.status-new div[style*="color:#6b7280"] {
@@ -135,7 +131,6 @@
             color: #ffffff !important;
         }
 
-        /* تعديل شكل الشارات (Badges) لتكون شفافة وأنيقة على الأحمر */
         .order-card.status-new .po-badge,
         .order-card.status-new .badge-status {
             background: rgba(255, 255, 255, 0.15) !important;
@@ -143,7 +138,6 @@
             border: 1px solid rgba(255, 255, 255, 0.3) !important;
         }
 
-        /* الخط الفاصل وشريط التقدم */
         .order-card.status-new .card-stats {
             border-top: 1px dashed rgba(255, 255, 255, 0.25) !important;
         }
@@ -151,10 +145,9 @@
             background: rgba(0, 0, 0, 0.2) !important;
         }
         .order-card.status-new .progress-fill {
-            background: #ffffff !important; /* شريط التقدم يصبح أبيض */
+            background: #ffffff !important; 
         }
 
-        /* تنسيق الطلبات المكتملة */
         .order-card.status-done {
             background: linear-gradient(145deg, #ffffff 50%, #ecfdf5 100%);
             border: 2px solid #a7f3d0;
@@ -262,7 +255,6 @@
 
         input:focus { outline: none !important; }
 
-        /* --- Partner Cards Styling --- */
         .partner-card {
             background: white; border-radius: 20px; padding: 25px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e5e7eb;
@@ -299,9 +291,38 @@
         .partner-card.supplier .pc-total label { color: #991b1b; }
         .pc-total span { font-size: 20px; font-weight: 800; color: #15803d; font-family: 'Poppins', monospace; }
         .partner-card.supplier .pc-total span { color: #b91c1c; }
+
+        /* 🔴 كود الطباعة الجديد 🔴 */
+        /* 🔴 كود الطباعة الجديد المعدل (حل مشكلة الشاشة البيضاء والألوان) 🔴 */
+        @media print {
+            body { background: white !important; margin: 0; padding: 0; }
+            
+            /* إخفاء كل شيء في الصفحة باستثناء منطقة الطباعة */
+            body > * { display: none !important; }
+            #printArea { display: block !important; }
+            
+            /* إجبار المتصفح على طباعة الألوان (الخلفيات والنصوص) */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            #printArea { width: 100%; direction: rtl; background: white; padding: 10px; font-family: 'Cairo', 'Poppins', sans-serif;}
+            #printArea table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+            #printArea th, #printArea td { border: 1px solid #cbd5e1; padding: 12px 10px; text-align: center; }
+            /* تلوين رأس الجدول بالوردي */
+            #printArea th { background-color: #fce7f3 !important; color: #be185d !important; font-weight: 800; font-size: 16px; border: 2px solid #fbcfe8; }
+            #printArea td { color: #1e293b !important; }
+            /* تلوين الصفوف الزوجية بلون رمادي فاتح جداً لراحة العين */
+            #printArea tr:nth-child(even) td { background-color: #f8fafc !important; }
+            #printArea tr { page-break-inside: avoid; }
+        }
     </style>
 </head>
 <body>
+
+    <div id="printArea" style="display: none;"></div>
 
     <div id="loadingOverlay">
         <i class="fas fa-heart heart-beat"></i>
@@ -911,7 +932,6 @@
             return { reqTotal: reqSubtotal * 1.15, delTotal: delSubtotal * 1.15 };
         }
 
-        // تم اختصار الحالات لتبسيط المسار
         function getStatusInfo(status) {
             if (status === 'NEW') return { text: 'مراجعة وتأكيد الكميات', pct: '50%' };
             return { text: 'مكتمل', pct: '100%' };
@@ -986,7 +1006,6 @@
                     if (!isDone) {
                         tbody.innerHTML += `<tr data-index="${index}"><td><span class="cell-read-only cell-code">${item.barcode}</span></td><td><span class="cell-read-only txt-right">${item.name}</span></td><td><span class="cell-read-only cell-qty" style="color:#64748b">${item.reqQty}</span></td><td><input type="number" class="cell-input cell-qty" value="${item.availQty}" onchange="recalcTotalsLive()"></td><td><span class="cell-read-only">${item.price}</span></td><td><input type="text" class="cell-input txt-right cell-notes" value="${item.notes || ''}" placeholder="..."></td></tr>`; 
                     } else {
-                        // وضع القراءة فقط للطلب المكتمل
                         tbody.innerHTML += `<tr data-index="${index}"><td><span class="cell-read-only cell-code">${item.barcode}</span></td><td><span class="cell-read-only txt-right">${item.name}</span></td><td><span class="cell-read-only cell-qty" style="color:#64748b">${item.reqQty}</span></td><td><span class="cell-read-only cell-qty" style="color:#1d4ed8; font-weight:800">${item.availQty}</span></td><td><span class="cell-read-only">${item.price}</span></td><td><span class="cell-read-only txt-right" style="color:#92400e">${item.notes || '-'}</span></td></tr>`;
                     }
                 }); 
@@ -995,13 +1014,80 @@
             document.getElementById('detailsModal').style.display = 'block'; 
         }
 
+        // 🔴 دالة توليد إذن التحضير والطباعة 🔴
+        window.printWarehouseSlip = function() {
+            const o = orders.find(x => x.id === currentId);
+            if(!o) return;
+
+            let html = `
+                <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px;">
+                    <h1 style="margin: 0; font-size: 24px; font-weight:bold;">إذن تحضير مخزني (Pick List)</h1>
+                    <h2 style="margin: 5px 0 0 0; font-size: 18px; color: #333;">Lolo ERP</h2>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 16px;">
+                    <div><strong>اسم العميل:</strong> ${o.client}</div>
+                    <div><strong>رقم الطلب (PO):</strong> ${o.poNumber}</div>
+                    <div><strong>تاريخ الطباعة:</strong> ${new Date().toLocaleDateString('en-GB')}</div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">م</th>
+                            <th style="width: 15%;">الباركود</th>
+                            <th style="width: 35%;">اسم المنتج</th>
+                            <th style="width: 10%;">مطلوب</th>
+                            <th style="width: 15%;">الكمية المتوفرة (كتابة)</th>
+                            <th style="width: 20%;">ملاحظات المخزن</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if(o.items) {
+                o.items.forEach((item, idx) => {
+                    html += `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td style="font-family: monospace; font-size: 16px;">${item.barcode}</td>
+                            <td style="text-align: right; padding-right: 15px;">${item.name}</td>
+                            <td style="font-weight: bold; font-size: 16px;">${item.reqQty}</td>
+                            <td></td> <td></td> </tr>
+                    `;
+                });
+            }
+
+            html += `
+                    </tbody>
+                </table>
+                <div style="margin-top: 40px; display: flex; justify-content: space-between; font-size: 16px;">
+                    <div><strong>توقيع أمين المخزن:</strong> ..........................</div>
+                    <div><strong>وقت انتهاء التحضير:</strong> .....:.....</div>
+                </div>
+            `;
+
+            document.getElementById('printArea').innerHTML = html;
+            window.print();
+        }
+
         function renderActionArea(order) { 
             const area = document.getElementById('actionArea'); 
             area.innerHTML = ''; 
             const isDone = order.status !== 'NEW';
             
             if(!isDone) { 
-                area.innerHTML = `<div style="background:#eff6ff; padding:20px; border-radius:15px; border:1px solid #dbeafe;"><p style="color:#1e40af; margin-top:0; font-size:15px;"><strong>📦 المستودع:</strong> يرجى مطابقة الكميات المتوفرة في العمود الأزرق ثم التأكيد. (تأكيد الكميات سيحول الطلب إلى "مكتمل" مباشرة للتمكن من رفع الفواتير)</p><button class="btn btn-gradient" style="width:100%; padding:15px; border-radius:12px; font-size:16px; margin-top:10px; font-weight:800; justify-content:center;" onclick="updateStatus('DONE')">✅ تأكيد الكميات وإكمال الطلب</button></div>`; 
+                // 🔴 تمت إضافة زر الطباعة هنا بجانب زر التأكيد 🔴
+                area.innerHTML = `
+                <div style="background:#eff6ff; padding:20px; border-radius:15px; border:1px solid #dbeafe;">
+                    <p style="color:#1e40af; margin-top:0; font-size:15px;"><strong>📦 المستودع:</strong> يرجى مطابقة الكميات المتوفرة في العمود الأزرق ثم التأكيد. (تأكيد الكميات سيحول الطلب إلى "مكتمل" مباشرة للتمكن من رفع الفواتير)</p>
+                    <div style="display:flex; gap:15px; margin-top:15px;">
+                        <button class="btn btn-blue" style="flex:1; padding:15px; border-radius:12px; font-size:16px; font-weight:800; justify-content:center;" onclick="printWarehouseSlip()">
+                            <i class="fas fa-print"></i> طباعة إذن تحضير (للمخزن)
+                        </button>
+                        <button class="btn btn-gradient" style="flex:2; padding:15px; border-radius:12px; font-size:16px; font-weight:800; justify-content:center;" onclick="updateStatus('DONE')">
+                            ✅ تأكيد الكميات وإكمال الطلب
+                        </button>
+                    </div>
+                </div>`; 
             }
         }
 
@@ -1079,8 +1165,6 @@
             const dList = document.getElementById('finNamesList');
             if(dList) { dList.innerHTML = Array.from(names).map(n => `<option value="${n}">`).join(''); }
         }
-
-        // --- Finance Multi-Row Implementation ---
 
         window.getSalesInputRowHtml = function() {
             let d = new Date();
