@@ -349,7 +349,6 @@
             </div>
             <div class="action-buttons" style="display:flex; gap:8px; flex-wrap:wrap; justify-content: flex-end;">
                 <button class="btn btn-cyan" onclick="togglePartnersView()"><i class="fas fa-users"></i> العملاء والموردين</button>
-                <button class="btn btn-blue" onclick="openFinanceModal()"><i class="fas fa-calculator"></i> الإدارة المالية</button>
                 <button class="btn btn-purple" onclick="openProductsModal()"><i class="fas fa-tags"></i> إدارة المنتجات</button>
                 <button class="btn btn-warning" onclick="exportShortagesToExcel()"><i class="fas fa-exclamation-triangle"></i> تقرير النواقص</button>
                 <button class="btn btn-excel" onclick="exportMainListToExcel()"><i class="fas fa-file-excel"></i> تقرير الطلبات</button>
@@ -369,12 +368,38 @@
             <div style="display:flex; gap:15px; align-items:center;">
                 <div style="position: relative; width: 350px;">
                     <i class="fas fa-search" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #0ea5e9;"></i>
-                    <input type="text" id="partnersSearchInput" class="search-input-style" placeholder="بحث في البطاقات (الاسم، النوع)..." onkeyup="renderPartnersList()" style="padding: 12px 40px 12px 15px;">
+                    <input type="text" id="partnersSearchInput" class="search-input-style" placeholder="بحث في البطاقات..." onkeyup="renderPartnersList()" style="padding: 12px 40px 12px 15px;">
                 </div>
-                <button class="btn btn-blue-gradient" onclick="openOpBalModal()"><i class="fas fa-plus-circle"></i> إضافة رصيد إغلاق 2025</button>
+                <button class="btn btn-blue" onclick="openFinanceModal()"><i class="fas fa-calculator"></i> الإدارة المالية السريعة</button>
+                <button class="btn btn-blue-gradient" onclick="openOpBalModal()"><i class="fas fa-plus-circle"></i> إضافة رصيد إغلاق</button>
             </div>
         </div>
         <div class="cards-grid" id="partnersCardsContainer"></div>
+    </div>
+
+    <div id="partnerDetailsModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <div>
+                    <h3 id="pmName" style="margin:0; color:#1e293b; display:flex; align-items:center; gap:10px;"></h3>
+                    <div id="pmBadge" style="margin-top:5px;"></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <button id="pmExportBtn" class="btn btn-excel"><i class="fas fa-file-excel"></i> تحميل كشف الحساب بالكامل</button>
+                    <div onclick="closeModal('partnerDetailsModal')" style="cursor:pointer; font-size:28px; color:#9ca3af;">×</div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="sheet-table-container">
+                    <table class="sheet-table">
+                        <thead id="pmTableHead">
+                            </thead>
+                        <tbody id="pmTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="opBalModal" class="modal">
@@ -587,7 +612,7 @@
                 
                 <div id="viewSalesLedger">
                     <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center; background: #eff6ff; padding: 10px 15px; border-radius: 12px; border: 1px dashed #bfdbfe;">
-                        <span style="color:#1d4ed8; font-weight:800; font-size:13px;"><i class="fas fa-info-circle"></i> يمكنك تحديد أي حقل ولصق عمود كامل من إكسل. (التاريخ يقبل النسخ المباشر ويُكتب بصيغة DD/MM/YYYY)</span>
+                        <span style="color:#1d4ed8; font-weight:800; font-size:13px;"><i class="fas fa-info-circle"></i> يمكنك التنقل بالأسهم ⌨️ (ذى الإكسيل) أو لصق أعمدة. (التاريخ يُكتب بصيغة DD/MM/YYYY)</span>
                         <div style="display:flex; gap: 10px;">
                             <button class="btn btn-outline btn-sm" onclick="addFinanceRow('sales')"><i class="fas fa-plus"></i> إضافة سطر</button>
                             <button class="btn btn-gradient btn-sm" onclick="saveAllFinances('sales')"><i class="fas fa-save"></i> حفظ الحركات المدخلة</button>
@@ -627,7 +652,7 @@
 
                 <div id="viewPurchasesLedger" style="display: none;">
                     <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center; background: #fef2f2; padding: 10px 15px; border-radius: 12px; border: 1px dashed #fecaca;">
-                        <span style="color:#b91c1c; font-weight:800; font-size:13px;"><i class="fas fa-info-circle"></i> يمكنك تحديد أي حقل ولصق عمود كامل من إكسل. (التاريخ يقبل النسخ المباشر ويُكتب بصيغة DD/MM/YYYY)</span>
+                        <span style="color:#b91c1c; font-weight:800; font-size:13px;"><i class="fas fa-info-circle"></i> يمكنك التنقل بالأسهم ⌨️ (ذى الإكسيل) أو لصق أعمدة. (التاريخ يُكتب بصيغة DD/MM/YYYY)</span>
                         <div style="display:flex; gap: 10px;">
                             <button class="btn btn-outline btn-sm" onclick="addFinanceRow('purc')"><i class="fas fa-plus"></i> إضافة سطر</button>
                             <button class="btn btn-danger btn-sm" onclick="saveAllFinances('purc')"><i class="fas fa-save"></i> حفظ الحركات المدخلة</button>
@@ -722,13 +747,66 @@
         let activeFinTab = 'SALES';
         let currentOrderView = 'ACTIVE'; // ACTIVE or CLOSED
 
-        document.addEventListener('keydown', (e) => { 
+        // Keyboard Navigation (Excel Like)
+        document.addEventListener('keydown', function(e) {
             if(e.key==="Escape"){ 
                 closeModal('createModal'); 
                 closeModal('detailsModal'); 
                 closeModal('productsModal');
                 closeModal('financeModal');
                 closeModal('opBalModal');
+                closeModal('partnerDetailsModal');
+                return;
+            }
+
+            // Excel Navigation Handler
+            if(e.target.matches('.finance-input-body .cell-input')) {
+                const input = e.target;
+                const tr = input.closest('tr');
+                const tbody = input.closest('tbody');
+                if(!tr || !tbody) return;
+
+                const inputsInRow = Array.from(tr.querySelectorAll('.cell-input:not([readonly])'));
+                const inputIndex = inputsInRow.indexOf(input);
+                if(inputIndex === -1) return;
+
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                const rowIndex = rows.indexOf(tr);
+
+                let isSelect = input.tagName.toLowerCase() === 'select';
+                let atStart = isSelect || input.selectionStart === 0;
+                let atEnd = isSelect || input.selectionEnd === input.value.length;
+
+                if(e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if(rowIndex > 0) rows[rowIndex - 1].querySelectorAll('.cell-input:not([readonly])')[inputIndex]?.focus();
+                } else if(e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if(rowIndex < rows.length - 1) rows[rowIndex + 1].querySelectorAll('.cell-input:not([readonly])')[inputIndex]?.focus();
+                } else if(e.key === 'ArrowRight' && atStart) {
+                    // Right arrow visually (goes to previous DOM element in RTL)
+                    e.preventDefault();
+                    if(inputIndex > 0) inputsInRow[inputIndex - 1]?.focus();
+                } else if(e.key === 'ArrowLeft' && atEnd) {
+                    // Left arrow visually (goes to next DOM element in RTL)
+                    e.preventDefault();
+                    if(inputIndex < inputsInRow.length - 1) inputsInRow[inputIndex + 1]?.focus();
+                } else if(e.key === 'Enter') {
+                    e.preventDefault();
+                    if(inputIndex < inputsInRow.length - 1) {
+                        inputsInRow[inputIndex + 1]?.focus();
+                    } else if(rowIndex < rows.length - 1) {
+                        rows[rowIndex + 1].querySelectorAll('.cell-input:not([readonly])')[0]?.focus();
+                    } else {
+                        // أضف سطر جديد تلقائياً لو كنا في آخر خليه
+                        let source = tbody.id === 'salesInputBody' ? 'sales' : 'purc';
+                        window.addFinanceRow(source);
+                        setTimeout(() => {
+                            const newRows = tbody.querySelectorAll('tr');
+                            newRows[newRows.length - 1].querySelectorAll('.cell-input:not([readonly])')[0]?.focus();
+                        }, 50);
+                    }
+                }
             }
         });
 
@@ -1578,6 +1656,100 @@
             window.triggerFinSearch();
         }
 
+        window.openPartnerDetails = function(partnerKey) {
+            let termName = ""; let type = "CLIENT"; let opBal = 0;
+            if(openingBalances[partnerKey]) { 
+                termName = openingBalances[partnerKey].name; type = openingBalances[partnerKey].type; opBal = parseFloat(openingBalances[partnerKey].amount) || 0; 
+            } else { 
+                let f = finances.find(x => cleanKey(x.client) === partnerKey); 
+                if(f) { termName = f.client; type = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type) ? 'SUPPLIER' : 'CLIENT'; } 
+            }
+            if(!termName) return;
+
+            let isClient = type === 'CLIENT';
+            document.getElementById('pmName').innerHTML = isClient ? `<i class="fas fa-user-circle" style="color:#3b82f6;"></i> ${termName}` : `<i class="fas fa-truck-loading" style="color:#ef4444;"></i> ${termName}`;
+            document.getElementById('pmBadge').innerHTML = isClient ? `<span class="pc-badge client">عميل</span>` : `<span class="pc-badge supplier">مورد</span>`;
+            document.getElementById('pmExportBtn').setAttribute('onclick', `exportPartnerStatement('${partnerKey}')`);
+
+            let partnerTxs = finances.filter(f => cleanKey(f.client) === partnerKey);
+            const monthlyStats = {};
+            
+            // إضافة رصيد الإغلاق كسطر مستقل إذا وجد
+            if(opBal !== 0) {
+                monthlyStats['2025-00'] = { label: 'رصيد افتتاحي (2025)', sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0, opBal: opBal };
+            }
+
+            partnerTxs.forEach(f => {
+                if(!f.date || !f.date.includes('-')) return;
+                let parts = f.date.split('-');
+                if(parts.length !== 3) return;
+                let monthKey = `${parts[0]}-${parts[1]}`;
+                
+                if(!monthlyStats[monthKey]) {
+                    monthlyStats[monthKey] = { label: '', sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0, opBal:0 };
+                }
+                
+                let p = monthlyStats[monthKey];
+                if(f.type === 'SALE' || f.type === 'INVOICE') p.sales += f.total;
+                if(f.type === 'SALE_RET' || f.type === 'RETURN') p.returns += f.total;
+                if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') p.discounts += f.total;
+                if(f.type === 'PAY_IN' || f.type === 'PAYMENT') p.payIn += f.total;
+                if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') p.purchases += f.total;
+                if(f.type === 'PAY_OUT') p.payOut += f.total;
+            });
+
+            let sortedKeys = Object.keys(monthlyStats).sort((a,b) => b.localeCompare(a)); // الأحدث أولاً
+            const monthNames = ["","يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+            
+            const thead = document.getElementById('pmTableHead');
+            const tbody = document.getElementById('pmTableBody');
+            
+            if(isClient) {
+                thead.innerHTML = `<tr><th>الشهر</th><th>مبيعات</th><th>مرتجعات</th><th>خصومات</th><th>دفعات مستلمة</th><th>صافي الحركة</th></tr>`;
+            } else {
+                thead.innerHTML = `<tr><th>الشهر</th><th>مشتريات</th><th>دفعات صادرة</th><th>صافي الحركة</th></tr>`;
+            }
+            
+            tbody.innerHTML = '';
+            
+            if(sortedKeys.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${isClient ? 6 : 4}">لا توجد حركات مسجلة</td></tr>`;
+            } else {
+                sortedKeys.forEach(key => {
+                    let st = monthlyStats[key];
+                    let displayMonth = st.label;
+                    if(!displayMonth) {
+                        let [y, m] = key.split('-');
+                        displayMonth = `${monthNames[parseInt(m)]} ${y}`;
+                    }
+
+                    if(isClient) {
+                        let net = st.opBal + st.sales - st.returns - st.discounts - st.payIn;
+                        let netColor = net > 0 ? '#ef4444' : (net < 0 ? '#10b981' : '#475569');
+                        tbody.innerHTML += `<tr>
+                            <td style="font-weight:bold; background:#f8fafc;">${displayMonth}</td>
+                            <td class="accounting-num">${st.opBal > 0 ? window.formatMoney(st.opBal) : window.formatMoney(st.sales)}</td>
+                            <td class="accounting-num" style="color:#ef4444">${window.formatMoney(st.returns)}</td>
+                            <td class="accounting-num" style="color:#d97706">${window.formatMoney(st.discounts)}</td>
+                            <td class="accounting-num" style="color:#3b82f6">${window.formatMoney(st.payIn)}</td>
+                            <td class="accounting-num" style="font-weight:bold; color:${netColor}; background:#f0f9ff">${window.formatMoney(net)}</td>
+                        </tr>`;
+                    } else {
+                        let net = st.opBal + st.purchases - st.payOut;
+                        let netColor = net > 0 ? '#ef4444' : (net < 0 ? '#10b981' : '#475569');
+                        tbody.innerHTML += `<tr>
+                            <td style="font-weight:bold; background:#f8fafc;">${displayMonth}</td>
+                            <td class="accounting-num">${st.opBal > 0 ? window.formatMoney(st.opBal) : window.formatMoney(st.purchases)}</td>
+                            <td class="accounting-num" style="color:#3b82f6">${window.formatMoney(st.payOut)}</td>
+                            <td class="accounting-num" style="font-weight:bold; color:${netColor}; background:#f0f9ff">${window.formatMoney(net)}</td>
+                        </tr>`;
+                    }
+                });
+            }
+
+            document.getElementById('partnerDetailsModal').style.display = 'block';
+        }
+
         window.renderPartnersList = function() {
             let partners = {};
             Object.values(openingBalances).forEach(b => { partners[cleanKey(b.name)] = { name: b.name, type: b.type, opBal: parseFloat(b.amount)||0, sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0 }; });
@@ -1601,7 +1773,9 @@
                 let badge = isClient ? `<span class="pc-badge client"><i class="fas fa-user"></i> عميل</span>` : `<span class="pc-badge supplier"><i class="fas fa-truck-loading"></i> مورد</span>`;
                 let cKey = cleanKey(p.name);
                 let statsHtml = isClient ? `<div class="pc-grid"><div class="pc-item"><label><i class="fas fa-arrow-down" style="color:#10b981"></i> مبيعات</label><span>${window.formatMoney(p.sales)}</span></div><div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مرتجعات</label><span style="color:#ef4444">${window.formatMoney(p.returns)}</span></div><div class="pc-item"><label><i class="fas fa-percent" style="color:#d97706"></i> خصومات</label><span style="color:#d97706">${window.formatMoney(p.discounts)}</span></div><div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> دفعات مستلمة</label><span>${window.formatMoney(p.payIn)}</span></div></div>` : `<div class="pc-grid"><div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مشتريات</label><span>${window.formatMoney(p.purchases)}</span></div><div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> مدفوعات صادرة</label><span>${window.formatMoney(p.payOut)}</span></div></div>`;
-                container.innerHTML += `<div class="partner-card ${isClient ? '' : 'supplier'}" onclick="exportPartnerStatement('${cKey}')"><div class="download-overlay"><i class="fas fa-file-excel" style="font-size:32px; margin-bottom:10px;"></i> تحميل كشف الحساب</div><div><div class="pc-header"><h3 class="pc-name">${p.name}</h3>${badge}</div>${statsHtml}</div><div><div style="font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 5px;">Closing Balance 2025: <span style="color:#0ea5e9; font-family:'Poppins'">${window.formatMoney(p.opBal)}</span></div><div class="pc-total"><label>صافي الرصيد الحالي</label><span>${window.formatMoney(netBalance)}</span></div></div></div>`;
+                
+                // تم تعديل الحدث هنا ليفتح النافذة الجديدة بدلاً من تحميل الإكسيل مباشرة
+                container.innerHTML += `<div class="partner-card ${isClient ? '' : 'supplier'}" onclick="openPartnerDetails('${cKey}')"><div class="download-overlay"><i class="fas fa-folder-open" style="font-size:32px; margin-bottom:10px;"></i> التفاصيل الشهرية</div><div><div class="pc-header"><h3 class="pc-name">${p.name}</h3>${badge}</div>${statsHtml}</div><div><div style="font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 5px;">Closing Balance 2025: <span style="color:#0ea5e9; font-family:'Poppins'">${window.formatMoney(p.opBal)}</span></div><div class="pc-total"><label>صافي الرصيد الحالي</label><span>${window.formatMoney(netBalance)}</span></div></div></div>`;
             });
             if (container.innerHTML === '') container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #9ca3af; padding: 40px; background: #f8fafc; border-radius: 15px; border: 2px dashed #e2e8f0;"><i class="fas fa-folder-open" style="font-size: 40px; margin-bottom: 15px; color:#cbd5e1;"></i><br>لا توجد بطاقات مطابقة للبحث أو لا يوجد بيانات مسجلة بعد.</div>';
         }
