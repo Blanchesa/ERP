@@ -77,6 +77,12 @@
         .btn-tab { padding: 12px 20px; border-radius: 12px 12px 0 0; background: #f1f5f9; color: #475569; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; box-shadow: none; font-size: 14px; }
         .btn-tab.active { background: #3b82f6; color: white; }
 
+        /* ستايل أزرار الفلترة العلوية للعملاء والموردين */
+        .filter-pill { padding: 10px 25px; border-radius: 50px; background: white; border: 2px solid #e2e8f0; color: #64748b; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .filter-pill:hover { background: #f8fafc; transform: translateY(-2px); }
+        .filter-pill.active.client-pill { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2); }
+        .filter-pill.active.supplier-pill { background: #fef2f2; color: #dc2626; border-color: #fecaca; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2); }
+
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
 
         .order-card { border-radius: 20px; padding: 25px; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -110,7 +116,6 @@
         .modal-header { padding: 25px 35px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; background: #ffffff; border-radius: 25px 25px 0 0; }
         .modal-body { padding: 35px; background: #f8fafc; border-radius: 0 0 25px 25px; }
 
-        /* تعديلات جداول الإدخال لتبدو عصرية */
         .sheet-table-container { border: 1px solid #e2e8f0; border-radius: 12px; background: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); overflow: hidden;}
         .sheet-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: 'Poppins', 'Cairo', sans-serif; table-layout: fixed; }
         .sheet-table thead { position: sticky; top: 0; z-index: 10; background: #f1f5f9; }
@@ -142,7 +147,6 @@
         .st-ok { background: white; color: #10b981; border: 1px solid #a7f3d0; }
         .st-closed { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 
-        /* تصميم كروت المبيعات الشهرية العصري */
         .month-cards-wrapper { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 10px 0; }
         .sales-card {
             background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
@@ -259,17 +263,23 @@
         <div class="glass-header" style="margin-bottom: 25px; border-radius: 20px; padding: 15px 30px;">
             <div style="display:flex; align-items:center; gap:20px;">
                 <button class="btn btn-outline" style="border-radius: 50%; padding: 12px 15px;" onclick="togglePartnersView()"><i class="fas fa-arrow-right"></i></button>
-                <h2 style="margin:0; color:#1e293b; display:flex; align-items:center; gap:10px;"><i class="fas fa-users" style="color:#0ea5e9"></i> دليل العملاء والموردين</h2>
+                <h2 style="margin:0; color:#1e293b; display:flex; align-items:center; gap:10px;"><i class="fas fa-users" style="color:#0ea5e9"></i> الدليل المالي</h2>
             </div>
             <div style="display:flex; gap:15px; align-items:center;">
-                <div style="position: relative; width: 350px;">
+                <div style="position: relative; width: 300px;">
                     <i class="fas fa-search" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #0ea5e9;"></i>
-                    <input type="text" id="partnersSearchInput" class="search-input-style" placeholder="بحث في البطاقات..." onkeyup="renderPartnersList()" style="padding: 12px 40px 12px 15px;">
+                    <input type="text" id="partnersSearchInput" class="search-input-style" placeholder="بحث بالاسم..." onkeyup="renderPartnersList()" style="padding: 12px 40px 12px 15px;">
                 </div>
-                <button class="btn btn-blue" onclick="openFinanceModal()"><i class="fas fa-calculator"></i> الإدارة المالية السريعة</button>
-                <button class="btn btn-blue-gradient" onclick="openOpBalModal()"><i class="fas fa-plus-circle"></i> إضافة رصيد إغلاق</button>
+                <button class="btn btn-blue" onclick="openFinanceModal()"><i class="fas fa-calculator"></i> الإدارة المالية</button>
+                <button class="btn btn-blue-gradient" onclick="openOpBalModal()"><i class="fas fa-plus-circle"></i> رصيد افتتاحي</button>
             </div>
         </div>
+
+        <div style="display:flex; justify-content: center; gap: 15px; margin-bottom: 30px;">
+            <button id="tabFilterClients" class="filter-pill active client-pill" onclick="filterPartners('CLIENT')"><i class="fas fa-users"></i> قسم العملاء</button>
+            <button id="tabFilterSuppliers" class="filter-pill supplier-pill" onclick="filterPartners('SUPPLIER')"><i class="fas fa-truck-loading"></i> قسم الموردين</button>
+        </div>
+
         <div class="cards-grid" id="partnersCardsContainer"></div>
     </div>
 
@@ -281,7 +291,7 @@
                     <div id="pmBadge" style="margin-top:5px;"></div>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <button id="pmExportBtn" class="btn btn-excel"><i class="fas fa-file-excel"></i> تحميل كشف الحساب بالكامل</button>
+                    <button id="pmExportBtn" class="btn btn-excel"><i class="fas fa-file-excel"></i> تحميل كشف حساب</button>
                     <button id="pmDeleteBtn" class="btn btn-danger"><i class="fas fa-trash"></i> حذف الحساب</button>
                     <div onclick="closeModal('partnerDetailsModal')" style="cursor:pointer; font-size:28px; color:#9ca3af; margin-right: 15px;">×</div>
                 </div>
@@ -300,7 +310,7 @@
             </div>
             <div class="modal-body" style="display: flex; flex-direction: column; gap: 20px;">
                 <div style="background: #eff6ff; padding: 15px; border-radius: 10px; border: 1px dashed #bfdbfe; font-size: 13px; color: #1d4ed8; font-weight: bold;">
-                    <i class="fas fa-info-circle"></i> يمكنك كتابة الرصيد بالسالب <code>-</code> للموردين أو الدائنين (يعني أن الشركة مدينة لهم بهذا المبلغ). أما الرصيد الموجب فيعني أن العميل مدين للشركة.
+                    <i class="fas fa-info-circle"></i> أدخل الرقم بالموجب واختر طبيعة الرصيد. الرصيد الدائن (Cr) سيظهر بالسالب تلقائياً لأنه يمثل التزاماً على الشركة.
                 </div>
                 <div class="input-group">
                     <label>الاسم (عميل / مورد)</label>
@@ -308,9 +318,16 @@
                 </div>
                 <div class="input-group">
                     <label>النوع</label>
-                    <select id="opBalType">
+                    <select id="opBalType" onchange="document.getElementById('opBalDrCr').value = this.value === 'SUPPLIER' ? 'CR' : 'DR'">
                         <option value="CLIENT">عميل (Client)</option>
                         <option value="SUPPLIER">مورد (Supplier)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>طبيعة الرصيد (مدين / دائن)</label>
+                    <select id="opBalDrCr">
+                        <option value="DR">مدين (Dr) - موجـب</option>
+                        <option value="CR">دائن (Cr) - سـالب</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -472,14 +489,14 @@
                     </div>
                     <div class="sheet-table-container">
                         <table class="sheet-table finance-table">
-                            <colgroup><col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="5%"></colgroup>
+                            <colgroup><col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="6%"></colgroup>
                             <thead><tr><th>التاريخ</th><th>نوع الحركة</th><th>اسم العميل</th><th>الوصف / البيان</th><th>رقم المرجع</th><th>المبلغ الأساسي</th><th>الضريبة</th><th>الإجمالي</th><th>إجراء</th></tr></thead>
                             <tbody id="salesInputBody" class="finance-input-body"></tbody>
                         </table>
                         <div style="background: #cbd5e1; height: 1px;"></div>
                         <div style="max-height: 400px; overflow-y: auto;">
                             <table class="sheet-table finance-table">
-                                <colgroup><col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="5%"></colgroup>
+                                <colgroup><col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="6%"></colgroup>
                                 <tbody id="salesTableBody"></tbody>
                             </table>
                         </div>
@@ -496,14 +513,14 @@
                     </div>
                     <div class="sheet-table-container">
                         <table class="sheet-table finance-table">
-                            <colgroup><col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="5%"></colgroup>
+                            <colgroup><col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="6%"></colgroup>
                             <thead><tr><th>التاريخ</th><th>نوع الحركة</th><th>اسم المورد</th><th>الوصف / البيان</th><th>رقم المرجع</th><th>المبلغ الأساسي</th><th>الضريبة</th><th>الإجمالي</th><th>إجراء</th></tr></thead>
                             <tbody id="purcInputBody" class="finance-input-body"></tbody>
                         </table>
                         <div style="background: #cbd5e1; height: 1px;"></div>
                         <div style="max-height: 400px; overflow-y: auto;">
                             <table class="sheet-table finance-table">
-                                <colgroup><col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="5%"></colgroup>
+                                <colgroup><col width="10%"><col width="13%"><col width="16%"><col width="16%"><col width="12%"><col width="10%"><col width="8%"><col width="10%"><col width="6%"></colgroup>
                                 <tbody id="purchasesTableBody"></tbody>
                             </table>
                         </div>
@@ -529,7 +546,7 @@
                     </div>
 
                     <div style="background: white; padding: 10px 15px; border-radius: 10px; border: 1px dashed #e2e8f0; margin-bottom: 15px; color: #475569; font-weight: 600; font-size: 13px;">
-                        <i class="fas fa-info-circle" style="color:#be185d"></i> ضريبة المبيعات تظهر بالسالب بين أقواس `( )` لأنها "التزام" مستحق الدفع. بينما ضريبة المشتريات تظهر بالموجب لأنها رصيد مسترد يخفض الالتزام.
+                        <i class="fas fa-info-circle" style="color:#be185d"></i> ضريبة المبيعات تظهر بالسالب بين أقواس `( )` لأنها "التزام" مستحق الدفع للهيئة. بينما ضريبة المشتريات تظهر بالموجب لأنها رصيد مسترد يخفض الالتزام.
                     </div>
                     
                     <div class="sheet-table-container" style="max-height: 400px; overflow-y: auto;">
@@ -549,13 +566,13 @@
         import { getDatabase, ref, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { 
-            apiKey: "AIzaSyBB8kMXBgwoPKnsLylktWSWLeM4mX23sJo", 
-            authDomain: "blanche-ksa.firebaseapp.com", databaseURL: "https://blanche-ksa-default-rtdb.europe-west1.firebasedatabase.app", projectId: "blanche-ksa", storageBucket: "blanche-ksa.firebasestorage.app", messagingSenderId: "914541537325", appId: "1:914541537325:web:0cfed5799623b14033b0a4"
+            apiKey: "AIzaSyBB8kMXBgwoPKnsLylktWSWLeM4mX23sJo", authDomain: "blanche-ksa.firebaseapp.com", databaseURL: "https://blanche-ksa-default-rtdb.europe-west1.firebasedatabase.app", projectId: "blanche-ksa", storageBucket: "blanche-ksa.firebasestorage.app", messagingSenderId: "914541537325", appId: "1:914541537325:web:0cfed5799623b14033b0a4"
         };
         const app = initializeApp(firebaseConfig); const db = getDatabase(app);
         const DB_PATH = 'beauty_oms/orders'; const PROD_PATH = 'beauty_oms/products'; const FIN_PATH = 'beauty_oms/finances'; const BAL_PATH = 'beauty_oms/opening_balances';
 
         let orders = []; let globalProducts = {}; let finances = []; let openingBalances = {}; let currentId = null; let activeFinTab = 'SALES'; let currentOrderView = 'ACTIVE';
+        let activePartnerTab = 'CLIENT'; // المتغير الجديد لفصل العملاء والموردين
 
         document.addEventListener('keydown', function(e) {
             if(e.key==="Escape"){ closeModal('createModal'); closeModal('detailsModal'); closeModal('productsModal'); closeModal('financeModal'); closeModal('opBalModal'); closeModal('partnerDetailsModal'); return; }
@@ -580,8 +597,10 @@
         window.switchOrderView = function(view) { currentOrderView = view; if(view === 'ACTIVE') { document.getElementById('btnViewActive').style.background = '#eff6ff'; document.getElementById('btnViewClosed').style.background = 'white'; } else { document.getElementById('btnViewClosed').style.background = '#f5f3ff'; document.getElementById('btnViewActive').style.background = 'white'; } window.renderList(); }
         function updateStats() { let active = orders.filter(o => !o.files || !o.files.stamped || o.files.stamped.length === 0); let closed = orders.filter(o => o.files && o.files.stamped && o.files.stamped.length > 0); document.getElementById('statTotal').innerText = active.length; document.getElementById('statPending').innerText = active.filter(o => o.status === 'NEW').length; document.getElementById('statDone').innerText = active.filter(o => o.status !== 'NEW').length; document.getElementById('statClosed').innerText = closed.length; }
         window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
+        
+        // الأرقام السالبة تظهر بين قوسين دلالة على الـ Credit
         window.formatMoney = function(a) { let num = parseFloat(a) || 0; if (num === 0) return '0.00'; let formatted = Math.abs(num).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); return num < 0 ? `(${formatted})` : formatted; }
-        window.formatLiveMoney = function(input) { let cursor = input.selectionStart; let val = input.value; let isNegative = val.startsWith('-'); let cleanVal = val.replace(/[^0-9.]/g, ''); let parts = cleanVal.split('.'); if(parts.length > 2) parts[1] = parts.slice(1).join(''); if(parts[0].length > 0) { parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","); } let newVal = parts.join('.'); if(isNegative && newVal) newVal = '-' + newVal; else if (isNegative && !newVal) newVal = '-'; input.value = newVal; }
+        window.formatLiveMoney = function(input) { let cursor = input.selectionStart; let oldLength = input.value.length; let cleanVal = input.value.replace(/[^0-9.]/g, ''); let parts = cleanVal.split('.'); if(parts.length > 2) parts[1] = parts.slice(1).join(''); if(parts[0].length > 0) { parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","); } let newVal = parts.join('.'); input.value = newVal; let newLength = newVal.length; try { input.setSelectionRange(cursor + (newLength - oldLength), cursor + (newLength - oldLength)); } catch(e){} }
         window.parseDisplayDateToISO = function(val) { if(!val) return ''; let parts = val.split('/'); if(parts.length === 3) { let d = parts[0].padStart(2, '0'); let m = parts[1].padStart(2, '0'); let y = parts[2].length === 2 ? '20' + parts[2] : parts[2]; return `${y}-${m}-${d}`; } return val; }
         window.parseISOToDisplayDate = function(val) { if(!val || !val.includes('-')) return val; let parts = val.split('-'); if(parts.length === 3) { return `${parts[2]}/${parts[1]}/${parts[0]}`; } return val; }
         window.formatDateInput = function(input) { let val = input.value; if (val.match(/[/.-]/)) { let parts = val.split(/[/.-]/); if (parts.length === 3 && parts[2] !== "") { let d = parts[0].padStart(2, '0'); let m = parts[1].padStart(2, '0'); let y = parts[2]; if (y.length > 4) y = y.slice(0, 4); val = `${d}/${m}/${y}`; } } else { val = val.replace(/[^0-9]/g, ''); if (val.length > 8) val = val.slice(0, 8); if (val.length >= 5) { val = `${val.slice(0, 2)}/${val.slice(2, 4)}/${val.slice(4)}`; } else if (val.length >= 3) { val = `${val.slice(0, 2)}/${val.slice(2)}`; } } input.value = val; }
@@ -676,19 +695,15 @@
             </tr>`;
         }
 
-        window.addFinanceRow = function(source) {
-            const tbody = document.getElementById(source === 'sales' ? 'salesInputBody' : 'purcInputBody');
-            const html = source === 'sales' ? window.getSalesInputRowHtml() : window.getPurcInputRowHtml();
-            tbody.insertAdjacentHTML('beforeend', html); window.setupFinancePasteListeners();
-        }
+        window.addFinanceRow = function(source) { const tbody = document.getElementById(source === 'sales' ? 'salesInputBody' : 'purcInputBody'); const html = source === 'sales' ? window.getSalesInputRowHtml() : window.getPurcInputRowHtml(); tbody.insertAdjacentHTML('beforeend', html); window.setupFinancePasteListeners(); }
 
         window.calcFinanceRow = function(el, source) {
             let row = el.closest('tr'); if(!row) return; let type = row.querySelector('[name="f_type"]').value;
-            let amountRaw = row.querySelector('[name="f_amount"]').value.replace(/,/g, ''); let isNegative = amountRaw.startsWith('-'); let amount = Math.abs(parseFloat(amountRaw) || 0);
+            let amountRaw = row.querySelector('[name="f_amount"]').value.replace(/,/g, ''); let amount = Math.abs(parseFloat(amountRaw) || 0);
             let vatRate = 0; if(source === 'sales' && ['SALE', 'SALE_RET', 'SALE_DISC'].includes(type)) vatRate = 0.15; if(source === 'purc' && type === 'PURC_VAT') vatRate = 0.15;
             let vat = amount * vatRate; let total = amount + vat;
-            row.querySelector('[name="f_vat"]').value = isNegative ? `-${window.formatMoney(vat)}` : window.formatMoney(vat);
-            row.querySelector('[name="f_total"]').value = isNegative ? `-${window.formatMoney(total)}` : window.formatMoney(total);
+            row.querySelector('[name="f_vat"]').value = window.formatMoney(vat);
+            row.querySelector('[name="f_total"]').value = window.formatMoney(total);
             let refInput = row.querySelector('[name="f_ref"]');
             if(source === 'sales') refInput.placeholder = (type === 'PAY_IN') ? 'سند/بنك...' : 'INV- / RET- ...';
             if(source === 'purc') refInput.placeholder = (type === 'PAY_OUT') ? 'سند/بنك...' : 'رقم الفاتورة...';
@@ -732,7 +747,6 @@
 
         window.deleteFinanceEntry = function(id) { if(confirm("هل أنت متأكد من حذف هذا القيد؟")) remove(ref(db, FIN_PATH + '/' + id)); }
 
-        // دالة التعديل (تسحب القيد للشبكة وتحذفه من الداتابيز لتعديله)
         window.editFinanceEntryGrid = function(id) {
             let f = finances.find(x => x.id === id); if(!f) return;
             let isSales = ['SALE', 'SALE_RET', 'SALE_DISC', 'PAY_IN'].includes(f.type); let source = isSales ? 'sales' : 'purc';
@@ -740,7 +754,7 @@
                 remove(ref(db, FIN_PATH + '/' + id)).then(() => {
                     const tbody = document.getElementById(source === 'sales' ? 'salesInputBody' : 'purcInputBody');
                     const html = source === 'sales' ? window.getSalesInputRowHtml() : window.getPurcInputRowHtml();
-                    tbody.insertAdjacentHTML('beforeend', html); let newRow = tbody.lastElementChild;
+                    tbody.insertAdjacentHTML('afterbegin', html); let newRow = tbody.firstElementChild;
                     
                     newRow.querySelector('[name="f_date"]').value = window.parseISOToDisplayDate(f.date);
                     newRow.querySelector('[name="f_type"]').value = f.type;
@@ -757,19 +771,19 @@
         }
 
         window.saveOpeningBalance = function() {
-            let name = document.getElementById('opBalName').value.trim(); let type = document.getElementById('opBalType').value;
-            let amountRaw = document.getElementById('opBalAmount').value.replace(/,/g, ''); let amount = parseFloat(amountRaw) || 0;
+            let name = document.getElementById('opBalName').value.trim(); 
+            let type = document.getElementById('opBalType').value;
+            let drCr = document.getElementById('opBalDrCr').value;
+            let amountRaw = document.getElementById('opBalAmount').value.replace(/,/g, ''); 
+            let amount = Math.abs(parseFloat(amountRaw) || 0);
             if(!name) return alert("يرجى كتابة الاسم");
-            set(ref(db, BAL_PATH + '/' + cleanKey(name)), { name: name, type: type, amount: amount }).then(() => { closeModal('opBalModal'); alert('تم الحفظ!'); });
+            set(ref(db, BAL_PATH + '/' + cleanKey(name)), { name: name, type: type, amount: amount, drCr: drCr }).then(() => { closeModal('opBalModal'); alert('تم الحفظ!'); });
         }
 
         function filterFinancesArray() { const term = document.getElementById('finSearchInput').value.toLowerCase(); if (!term) return finances; return finances.filter(f => (f.client && f.client.toLowerCase().includes(term)) || (f.ref && f.ref.toLowerCase().includes(term)) || (f.desc && f.desc.toLowerCase().includes(term))); }
         
         window.triggerFinSearch = function() { 
-            const filtered = filterFinancesArray().sort((a,b) => {
-                if(a.date !== b.date) return b.date.localeCompare(a.date);
-                return b.id - a.id;
-            }); 
+            const filtered = filterFinancesArray().sort((a,b) => { if(a.date !== b.date) return b.date.localeCompare(a.date); return b.id - a.id; }); 
             window.renderSalesList(filtered); window.renderPurchasesList(filtered); window.renderVatList(filtered); 
         }
 
@@ -800,36 +814,27 @@
 
         window.renderVatList = function(filteredData) {
             const tbody = document.getElementById('vatTableBody'); tbody.innerHTML = '';
-            const sDate = document.getElementById('vatStartDate').value;
-            const eDate = document.getElementById('vatEndDate').value;
-            
+            const sDate = document.getElementById('vatStartDate').value; const eDate = document.getElementById('vatEndDate').value;
             let netVat = 0;
-
             filteredData.filter(f => f.vat > 0).forEach(f => {
-                if(sDate && f.date < sDate) return;
-                if(eDate && f.date > eDate) return;
-
+                if(sDate && f.date < sDate) return; if(eDate && f.date > eDate) return;
                 let typeStr = ''; let vatSign = 1;
                 if(f.type === 'SALE' || f.type === 'INVOICE') { typeStr = 'فاتورة مبيعات'; vatSign = -1; }
                 else if(f.type === 'SALE_RET' || f.type === 'RETURN') { typeStr = 'مرتجع مبيعات'; vatSign = 1; }
                 else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { typeStr = 'إشعار خصم'; vatSign = 1; }
                 else if(f.type === 'PURC_VAT') { typeStr = 'فاتورة مشتريات'; vatSign = 1; }
                 
-                let actualVat = f.vat * vatSign;
-                netVat += actualVat;
-
+                let actualVat = f.vat * vatSign; netVat += actualVat;
                 let vColorStyle = vatSign === -1 ? 'color:#ef4444;' : 'color:#10b981;';
                 tbody.innerHTML += `<tr><td style="font-family:'Poppins', monospace;">${window.parseISOToDisplayDate(f.date)}</td><td style="font-family:monospace; font-weight:bold; color:#be185d">${f.ref}</td><td style="font-weight:bold">${f.client}</td><td style="color:#64748b; font-size:13px">${f.desc || '-'}</td><td style="color:#475569; font-size:13px">${typeStr}</td><td class="accounting-num">${window.formatMoney(f.amount * vatSign)}</td><td class="accounting-num" style="background:#fce7f3; font-weight:800; ${vColorStyle}">${window.formatMoney(actualVat)}</td></tr>`;
             });
-
-            // تحديث إجمالي الضريبة
             let vatTotalEl = document.getElementById('vatTotalAmount');
-            if(netVat < 0) { vatTotalEl.innerHTML = `<span style="color:#ef4444;">مستحق دفع: ${window.formatMoney(Math.abs(netVat))}</span>`; } 
+            if(netVat < 0) { vatTotalEl.innerHTML = `<span style="color:#ef4444;">مستحق الدفع: ${window.formatMoney(Math.abs(netVat))}</span>`; } 
             else { vatTotalEl.innerHTML = `<span style="color:#10b981;">رصيد مسترد: ${window.formatMoney(netVat)}</span>`; }
         }
 
         window.togglePartnersView = function() { const dash = document.getElementById('mainDashboardView'); const partners = document.getElementById('partnersView'); if (partners.style.display === 'none') { dash.style.display = 'none'; partners.style.display = 'block'; window.renderPartnersList(); } else { partners.style.display = 'none'; dash.style.display = 'block'; } }
-        window.openOpBalModal = function() { document.getElementById('opBalModal').style.display = 'block'; document.getElementById('opBalName').value = ''; document.getElementById('opBalAmount').value = ''; }
+        window.openOpBalModal = function() { document.getElementById('opBalModal').style.display = 'block'; document.getElementById('opBalName').value = ''; document.getElementById('opBalAmount').value = ''; document.getElementById('opBalType').value = 'CLIENT'; document.getElementById('opBalDrCr').value = 'DR'; }
         
         window.switchFinTab = function(tab) {
             activeFinTab = tab;
@@ -847,20 +852,41 @@
             window.switchFinTab('SALES'); window.triggerFinSearch();
         }
 
-        // دالة الحذف الكامل للحساب
+        // دالة الفلترة للعملاء والموردين
+        window.filterPartners = function(type) {
+            activePartnerTab = type;
+            const btnClient = document.getElementById('tabFilterClients');
+            const btnSupplier = document.getElementById('tabFilterSuppliers');
+            
+            if (type === 'CLIENT') {
+                btnClient.classList.add('active');
+                btnSupplier.classList.remove('active');
+            } else {
+                btnSupplier.classList.add('active');
+                btnClient.classList.remove('active');
+            }
+            window.renderPartnersList();
+        }
+
         window.deletePartner = function(partnerKey) {
-            if(!confirm("⚠️ تنبيه خطير: هل أنت متأكد من حذف هذا الحساب (العميل/المورد) نهائياً مع كافة قيوده المالية؟ لا يمكن التراجع عن هذا الإجراء!")) return;
+            if(!confirm("⚠️ تنبيه: هل أنت متأكد من حذف هذا الحساب نهائياً مع كافة قيوده المالية؟ لا يمكن التراجع عن هذا الإجراء!")) return;
             remove(ref(db, BAL_PATH + '/' + partnerKey));
             let updates = {};
             finances.forEach(f => { if(cleanKey(f.client) === partnerKey) { updates[f.id] = null; } });
             if(Object.keys(updates).length > 0) { update(ref(db, FIN_PATH), updates); }
-            closeModal('partnerDetailsModal'); window.renderPartnersList(); alert("تم حذف الحساب بالكامل بنجاح.");
+            closeModal('partnerDetailsModal'); window.renderPartnersList(); alert("تم حذف الحساب بنجاح.");
         }
 
         window.openPartnerDetails = function(partnerKey) {
-            let termName = ""; let type = "CLIENT"; let opBal = 0;
-            if(openingBalances[partnerKey]) { termName = openingBalances[partnerKey].name; type = openingBalances[partnerKey].type; opBal = parseFloat(openingBalances[partnerKey].amount) || 0; } 
-            else { let f = finances.find(x => cleanKey(x.client) === partnerKey); if(f) { termName = f.client; type = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type) ? 'SUPPLIER' : 'CLIENT'; } }
+            let termName = ""; let type = "CLIENT"; let opBalAbs = 0; let opBalDrCr = "DR";
+            if(openingBalances[partnerKey]) { 
+                termName = openingBalances[partnerKey].name; type = openingBalances[partnerKey].type; 
+                opBalAbs = Math.abs(parseFloat(openingBalances[partnerKey].amount) || 0);
+                opBalDrCr = openingBalances[partnerKey].drCr || (type === 'SUPPLIER' ? 'CR' : 'DR');
+            } else { 
+                let f = finances.find(x => cleanKey(x.client) === partnerKey); 
+                if(f) { termName = f.client; type = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type) ? 'SUPPLIER' : 'CLIENT'; opBalDrCr = type === 'SUPPLIER' ? 'CR' : 'DR'; } 
+            }
             if(!termName) return;
 
             let isClient = type === 'CLIENT';
@@ -876,9 +902,7 @@
                 if(!f.date || !f.date.includes('-')) return;
                 let parts = f.date.split('-'); if(parts.length !== 3) return;
                 let monthKey = `${parts[0]}-${parts[1]}`;
-                
                 if(!monthlyStats[monthKey]) { monthlyStats[monthKey] = { label: '', sales:0, purchases:0 }; }
-                
                 let p = monthlyStats[monthKey];
                 if(f.type === 'SALE' || f.type === 'INVOICE') p.sales += f.total;
                 if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') p.purchases += f.total;
@@ -897,24 +921,30 @@
                     let displayMonth = `${monthNames[parseInt(m)]} ${y}`;
                     let cardClass = isClient ? '' : 'supplier-sc';
                     let val = isClient ? st.sales : st.purchases;
-                    let labelStr = isClient ? 'إجمالي مبيعات الشهر' : 'إجمالي مشتريات الشهر';
+                    let labelStr = isClient ? 'إجمالي مبيعات الشهر' : 'إجمالي فواتير المشتريات';
                     
                     if(val > 0) {
                         container.innerHTML += `<div class="sales-card ${cardClass}"><div class="month-label"><i class="fas fa-calendar-alt"></i> ${displayMonth}</div><div class="sales-amount">${window.formatMoney(val)}</div><div style="font-size: 13px; color: #64748b; font-weight: 700; margin-top: 10px;">${labelStr}</div></div>`;
                     }
                 });
-                if(container.innerHTML === '') container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; padding: 40px;"><i class="fas fa-folder-open" style="font-size:40px; margin-bottom:15px;"></i><br>لا توجد مبيعات/مشتريات مسجلة لهذا الحساب</div>`;
+                if(container.innerHTML === '') container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; padding: 40px;"><i class="fas fa-folder-open" style="font-size:40px; margin-bottom:15px;"></i><br>لا توجد بيانات مسجلة لهذا الحساب</div>`;
             }
-
             document.getElementById('partnerDetailsModal').style.display = 'block';
         }
 
         window.renderPartnersList = function() {
             let partners = {};
-            Object.values(openingBalances).forEach(b => { partners[cleanKey(b.name)] = { name: b.name, type: b.type, opBal: parseFloat(b.amount)||0, sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0 }; });
+            Object.values(openingBalances).forEach(b => { 
+                let absAmt = Math.abs(parseFloat(b.amount)||0);
+                let drCr = b.drCr || (b.type === 'SUPPLIER' ? 'CR' : 'DR');
+                partners[cleanKey(b.name)] = { 
+                    name: b.name, type: b.type, opBalAbs: absAmt, opBalDrCr: drCr,
+                    sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0 
+                }; 
+            });
             finances.forEach(f => {
                 if(!f.client) return; let cKey = cleanKey(f.client);
-                if(!partners[cKey]) { let isSupp = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type); partners[cKey] = { name: f.client, type: isSupp ? 'SUPPLIER' : 'CLIENT', opBal: 0, sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0 }; }
+                if(!partners[cKey]) { let isSupp = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type); partners[cKey] = { name: f.client, type: isSupp ? 'SUPPLIER' : 'CLIENT', opBalAbs: 0, opBalDrCr: isSupp ? 'CR' : 'DR', sales:0, returns:0, discounts:0, payIn:0, purchases:0, payOut:0 }; }
                 let p = partners[cKey];
                 if(f.type === 'SALE' || f.type === 'INVOICE') p.sales += f.total;
                 if(f.type === 'SALE_RET' || f.type === 'RETURN') p.returns += f.total;
@@ -923,41 +953,86 @@
                 if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') p.purchases += f.total;
                 if(f.type === 'PAY_OUT') p.payOut += f.total;
             });
+
             const container = document.getElementById('partnersCardsContainer'); container.innerHTML = '';
             const term = document.getElementById('partnersSearchInput').value.toLowerCase();
+            
             Object.values(partners).forEach(p => {
-                if(term && !p.name.toLowerCase().includes(term) && !p.type.toLowerCase().includes(term)) return;
                 let isClient = p.type === 'CLIENT';
-                let netBalance = isClient ? (p.opBal + p.sales - p.returns - p.discounts - p.payIn) : (p.opBal + p.purchases - p.payOut);
+                
+                // الفلترة حسب قسم العملاء والموردين
+                if(activePartnerTab === 'CLIENT' && !isClient) return;
+                if(activePartnerTab === 'SUPPLIER' && isClient) return;
+
+                if(term && !p.name.toLowerCase().includes(term)) return;
+                
+                let runDr = p.opBalDrCr === 'DR' ? p.opBalAbs : 0;
+                let runCr = p.opBalDrCr === 'CR' ? p.opBalAbs : 0;
+                
+                runDr += p.sales; 
+                runCr += p.returns; 
+                runCr += p.discounts; 
+                runCr += p.payIn; 
+                
+                runCr += p.purchases; 
+                runDr += p.payOut; 
+
+                // حساب صافي الرصيد بناءً على طبيعة الحساب (موجب = Dr، سالب = Cr)
+                let netBalance = runDr - runCr; 
+
                 let badge = isClient ? `<span class="pc-badge client"><i class="fas fa-user"></i> عميل</span>` : `<span class="pc-badge supplier"><i class="fas fa-truck-loading"></i> مورد</span>`;
                 let cKey = cleanKey(p.name);
-                let statsHtml = isClient ? `<div class="pc-grid"><div class="pc-item"><label><i class="fas fa-arrow-down" style="color:#10b981"></i> مبيعات</label><span>${window.formatMoney(p.sales)}</span></div><div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مرتجعات</label><span style="color:#ef4444">${window.formatMoney(p.returns)}</span></div><div class="pc-item"><label><i class="fas fa-percent" style="color:#d97706"></i> خصومات</label><span style="color:#d97706">${window.formatMoney(p.discounts)}</span></div><div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> مستلم</label><span>${window.formatMoney(p.payIn)}</span></div></div>` : `<div class="pc-grid"><div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مشتريات</label><span>${window.formatMoney(p.purchases)}</span></div><div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> مدفوع</label><span>${window.formatMoney(p.payOut)}</span></div></div>`;
-                container.innerHTML += `<div class="partner-card ${isClient ? '' : 'supplier'}" onclick="openPartnerDetails('${cKey}')"><div class="download-overlay"><i class="fas fa-chart-bar" style="font-size:32px; margin-bottom:10px;"></i> التفاصيل الشهرية</div><div><div class="pc-header"><h3 class="pc-name">${p.name}</h3>${badge}</div>${statsHtml}</div><div><div style="font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 5px;">رصيد البداية 2025: <span style="color:#0ea5e9; font-family:'Poppins'">${window.formatMoney(p.opBal)}</span></div><div class="pc-total"><label>صافي الرصيد الحالي</label><span>${window.formatMoney(netBalance)}</span></div></div></div>`;
+                
+                let statsHtml = isClient ? `<div class="pc-grid"><div class="pc-item"><label><i class="fas fa-arrow-down" style="color:#10b981"></i> مبيعات</label><span>${window.formatMoney(p.sales)}</span></div><div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مرتجعات</label><span style="color:#ef4444">${window.formatMoney(p.returns)}</span></div><div class="pc-item"><label><i class="fas fa-percent" style="color:#d97706"></i> خصومات</label><span style="color:#d97706">${window.formatMoney(p.discounts)}</span></div><div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> مستلم</label><span>${window.formatMoney(p.payIn)}</span></div></div>` : `<div class="pc-grid"><div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> فواتير المشتريات</label><span>${window.formatMoney(p.purchases)}</span></div><div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> مدفوع</label><span>${window.formatMoney(p.payOut)}</span></div></div>`;
+                
+                // الرصيد الافتتاحي (يظهر بين قوسين إذا كان دائن)
+                let opBalDisplay = p.opBalDrCr === 'CR' ? `(${window.formatMoney(p.opBalAbs)})` : window.formatMoney(p.opBalAbs);
+                
+                // الرصيد النهائي (يظهر بين قوسين إذا كان دائن/سالب، وإلا موجب)
+                let netBalanceDisplay = netBalance < 0 ? `(${window.formatMoney(Math.abs(netBalance))})` : window.formatMoney(netBalance);
+                
+                container.innerHTML += `<div class="partner-card ${isClient ? '' : 'supplier'}" onclick="openPartnerDetails('${cKey}')"><div class="download-overlay"><i class="fas fa-chart-bar" style="font-size:32px; margin-bottom:10px;"></i> التفاصيل الشهرية</div><div><div class="pc-header"><h3 class="pc-name">${p.name}</h3>${badge}</div>${statsHtml}</div><div><div style="font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 5px;">رصيد البداية 2025: <span style="color:#0ea5e9; font-family:'Poppins'">${opBalDisplay}</span></div><div class="pc-total"><label>صافي الرصيد الحالي</label><span style="${netBalance < 0 ? 'color:#ef4444;' : ''}">${netBalanceDisplay}</span></div></div></div>`;
             });
-            if (container.innerHTML === '') container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #9ca3af; padding: 40px; background: white; border-radius: 15px; border: 2px dashed #e2e8f0;"><i class="fas fa-folder-open" style="font-size: 40px; margin-bottom: 15px; color:#cbd5e1;"></i><br>لا توجد بطاقات مطابقة للبحث أو لا يوجد بيانات مسجلة بعد.</div>';
+            if (container.innerHTML === '') container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #9ca3af; padding: 40px; background: white; border-radius: 15px; border: 2px dashed #e2e8f0;"><i class="fas fa-folder-open" style="font-size: 40px; margin-bottom: 15px; color:#cbd5e1;"></i><br>لا توجد بطاقات مطابقة للبحث أو الفلتر الحالي.</div>';
         }
 
         window.exportPartnerStatement = function(partnerKey) {
-            let termName = ""; let type = "CLIENT"; let opBal = 0;
-            if(openingBalances[partnerKey]) { termName = openingBalances[partnerKey].name; type = openingBalances[partnerKey].type; opBal = parseFloat(openingBalances[partnerKey].amount) || 0; } 
-            else { let f = finances.find(x => cleanKey(x.client) === partnerKey); if(f) { termName = f.client; type = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type) ? 'SUPPLIER' : 'CLIENT'; } }
+            let termName = ""; let type = "CLIENT"; let opBalAbs = 0; let opBalDrCr = "DR";
+            if(openingBalances[partnerKey]) { 
+                termName = openingBalances[partnerKey].name; type = openingBalances[partnerKey].type; 
+                opBalAbs = Math.abs(parseFloat(openingBalances[partnerKey].amount) || 0);
+                opBalDrCr = openingBalances[partnerKey].drCr || (type === 'SUPPLIER' ? 'CR' : 'DR');
+            } 
+            else { let f = finances.find(x => cleanKey(x.client) === partnerKey); if(f) { termName = f.client; type = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type) ? 'SUPPLIER' : 'CLIENT'; opBalDrCr = type === 'SUPPLIER' ? 'CR' : 'DR'; } }
             if(!termName) return;
+
             let partnerTxs = finances.filter(f => cleanKey(f.client) === partnerKey).sort((a,b) => { if (a.date === b.date) return a.id - b.id; return a.date.localeCompare(b.date); });
-            let isClient = type === 'CLIENT';
-            const headSt = "background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px; font-family: 'Poppins', sans-serif; font-size: 14px; text-align:center; vertical-align: middle;"; const cellSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle;"; const descSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:right; vertical-align: middle;"; const numSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle; font-weight: 600; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
+            
+            const headSt = "background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px; font-family: 'Poppins', sans-serif; font-size: 14px; text-align:center; vertical-align: middle;"; const cellSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle;"; const descSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:right; vertical-align: middle;"; const numSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle; font-weight: 600; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';"; const balNumSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle; font-weight: bold; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
+            
             let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap'); * { font-family: 'Poppins', sans-serif !important; }</style></head><body dir="ltr"><table style="border-collapse:collapse; table-layout: fixed;"><colgroup><col style="width: 110px;"><col style="width: 140px;"><col style="width: 350px;"><col style="width: 160px;"><col style="width: 130px;"><col style="width: 130px;"><col style="width: 140px;"></colgroup><tr><th style="${headSt}">Date</th><th style="${headSt}">Reference</th><th style="${headSt}">Description</th><th style="${headSt}">Transaction Type</th><th style="${headSt}">Debit</th><th style="${headSt}">Credit</th><th style="${headSt}">Balance</th></tr><tbody>`;
-            let runBal = opBal; const debColor = "#ef4444"; const credColor = "#10b981"; const balBg = "#f0f9ff"; const balColor = "#0369a1";
-            h += `<tr><td style="${cellSt}">01/01/2025</td><td style="${cellSt}">-</td><td style="${descSt} font-weight:bold; color:#475569;">Opening Balance (2025)</td><td style="${cellSt} color:#475569;">Opening Balance</td><td style="${numSt} color:${debColor};">${isClient && runBal > 0 ? runBal : (!isClient && runBal < 0 ? Math.abs(runBal) : '-')}</td><td style="${numSt} color:${credColor};">${isClient && runBal < 0 ? Math.abs(runBal) : (!isClient && runBal > 0 ? runBal : '-')}</td><td style="${numSt} font-weight:bold; background-color:${balBg}; color:${balColor};">${runBal}</td></tr>`;
+            
+            let runDr = opBalDrCr === 'DR' ? opBalAbs : 0;
+            let runCr = opBalDrCr === 'CR' ? opBalAbs : 0;
+            let runBal = runDr - runCr;
+            
+            h += `<tr><td style="${cellSt}">01/01/2025</td><td style="${cellSt}">-</td><td style="${descSt} font-weight:bold; color:#475569;">Opening Balance (2025)</td><td style="${cellSt} color:#475569;">Opening Balance</td><td style="${numSt} color:#ef4444;">${opBalDrCr === 'DR' && opBalAbs > 0 ? opBalAbs : '-'}</td><td style="${numSt} color:#10b981;">${opBalDrCr === 'CR' && opBalAbs > 0 ? opBalAbs : '-'}</td><td style="${balNumSt} background-color:#f0f9ff; color:${runBal < 0 ? '#ef4444' : '#0369a1'};">${runBal}</td></tr>`;
+            
             let idx = 1;
             partnerTxs.forEach(f => {
-                let amountSign = 1; let isDebit = false; let isCredit = false;
-                if(f.type === 'SALE' || f.type === 'INVOICE') { amountSign = 1; isDebit = true; } else if(f.type === 'SALE_RET' || f.type === 'RETURN') { amountSign = -1; isCredit = true; } else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { amountSign = -1; isCredit = true; } else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { amountSign = -1; isCredit = true; } else if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') { amountSign = 1; isCredit = true; } else if(f.type === 'PAY_OUT') { amountSign = -1; isDebit = true; } 
-                runBal += (f.total * amountSign); let debVal = isDebit ? f.total : 0; let credVal = isCredit ? f.total : 0;
+                let isDebit = false; let isCredit = false;
+                if(f.type === 'SALE' || f.type === 'INVOICE') { isDebit = true; } else if(f.type === 'SALE_RET' || f.type === 'RETURN') { isCredit = true; } else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { isCredit = true; } else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { isCredit = true; } else if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') { isCredit = true; } else if(f.type === 'PAY_OUT') { isDebit = true; } 
+                
+                let debVal = isDebit ? f.total : 0; let credVal = isCredit ? f.total : 0;
+                runDr += debVal; runCr += credVal;
+                runBal = runDr - runCr;
+
                 let typeText = f.type; if(f.type === 'SALE' || f.type === 'INVOICE') typeText = 'Sales Invoice'; else if(f.type === 'SALE_RET' || f.type === 'RETURN') typeText = 'Sales Return'; else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') typeText = 'Discount'; else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') typeText = 'Payment Received'; else if(f.type === 'PURC_VAT') typeText = 'Purchase Invoice (VAT)'; else if(f.type === 'PURC_NO_VAT') typeText = 'Purchase Invoice'; else if(f.type === 'PAY_OUT') typeText = 'Payment Sent';
+                
                 let bg = (idx % 2 === 0) ? "#f8fafc" : "#ffffff"; idx++;
-                h += `<tr style="background-color:${bg}"><td style="${cellSt} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellSt} mso-number-format:'\@'">${f.ref}</td><td style="${descSt}">${f.desc || '-'}</td><td style="${cellSt}">${typeText}</td><td style="${numSt} color:${debColor};">${debVal > 0 ? debVal : '-'}</td><td style="${numSt} color:${credColor};">${credVal > 0 ? credVal : '-'}</td><td style="${numSt} font-weight:bold; background-color:${balBg}; color:${balColor};">${runBal}</td></tr>`;
+                h += `<tr style="background-color:${bg}"><td style="${cellSt} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellSt} mso-number-format:'\@'">${f.ref}</td><td style="${descSt}">${f.desc || '-'}</td><td style="${cellSt}">${typeText}</td><td style="${numSt} color:#ef4444;">${debVal > 0 ? debVal : '-'}</td><td style="${numSt} color:#10b981;">${credVal > 0 ? credVal : '-'}</td><td style="${balNumSt} background-color:#f0f9ff; color:${runBal < 0 ? '#ef4444' : '#0369a1'};">${runBal}</td></tr>`;
             });
-            h += `<tr><td colspan="7" style="border:none; height:15px;"></td></tr><tr><td colspan="6" style="${descSt} font-weight:bold; background-color:#0f172a; color:#ffffff; text-align:right;">Final Net Balance:</td><td style="${numSt} font-weight:bold; background-color:#1e40af; color:#ffffff; font-size:15px;">${runBal}</td></tr></tbody></table></body></html>`;
+            h += `<tr><td colspan="7" style="border:none; height:15px;"></td></tr><tr><td colspan="6" style="${descSt} font-weight:bold; background-color:#0f172a; color:#ffffff; text-align:right;">Final Net Balance:</td><td style="${balNumSt} background-color:#1e40af; color:#ffffff; font-size:15px;">${runBal}</td></tr></tbody></table></body></html>`;
             window.downloadExcel(h, `${termName} SOA ${new Date().toISOString().split('T')[0]}.xls`);
         }
 
@@ -975,8 +1050,7 @@
                 filteredData.filter(f => purcTypes.includes(f.type)).forEach(f => { let sign = (f.type === 'PAY_OUT') ? -1 : 1; h += `<tr><td style="${cellStyle} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle} mso-number-format:'\@'">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td></tr>`; });
                 h += `</tbody></table></body></html>`; window.downloadExcel(h, 'Purchases_Ledger.xls');
             } else if (activeFinTab === 'VAT') {
-                const sDate = document.getElementById('vatStartDate').value;
-                const eDate = document.getElementById('vatEndDate').value;
+                const sDate = document.getElementById('vatStartDate').value; const eDate = document.getElementById('vatEndDate').value;
                 let titleDate = "الكل"; if(sDate || eDate) titleDate = `من ${sDate || '-'} إلى ${eDate || '-'}`;
                 
                 let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل ضريبة القيمة المضافة (${titleDate})</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">رقم المرجع</th><th style="${headerStyle}">الاسم</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">نوع الحركة</th><th style="${headerStyle}">المبلغ الأساسي الخاضع</th><th style="${headerStyle}">قيمة الضريبة (VAT)</th></tr></thead><tbody>`;
@@ -985,7 +1059,7 @@
                     let vatSign = (f.type === 'SALE' || f.type === 'INVOICE') ? -1 : 1; 
                     h += `<tr><td style="${cellStyle} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellStyle} mso-number-format:'\@'">${f.ref}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle}">${f.type}</td><td style="${numStyle}">${f.amount * vatSign}</td><td style="${numStyle}">${f.vat * vatSign}</td></tr>`; 
                 });
-                h += `</tbody></table></body></html>`; window.downloadExcel(h, 'VAT_Ledger.xls');
+                h += `</tbody></table></body></html>`; window.downloadExcel(h, `VAT_Ledger_${new Date().toISOString().split('T')[0]}.xls`);
             }
         }
 
