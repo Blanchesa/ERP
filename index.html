@@ -656,7 +656,61 @@
         window.uplFile = function(inp, t) { processFiles(inp.files, (fs) => { const o = orders.find(x => x.id === currentId); if(!o.files) o.files = {}; if(!o.files[t]) o.files[t] = []; if(t === 'stamped' && o.files[t].length === 0) { o.closedDate = new Date().toISOString(); } o.files[t] = [...o.files[t], ...fs]; update(ref(db, DB_PATH + '/' + o.id), o).then(() => { renderFilesType(o,t); if(t === 'stamped') { updateStats(); window.renderList(); openDetails(o.id); } }); }); }
         window.delFile = function(t, i) { const o = orders.find(x => x.id === currentId); o.files[t].splice(i,1); if(t === 'stamped' && o.files[t].length === 0) { o.closedDate = null; } update(ref(db, DB_PATH + '/' + o.id), o).then(() => { renderFilesType(o,t); if(t === 'stamped') { updateStats(); window.renderList(); openDetails(o.id); } }); }
         window.downloadExcel = function(h, f) { const b = new Blob([h], {type: 'application/vnd.ms-excel'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = f; a.click(); }
-        window.exportToExcel = function() { const o = orders.find(x => x.id === currentId); const t = calculateOrderTotals(o.items); const headerStyle = "background-color: #fce7f3; font-weight: bold; border: 1px solid #000000; padding: 5px;"; const cellStyle = "border: 1px solid #000000; padding: 5px; text-align: center;"; let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><table border="1"><thead><tr><th style="${headerStyle}">الباركود (Code)</th><th style="${headerStyle}">المنتج (Item)</th><th style="${headerStyle}">مطلوب</th><th style="${headerStyle}">متوفر</th><th style="${headerStyle}">السعر</th><th style="${headerStyle}">الإجمالي</th></tr></thead><tbody>`; if(o.items) { o.items.forEach(i => { h += `<tr><td style="${cellStyle} mso-number-format:'\@'">${i.barcode}</td><td style="${cellStyle}">${i.name}</td><td style="${cellStyle}">${i.reqQty}</td><td style="${cellStyle}">${i.availQty}</td><td style="${cellStyle}">${i.price}</td><td style="${cellStyle}">${(i.availQty*i.price).toFixed(2)}</td></tr>`; }); } h += `</tbody></table></body></html>`; window.downloadExcel(h, `${o.poNumber}.xls`); }
+        
+        // --- الدالة المعدّلة لتحميل الإكسيل ---
+        window.exportToExcel = function() {
+            const o = orders.find(x => x.id === currentId);
+            const t = calculateOrderTotals(o.items);
+            const headerStyle = "background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 10px; text-align: center; white-space: nowrap;";
+            const cellStyleBase = "border: 1px solid #cbd5e1; padding: 10px; text-align: center; white-space: nowrap;";
+            const infoLabelStyle = "font-weight: bold; background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 8px; white-space: nowrap;";
+            const infoValueStyle = "border: 1px solid #cbd5e1; padding: 8px; white-space: nowrap; text-align: right;";
+            
+            let creationDate = new Date(o.id).toLocaleDateString('en-GB');
+            let confirmDate = o.completionDate ? new Date(o.completionDate).toLocaleDateString('en-GB') : 'لم يتم التأكيد';
+
+            let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><style> td, th { white-space: nowrap !important; } </style></head><body dir="rtl"><table style="border-collapse:collapse;">`;
+            
+            // المعلومات الأساسية في الأعلى (بدون Merge)
+            h += `<tr><td style="${infoLabelStyle}">اسم العميل</td><td style="${infoValueStyle}">${o.client}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            h += `<tr><td style="${infoLabelStyle}">رقم أمر الشراء (PO)</td><td style="${infoValueStyle} mso-number-format:'\\@'">${o.poNumber}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            h += `<tr><td style="${infoLabelStyle}">موقع التسليم</td><td style="${infoValueStyle}">${o.location || 'غير محدد'}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            h += `<tr><td style="${infoLabelStyle}">تاريخ إنشاء الطلب</td><td style="${infoValueStyle}">${creationDate}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            h += `<tr><td style="${infoLabelStyle}">تاريخ تأكيد المخازن</td><td style="${infoValueStyle}">${confirmDate}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            h += `<tr><td style="${infoLabelStyle}">موعد التسليم</td><td style="${infoValueStyle}">${o.deliveryDate || '-'}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            h += `<tr><td style="${infoLabelStyle}">حالة الطلب</td><td style="${infoValueStyle}">${o.status}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            h += `<tr><td style="${infoLabelStyle}">إجمالي القيمة المعتمدة</td><td style="${infoValueStyle}">${t.delTotal.toFixed(2)}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            
+            h += `<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            
+            // عناوين الأعمدة للمنتجات
+            h += `<tr><th style="${headerStyle}">الباركود</th><th style="${headerStyle}">اسم المنتج</th><th style="${headerStyle}">الكمية المطلوبة</th><th style="${headerStyle}">الكمية المتوفرة</th><th style="${headerStyle}">السعر</th><th style="${headerStyle}">الإجمالي</th><th style="${headerStyle}">الملاحظات</th></tr>`;
+            
+            if(o.items) {
+                o.items.forEach(i => {
+                    let req = parseFloat(i.reqQty) || 0;
+                    let avail = parseFloat(i.availQty) || 0;
+                    let price = parseFloat(i.price) || 0;
+                    let total = avail * price;
+                    let rowColor = "";
+                    
+                    // التلوين: أحمر لو الصنف صفر، أصفر لو الصنف اتعدل (لا يساوي المطلوب ومو صفر)
+                    if (avail === 0) {
+                        rowColor = "background-color: #fca5a5;";
+                    } else if (avail !== req) {
+                        rowColor = "background-color: #fef08a;";
+                    }
+
+                    let currentCellStyle = `${cellStyleBase} ${rowColor}`;
+
+                    h += `<tr><td style="${currentCellStyle} mso-number-format:'\\@'">${i.barcode}</td><td style="${currentCellStyle}">${i.name}</td><td style="${currentCellStyle}">${req}</td><td style="${currentCellStyle}">${avail}</td><td style="${currentCellStyle}">${price.toFixed(2)}</td><td style="${currentCellStyle}">${total.toFixed(2)}</td><td style="${currentCellStyle}">${i.notes || ''}</td></tr>`;
+                });
+            }
+            h += `</table></body></html>`;
+            window.downloadExcel(h, `${o.poNumber}_Confirmed.xls`);
+        }
+        // ---------------------------------------------
+
         window.exportMainListToExcel = function() { let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><table border="1"><thead><tr style="background:#fce7f3"><th>PO</th><th>العميل</th><th>الموقع</th><th>التاريخ</th><th>الحالة</th><th>القيمة المطلوبة (PO)</th><th>القيمة المعتمدة (Inv)</th></tr></thead><tbody>`; orders.forEach(o => { const t = calculateOrderTotals(o.items); h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${o.location||''}</td><td>${o.deliveryDate}</td><td>${o.status}</td><td>${t.reqTotal.toFixed(2)}</td><td>${t.delTotal.toFixed(2)}</td></tr>`; }); h += `</tbody></table></body></html>`; window.downloadExcel(h, 'All_Orders.xls'); }
         window.exportShortagesToExcel = function() { let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><table border="1"><thead><tr style="background:#fee2e2"><th>PO</th><th>العميل</th><th>المنتج</th><th>مطلوب</th><th>متوفر</th></tr></thead><tbody>`; orders.forEach(o => { if(o.items) o.items.forEach(i => { if(i.reqQty > i.availQty) h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${i.name}</td><td>${i.reqQty}</td><td>${i.availQty}</td></tr>`; }); }); h += `</tbody></table></body></html>`; window.downloadExcel(h, 'Shortages.xls'); }
 
