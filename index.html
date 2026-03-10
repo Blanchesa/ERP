@@ -77,7 +77,6 @@
         .btn-tab { padding: 12px 20px; border-radius: 12px 12px 0 0; background: #f1f5f9; color: #475569; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; box-shadow: none; font-size: 14px; }
         .btn-tab.active { background: #3b82f6; color: white; }
 
-        /* ستايل أزرار الفلترة العلوية للعملاء والموردين */
         .filter-pill { padding: 10px 25px; border-radius: 50px; background: white; border: 2px solid #e2e8f0; color: #64748b; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .filter-pill:hover { background: #f8fafc; transform: translateY(-2px); }
         .filter-pill.active.client-pill { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2); }
@@ -148,17 +147,7 @@
         .st-closed { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 
         .month-cards-wrapper { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 10px 0; }
-        .sales-card {
-            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-            border: 2px solid #e2e8f0; border-radius: 20px; padding: 25px;
-            text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.02);
-            transition: 0.3s; position: relative; overflow: hidden;
-        }
-        .sales-card:hover { transform: translateY(-5px); border-color: #3b82f6; box-shadow: 0 15px 35px rgba(59, 130, 246, 0.15); }
-        .sales-card .month-label { font-size: 15px; color: #64748b; font-weight: 800; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 6px 15px; border-radius: 20px; }
-        .sales-card .sales-amount { font-size: 30px; font-weight: 800; color: #1e293b; font-family: 'Poppins', monospace; }
-        .sales-card.supplier-sc:hover { border-color: #ef4444; box-shadow: 0 15px 35px rgba(239, 68, 68, 0.15); }
-
+        
         .file-box { background: #fff; border-radius: 15px; padding: 15px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 10px; }
         .file-box h4 { margin: 0; color: #db2777; font-size: 14px; font-weight: 800; border-bottom: 1px solid #fce7f3; padding-bottom: 8px; }
         .file-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 13px; margin-bottom: 5px; font-weight: 600; }
@@ -204,18 +193,59 @@
         .pc-total span { font-size: 20px; font-weight: 800; color: #15803d; font-family: 'Poppins', monospace; }
         .partner-card.supplier .pc-total span { color: #b91c1c; }
 
+        /* تنسيقات طباعة المخازن - Portrait وجذابة جداً ومتناسقة */
+        @page { margin: 10mm; size: A4 portrait; }
         @media print {
-            body { background: white !important; margin: 0; padding: 0; }
+            body { background: white !important; margin: 0; padding: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body > * { display: none !important; }
-            #printArea { display: block !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
-            #printArea { width: 100%; direction: rtl; background: white; padding: 10px; font-family: 'Cairo', 'Poppins', sans-serif;}
-            #printArea table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-            #printArea th, #printArea td { border: 1px solid #cbd5e1; padding: 12px 10px; text-align: center; }
-            #printArea th { background-color: #fce7f3 !important; color: #be185d !important; font-weight: 800; font-size: 16px; border: 2px solid #fbcfe8; }
-            #printArea td { color: #1e293b !important; }
-            #printArea tr:nth-child(even) td { background-color: #f8fafc !important; }
-            #printArea tr { page-break-inside: avoid; }
+            #printArea { display: block !important; position: absolute; top: 0; left: 0; width: 100%; max-width: 100%; direction: rtl; background: white; padding: 0; font-family: 'Cairo', sans-serif; box-sizing: border-box; }
+            
+            #printArea .info-box { 
+                background: linear-gradient(135deg, #334155 0%, #0f172a 100%) !important; 
+                color: white !important; 
+                padding: 20px !important; 
+                border-radius: 12px !important; 
+                display: flex !important; 
+                justify-content: space-between !important; 
+                align-items: center !important;
+                margin-bottom: 20px !important;
+                border: 2px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+            }
+            #printArea .info-box div { font-size: 16px !important; font-weight: 700 !important; }
+            #printArea .info-box span { font-weight: 800 !important; font-size: 16px !important; margin-right: 8px !important; background: rgba(255,255,255,0.2) !important; padding: 6px 12px !important; border-radius: 8px !important; font-family: monospace !important; }
+            
+            #printArea table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed !important; border: 1px solid #cbd5e1 !important; }
+            #printArea th { 
+                background-color: #f8fafc !important; 
+                color: #0f172a !important; 
+                padding: 12px 8px !important; 
+                font-size: 13px !important; 
+                border: 1px solid #cbd5e1 !important;
+                border-bottom: 2px solid #94a3b8 !important;
+                text-align: center !important;
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+            }
+            #printArea td { 
+                padding: 10px 8px !important; 
+                font-size: 12px !important; 
+                border: 1px solid #cbd5e1 !important; 
+                color: #1e293b !important;
+                word-wrap: break-word !important; 
+                overflow-wrap: break-word !important;
+                vertical-align: middle !important;
+            }
+            #printArea tr:nth-child(even) td { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            #printArea tr { page-break-inside: avoid !important; }
+            
+            #printArea th:nth-child(1), #printArea td:nth-child(1) { width: 18% !important; font-family: monospace !important; text-align: center !important; }
+            #printArea th:nth-child(2), #printArea td:nth-child(2) { width: 40% !important; text-align: right !important; padding-right: 10px !important; font-weight: 700 !important; }
+            #printArea th:nth-child(3), #printArea td:nth-child(3) { width: 12% !important; font-weight: bold !important; color: #2563eb !important; text-align: center !important; }
+            #printArea th:nth-child(4), #printArea td:nth-child(4) { width: 12% !important; font-weight: bold !important; color: #10b981 !important; text-align: center !important; }
+            #printArea th:nth-child(5), #printArea td:nth-child(5) { width: 18% !important; text-align: center !important; }
         }
     </style>
 </head>
@@ -296,7 +326,7 @@
                     <div onclick="closeModal('partnerDetailsModal')" style="cursor:pointer; font-size:28px; color:#9ca3af; margin-right: 15px;">×</div>
                 </div>
             </div>
-            <div class="modal-body" style="padding: 0; border-radius: 20px;">
+            <div class="modal-body" style="padding: 0; border-radius: 20px; background: transparent;">
                 <div id="monthlyStatsContainer" class="month-cards-wrapper"></div>
             </div>
         </div>
@@ -572,7 +602,7 @@
         const DB_PATH = 'beauty_oms/orders'; const PROD_PATH = 'beauty_oms/products'; const FIN_PATH = 'beauty_oms/finances'; const BAL_PATH = 'beauty_oms/opening_balances';
 
         let orders = []; let globalProducts = {}; let finances = []; let openingBalances = {}; let currentId = null; let activeFinTab = 'SALES'; let currentOrderView = 'ACTIVE';
-        let activePartnerTab = 'CLIENT'; // المتغير الجديد لفصل العملاء والموردين
+        let activePartnerTab = 'CLIENT';
 
         document.addEventListener('keydown', function(e) {
             if(e.key==="Escape"){ closeModal('createModal'); closeModal('detailsModal'); closeModal('productsModal'); closeModal('financeModal'); closeModal('opBalModal'); closeModal('partnerDetailsModal'); return; }
@@ -598,7 +628,6 @@
         function updateStats() { let active = orders.filter(o => !o.files || !o.files.stamped || o.files.stamped.length === 0); let closed = orders.filter(o => o.files && o.files.stamped && o.files.stamped.length > 0); document.getElementById('statTotal').innerText = active.length; document.getElementById('statPending').innerText = active.filter(o => o.status === 'NEW').length; document.getElementById('statDone').innerText = active.filter(o => o.status !== 'NEW').length; document.getElementById('statClosed').innerText = closed.length; }
         window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
         
-        // الأرقام السالبة تظهر بين قوسين دلالة على الـ Credit
         window.formatMoney = function(a) { let num = parseFloat(a) || 0; if (num === 0) return '0.00'; let formatted = Math.abs(num).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); return num < 0 ? `(${formatted})` : formatted; }
         window.formatLiveMoney = function(input) { let cursor = input.selectionStart; let oldLength = input.value.length; let cleanVal = input.value.replace(/[^0-9.]/g, ''); let parts = cleanVal.split('.'); if(parts.length > 2) parts[1] = parts.slice(1).join(''); if(parts[0].length > 0) { parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","); } let newVal = parts.join('.'); input.value = newVal; let newLength = newVal.length; try { input.setSelectionRange(cursor + (newLength - oldLength), cursor + (newLength - oldLength)); } catch(e){} }
         window.parseDisplayDateToISO = function(val) { if(!val) return ''; let parts = val.split('/'); if(parts.length === 3) { let d = parts[0].padStart(2, '0'); let m = parts[1].padStart(2, '0'); let y = parts[2].length === 2 ? '20' + parts[2] : parts[2]; return `${y}-${m}-${d}`; } return val; }
@@ -641,7 +670,38 @@
             document.getElementById('detailsModal').style.display = 'block'; 
         }
 
-        window.printWarehouseSlip = function() { const o = orders.find(x => x.id === currentId); if(!o) return; let html = `<div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px;"><h1 style="margin: 0; font-size: 24px; font-weight:bold;">إذن تحضير مخزني</h1><h2 style="margin: 5px 0 0 0; font-size: 18px;">Lolo ERP</h2></div><div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 16px;"><div><strong>العميل:</strong> ${o.client}</div><div><strong>PO:</strong> ${o.poNumber}</div><div><strong>التاريخ:</strong> ${new Date().toLocaleDateString('en-GB')}</div></div><table><thead><tr><th style="width: 5%;">م</th><th style="width: 15%;">الباركود</th><th style="width: 35%;">الصنف</th><th style="width: 10%;">مطلوب</th><th style="width: 15%;">متوفر (كتابة)</th><th style="width: 20%;">ملاحظات</th></tr></thead><tbody>`; if(o.items) { o.items.forEach((item, idx) => { html += `<tr><td>${idx + 1}</td><td style="font-family: monospace;">${item.barcode}</td><td style="text-align: right; padding-right: 15px;">${item.name}</td><td style="font-weight: bold;">${item.reqQty}</td><td></td> <td></td> </tr>`; }); } html += `</tbody></table><div style="margin-top: 40px; display: flex; justify-content: space-between; font-size: 16px;"><div><strong>توقيع أمين المخزن:</strong> ..........................</div></div>`; document.getElementById('printArea').innerHTML = html; window.print(); }
+        window.printWarehouseSlip = function() { 
+            const o = orders.find(x => x.id === currentId); if(!o) return; 
+            let html = `
+            <div style="text-align:center; margin-bottom: 20px;">
+                <h2 style="margin:0; color:#0f172a; font-size:24px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; display: inline-block;">إذن تحضير مخزني</h2>
+                <div style="margin-top:5px; color:#64748b; font-size:13px; font-weight: 700;">تاريخ الطباعة: ${new Date().toLocaleDateString('en-GB')}</div>
+            </div>
+            <div class="info-box">
+                <div>العميل: <span>${o.client}</span></div>
+                <div>رقم الطلب (PO): <span>${o.poNumber}</span></div>
+            </div>
+            <table>
+                <thead>
+                    <tr><th>الباركود</th><th>اسم الصنف</th><th>المطلوب</th><th>المتوفر</th><th>الملاحظات</th></tr>
+                </thead>
+                <tbody>`; 
+            if(o.items) { 
+                o.items.forEach((item) => { 
+                    html += `<tr>
+                        <td>${item.barcode}</td>
+                        <td>${item.name}</td>
+                        <td>${item.reqQty}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>`; 
+                }); 
+            } 
+            html += `</tbody></table>`; 
+            document.getElementById('printArea').innerHTML = html; 
+            window.print(); 
+        }
+
         function renderActionArea(order) { const area = document.getElementById('actionArea'); area.innerHTML = ''; const isDone = order.status !== 'NEW'; if(!isDone) { area.innerHTML = `<div style="background:#eff6ff; padding:20px; border-radius:15px; border:1px solid #dbeafe;"><div style="display:flex; gap:15px;"><button class="btn btn-blue" style="flex:1; padding:15px; justify-content:center;" onclick="printWarehouseSlip()"><i class="fas fa-print"></i> طباعة إذن</button><button class="btn btn-gradient" style="flex:2; padding:15px; justify-content:center;" onclick="updateStatus('DONE')">✅ تأكيد الكميات</button></div></div>`; } }
         window.recalcTotalsLive = function() { const order = orders.find(o => o.id === currentId); document.querySelectorAll('#detailsTableBody tr').forEach(row => { const idx = row.getAttribute('data-index'); const qtyInput = row.querySelector('input[type="number"]'); const noteInput = row.querySelector('input[type="text"]'); if(qtyInput) order.items[idx].availQty = qtyInput.value; if(noteInput) order.items[idx].notes = noteInput.value; }); if (document.getElementById('financialSummary').style.display !== 'none') window.updateFinancialSummary(order); }
         window.updateFinancialSummary = function(order) { const t = calculateOrderTotals(order.items); document.getElementById('financialSummary').innerHTML = `<div style="background:white; padding:15px; border-radius:15px; text-align:center; border:1px solid #f3f4f6"><div style="font-size:12px; color:#6b7280;">القيمة الأصلية</div><div style="font-weight:800; font-size:20px;">${formatMoney(t.reqTotal)}</div></div><div style="background:var(--pink-gradient); color:white; padding:15px; border-radius:15px; text-align:center;"><div style="font-size:12px; opacity:0.9;">المعتمدة (الفاتورة)</div><div style="font-weight:800; font-size:20px;">${formatMoney(t.delTotal)}</div></div>`; }
@@ -655,37 +715,25 @@
         function renderFilesType(o, t) { const div = document.getElementById(`fileArea_${t}`); const list = (o.files && o.files[t]) ? o.files[t] : []; if (list.length > 0) { div.innerHTML = list.map((f, i) => `<div class="file-item"><a href="${f.data}" download="${f.name}" class="file-link"><i class="fas fa-download"></i><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">${f.name}</span></a><span class="file-del" onclick="delFile('${t}', ${i})">×</span></div>`).join(''); } else { div.innerHTML = `<label style="cursor:pointer; display:block; padding:10px; border:1px dashed #ccc; text-align:center; border-radius:10px; font-size:12px; color:#666;"><i class="fas fa-plus"></i> اضغط للرفع<input type="file" onchange="uplFile(this,'${t}')" style="display:none"></label>`; } }
         window.uplFile = function(inp, t) { processFiles(inp.files, (fs) => { const o = orders.find(x => x.id === currentId); if(!o.files) o.files = {}; if(!o.files[t]) o.files[t] = []; if(t === 'stamped' && o.files[t].length === 0) { o.closedDate = new Date().toISOString(); } o.files[t] = [...o.files[t], ...fs]; update(ref(db, DB_PATH + '/' + o.id), o).then(() => { renderFilesType(o,t); if(t === 'stamped') { updateStats(); window.renderList(); openDetails(o.id); } }); }); }
         window.delFile = function(t, i) { const o = orders.find(x => x.id === currentId); o.files[t].splice(i,1); if(t === 'stamped' && o.files[t].length === 0) { o.closedDate = null; } update(ref(db, DB_PATH + '/' + o.id), o).then(() => { renderFilesType(o,t); if(t === 'stamped') { updateStats(); window.renderList(); openDetails(o.id); } }); }
-        window.downloadExcel = function(h, f) { const b = new Blob([h], {type: 'application/vnd.ms-excel'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = f; a.click(); }
         
-        // --- الدالة المعدّلة لتحميل الإكسيل ---
+        // ================= EXPORT XLSX (Styled via HTML fallback) =================
+        window.downloadExcel = function(h, f) { const b = new Blob([h], {type: 'application/vnd.ms-excel'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = f; a.click(); }
+
         window.exportToExcel = function() {
             const o = orders.find(x => x.id === currentId);
             const t = calculateOrderTotals(o.items);
-            const headerStyle = "background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 10px; text-align: center; white-space: nowrap;";
-            const cellStyleBase = "border: 1px solid #cbd5e1; padding: 10px; text-align: center; white-space: nowrap;";
-            const infoLabelStyle = "font-weight: bold; background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 8px; white-space: nowrap;";
-            const infoValueStyle = "border: 1px solid #cbd5e1; padding: 8px; white-space: nowrap; text-align: right;";
-            
-            let creationDate = new Date(o.id).toLocaleDateString('en-GB');
-            let confirmDate = o.completionDate ? new Date(o.completionDate).toLocaleDateString('en-GB') : 'لم يتم التأكيد';
-
-            let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><style> td, th { white-space: nowrap !important; } </style></head><body dir="rtl"><table style="border-collapse:collapse;">`;
-            
-            // المعلومات الأساسية في الأعلى (بدون Merge)
-            h += `<tr><td style="${infoLabelStyle}">اسم العميل</td><td style="${infoValueStyle}">${o.client}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
-            h += `<tr><td style="${infoLabelStyle}">رقم أمر الشراء (PO)</td><td style="${infoValueStyle} mso-number-format:'\\@'">${o.poNumber}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
-            h += `<tr><td style="${infoLabelStyle}">موقع التسليم</td><td style="${infoValueStyle}">${o.location || 'غير محدد'}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
-            h += `<tr><td style="${infoLabelStyle}">تاريخ إنشاء الطلب</td><td style="${infoValueStyle}">${creationDate}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
-            h += `<tr><td style="${infoLabelStyle}">تاريخ تأكيد المخازن</td><td style="${infoValueStyle}">${confirmDate}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
-            h += `<tr><td style="${infoLabelStyle}">موعد التسليم</td><td style="${infoValueStyle}">${o.deliveryDate || '-'}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
-            h += `<tr><td style="${infoLabelStyle}">حالة الطلب</td><td style="${infoValueStyle}">${o.status}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
-            h += `<tr><td style="${infoLabelStyle}">إجمالي القيمة المعتمدة</td><td style="${infoValueStyle}">${t.delTotal.toFixed(2)}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
-            
-            h += `<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
-            
-            // عناوين الأعمدة للمنتجات
-            h += `<tr><th style="${headerStyle}">الباركود</th><th style="${headerStyle}">اسم المنتج</th><th style="${headerStyle}">الكمية المطلوبة</th><th style="${headerStyle}">الكمية المتوفرة</th><th style="${headerStyle}">السعر</th><th style="${headerStyle}">الإجمالي</th><th style="${headerStyle}">الملاحظات</th></tr>`;
-            
+            let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head><meta charset="utf-8"><style>
+                table.styled-table { border-collapse: collapse; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; direction: rtl; }
+                table.styled-table th { background-color: #be185d; color: white; font-weight: bold; border-bottom: 3px solid #9d174d; padding: 15px; text-align: center; font-size: 14px; text-transform: uppercase; }
+                table.styled-table td { border-bottom: 1px solid #e2e8f0; padding: 12px; text-align: center; font-size: 13px; vertical-align: middle; color: #1e293b; }
+                table.styled-table .num { mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; font-weight: 700; color: #0f172a; }
+                table.styled-table .bg-red { background-color: #fef2f2; color: #ef4444; font-weight: 800; }
+                table.styled-table .bg-yellow { background-color: #fffbeb; color: #d97706; font-weight: 800; }
+                table.styled-table tr:hover td { background-color: #f8fafc; }
+            </style></head><body dir="rtl">
+            <table class="styled-table">
+            <tr><th>الباركود</th><th>اسم المنتج</th><th>الكمية المطلوبة</th><th>الكمية المتوفرة</th><th>السعر</th><th>الإجمالي</th><th>الملاحظات</th></tr>`;
             if(o.items) {
                 o.items.forEach(i => {
                     let req = parseFloat(i.reqQty) || 0;
@@ -693,26 +741,53 @@
                     let price = parseFloat(i.price) || 0;
                     let total = avail * price;
                     let rowColor = "";
-                    
-                    // التلوين: أحمر لو الصنف صفر، أصفر لو الصنف اتعدل (لا يساوي المطلوب ومو صفر)
-                    if (avail === 0) {
-                        rowColor = "background-color: #fca5a5;";
-                    } else if (avail !== req) {
-                        rowColor = "background-color: #fef08a;";
-                    }
-
-                    let currentCellStyle = `${cellStyleBase} ${rowColor}`;
-
-                    h += `<tr><td style="${currentCellStyle} mso-number-format:'\\@'">${i.barcode}</td><td style="${currentCellStyle}">${i.name}</td><td style="${currentCellStyle}">${req}</td><td style="${currentCellStyle}">${avail}</td><td style="${currentCellStyle}">${price.toFixed(2)}</td><td style="${currentCellStyle}">${total.toFixed(2)}</td><td style="${currentCellStyle}">${i.notes || ''}</td></tr>`;
+                    if (avail === 0) { rowColor = "bg-red"; } else if (avail !== req) { rowColor = "bg-yellow"; }
+                    h += `<tr><td class="${rowColor}" style="mso-number-format:'\\@'">${i.barcode}</td><td class="${rowColor}">${i.name}</td><td class="${rowColor}">${req}</td><td class="${rowColor}">${avail}</td><td class="${rowColor} num">${price}</td><td class="${rowColor} num">${total}</td><td class="${rowColor}">${i.notes || ''}</td></tr>`;
                 });
             }
-            h += `</table></body></html>`;
+            h += `<tr><td colspan="7" style="border:none; height:15px;"></td></tr>
+            <tr><td colspan="5" style="font-weight:900; background-color:#1e293b; color:#ffffff; font-size: 15px; text-align: left; padding: 15px;">إجمالي القيمة المعتمدة:</td><td colspan="2" class="num" style="background-color:#be185d; color:#ffffff; font-size:18px; padding: 15px;">${t.delTotal}</td></tr>
+            </table></body></html>`;
             window.downloadExcel(h, `${o.poNumber}_Confirmed.xls`);
         }
-        // ---------------------------------------------
 
-        window.exportMainListToExcel = function() { let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><table border="1"><thead><tr style="background:#fce7f3"><th>PO</th><th>العميل</th><th>الموقع</th><th>التاريخ</th><th>الحالة</th><th>القيمة المطلوبة (PO)</th><th>القيمة المعتمدة (Inv)</th></tr></thead><tbody>`; orders.forEach(o => { const t = calculateOrderTotals(o.items); h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${o.location||''}</td><td>${o.deliveryDate}</td><td>${o.status}</td><td>${t.reqTotal.toFixed(2)}</td><td>${t.delTotal.toFixed(2)}</td></tr>`; }); h += `</tbody></table></body></html>`; window.downloadExcel(h, 'All_Orders.xls'); }
-        window.exportShortagesToExcel = function() { let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><table border="1"><thead><tr style="background:#fee2e2"><th>PO</th><th>العميل</th><th>المنتج</th><th>مطلوب</th><th>متوفر</th></tr></thead><tbody>`; orders.forEach(o => { if(o.items) o.items.forEach(i => { if(i.reqQty > i.availQty) h += `<tr><td>${o.poNumber}</td><td>${o.client}</td><td>${i.name}</td><td>${i.reqQty}</td><td>${i.availQty}</td></tr>`; }); }); h += `</tbody></table></body></html>`; window.downloadExcel(h, 'Shortages.xls'); }
+        window.exportMainListToExcel = function() { 
+            let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8">
+            <style>
+                table.styled-table { border-collapse: collapse; font-family: 'Segoe UI', Tahoma, sans-serif; direction: rtl; }
+                table.styled-table th { background-color: #2563eb; color: #ffffff; font-weight: bold; border-bottom: 3px solid #1e40af; padding: 15px; text-align: center; }
+                table.styled-table td { border-bottom: 1px solid #e2e8f0; padding: 12px; text-align: center; vertical-align: middle; color: #1e293b; }
+                table.styled-table .num { mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; font-weight: bold; }
+                table.styled-table tr:hover td { background-color: #f8fafc; }
+            </style></head><body dir="rtl">
+            <table class="styled-table">
+            <tr><th>PO</th><th>العميل</th><th>الموقع</th><th>التاريخ</th><th>الحالة</th><th>القيمة المطلوبة (PO)</th><th>القيمة المعتمدة (Inv)</th></tr>`;
+            orders.forEach(o => {
+                const t = calculateOrderTotals(o.items);
+                h += `<tr><td style="mso-number-format:'\\@'">${o.poNumber}</td><td>${o.client}</td><td>${o.location||''}</td><td>${o.deliveryDate}</td><td>${o.status}</td><td class="num">${t.reqTotal}</td><td class="num">${t.delTotal}</td></tr>`;
+            });
+            h += `</table></body></html>`;
+            window.downloadExcel(h, 'All_Orders.xls');
+        }
+
+        window.exportShortagesToExcel = function() { 
+            let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8">
+            <style>
+                table.styled-table { border-collapse: collapse; font-family: 'Segoe UI', Tahoma, sans-serif; direction: rtl; }
+                table.styled-table th { background-color: #ef4444; color: #ffffff; font-weight: bold; border-bottom: 3px solid #b91c1c; padding: 15px; text-align: center; }
+                table.styled-table td { border-bottom: 1px solid #e2e8f0; padding: 12px; text-align: center; vertical-align: middle; color: #1e293b; }
+                table.styled-table tr:hover td { background-color: #fef2f2; }
+            </style></head><body dir="rtl">
+            <table class="styled-table">
+            <tr><th>PO</th><th>العميل</th><th>المنتج</th><th>مطلوب</th><th>متوفر</th></tr>`;
+            orders.forEach(o => {
+                if(o.items) o.items.forEach(i => {
+                    if(i.reqQty > i.availQty) h += `<tr><td style="mso-number-format:'\\@'">${o.poNumber}</td><td>${o.client}</td><td>${i.name}</td><td style="font-weight:bold;">${i.reqQty}</td><td style="font-weight:bold; color:#ef4444;">${i.availQty}</td></tr>`;
+                });
+            });
+            h += `</table></body></html>`;
+            window.downloadExcel(h, 'Shortages.xls');
+        }
 
         window.handleNameInput = function(input) { if(input.value.trim().length > 0) { input.setAttribute('list', 'finNamesList'); } else { input.removeAttribute('list'); } }
         window.updateNameSuggestions = function() { const names = new Set(); finances.forEach(f => { if (f.client && f.client.trim() !== '') names.add(f.client.trim()); }); const dList = document.getElementById('finNamesList'); if(dList) { dList.innerHTML = Array.from(names).map(n => `<option value="${n}">`).join(''); } }
@@ -906,7 +981,6 @@
             window.switchFinTab('SALES'); window.triggerFinSearch();
         }
 
-        // دالة الفلترة للعملاء والموردين
         window.filterPartners = function(type) {
             activePartnerTab = type;
             const btnClient = document.getElementById('tabFilterClients');
@@ -962,23 +1036,33 @@
                 if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') p.purchases += f.total;
             });
 
-            let sortedKeys = Object.keys(monthlyStats).sort((a,b) => b.localeCompare(a)); 
+            let sortedKeys = Object.keys(monthlyStats).sort((a,b) => a.localeCompare(b)); 
             const monthNames = ["","يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
             
             const container = document.getElementById('monthlyStatsContainer'); container.innerHTML = '';
             
             if(sortedKeys.length === 0) {
-                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; padding: 40px;"><i class="fas fa-folder-open" style="font-size:40px; margin-bottom:15px;"></i><br>لا توجد مبيعات/مشتريات مسجلة لهذا الحساب</div>`;
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; padding: 40px;"><i class="fas fa-folder-open" style="font-size:40px; margin-bottom:15px;"></i><br>لا توجد بيانات مسجلة لهذا الحساب</div>`;
             } else {
                 sortedKeys.forEach(key => {
                     let st = monthlyStats[key]; let [y, m] = key.split('-');
                     let displayMonth = `${monthNames[parseInt(m)]} ${y}`;
-                    let cardClass = isClient ? '' : 'supplier-sc';
                     let val = isClient ? st.sales : st.purchases;
                     let labelStr = isClient ? 'إجمالي مبيعات الشهر' : 'إجمالي فواتير المشتريات';
                     
                     if(val > 0) {
-                        container.innerHTML += `<div class="sales-card ${cardClass}"><div class="month-label"><i class="fas fa-calendar-alt"></i> ${displayMonth}</div><div class="sales-amount">${window.formatMoney(val)}</div><div style="font-size: 13px; color: #64748b; font-weight: 700; margin-top: 10px;">${labelStr}</div></div>`;
+                        let gradient = isClient ? 'linear-gradient(135deg, #ffffff 0%, #eff6ff 100%)' : 'linear-gradient(135deg, #ffffff 0%, #fef2f2 100%)';
+                        let borderColor = isClient ? '#3b82f6' : '#ef4444';
+                        let textColor = isClient ? '#1d4ed8' : '#b91c1c';
+                        let iconHtml = isClient ? '<i class="fas fa-chart-line" style="color:#bfdbfe; font-size:40px; position:absolute; left:15px; top:50%; transform:translateY(-50%); opacity:0.5;"></i>' : '<i class="fas fa-shopping-cart" style="color:#fecaca; font-size:40px; position:absolute; left:15px; top:50%; transform:translateY(-50%); opacity:0.5;"></i>';
+                        
+                        container.innerHTML += `
+                        <div style="background: ${gradient}; border-right: 5px solid ${borderColor}; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; overflow: hidden; transition: 0.3s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                            ${iconHtml}
+                            <div style="font-size: 15px; color: #475569; font-weight: 800; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-calendar-day" style="color:${borderColor}"></i> ${displayMonth}</div>
+                            <div style="font-size: 13px; color: #64748b; font-weight: 700; margin-bottom: 5px;">${labelStr}</div>
+                            <div style="font-size: 26px; font-weight: 800; color: ${textColor}; font-family: 'Poppins', monospace;">${window.formatMoney(val)}</div>
+                        </div>`;
                     }
                 });
                 if(container.innerHTML === '') container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; padding: 40px;"><i class="fas fa-folder-open" style="font-size:40px; margin-bottom:15px;"></i><br>لا توجد بيانات مسجلة لهذا الحساب</div>`;
@@ -1014,7 +1098,6 @@
             Object.values(partners).forEach(p => {
                 let isClient = p.type === 'CLIENT';
                 
-                // الفلترة حسب قسم العملاء والموردين
                 if(activePartnerTab === 'CLIENT' && !isClient) return;
                 if(activePartnerTab === 'SUPPLIER' && isClient) return;
 
@@ -1031,7 +1114,6 @@
                 runCr += p.purchases; 
                 runDr += p.payOut; 
 
-                // حساب صافي الرصيد بناءً على طبيعة الحساب (موجب = Dr، سالب = Cr)
                 let netBalance = runDr - runCr; 
 
                 let badge = isClient ? `<span class="pc-badge client"><i class="fas fa-user"></i> عميل</span>` : `<span class="pc-badge supplier"><i class="fas fa-truck-loading"></i> مورد</span>`;
@@ -1039,10 +1121,8 @@
                 
                 let statsHtml = isClient ? `<div class="pc-grid"><div class="pc-item"><label><i class="fas fa-arrow-down" style="color:#10b981"></i> مبيعات</label><span>${window.formatMoney(p.sales)}</span></div><div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> مرتجعات</label><span style="color:#ef4444">${window.formatMoney(p.returns)}</span></div><div class="pc-item"><label><i class="fas fa-percent" style="color:#d97706"></i> خصومات</label><span style="color:#d97706">${window.formatMoney(p.discounts)}</span></div><div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> مستلم</label><span>${window.formatMoney(p.payIn)}</span></div></div>` : `<div class="pc-grid"><div class="pc-item"><label><i class="fas fa-arrow-up" style="color:#ef4444"></i> فواتير المشتريات</label><span>${window.formatMoney(p.purchases)}</span></div><div class="pc-item"><label><i class="fas fa-money-bill-wave" style="color:#3b82f6"></i> مدفوع</label><span>${window.formatMoney(p.payOut)}</span></div></div>`;
                 
-                // الرصيد الافتتاحي (يظهر بين قوسين إذا كان دائن)
                 let opBalDisplay = p.opBalDrCr === 'CR' ? `(${window.formatMoney(p.opBalAbs)})` : window.formatMoney(p.opBalAbs);
                 
-                // الرصيد النهائي (يظهر بين قوسين إذا كان دائن/سالب، وإلا موجب)
                 let netBalanceDisplay = netBalance < 0 ? `(${window.formatMoney(Math.abs(netBalance))})` : window.formatMoney(netBalance);
                 
                 container.innerHTML += `<div class="partner-card ${isClient ? '' : 'supplier'}" onclick="openPartnerDetails('${cKey}')"><div class="download-overlay"><i class="fas fa-chart-bar" style="font-size:32px; margin-bottom:10px;"></i> التفاصيل الشهرية</div><div><div class="pc-header"><h3 class="pc-name">${p.name}</h3>${badge}</div>${statsHtml}</div><div><div style="font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 5px;">رصيد البداية 2025: <span style="color:#0ea5e9; font-family:'Poppins'">${opBalDisplay}</span></div><div class="pc-total"><label>صافي الرصيد الحالي</label><span style="${netBalance < 0 ? 'color:#ef4444;' : ''}">${netBalanceDisplay}</span></div></div></div>`;
@@ -1060,19 +1140,57 @@
             else { let f = finances.find(x => cleanKey(x.client) === partnerKey); if(f) { termName = f.client; type = ['PURC_VAT','PURC_NO_VAT','PAY_OUT'].includes(f.type) ? 'SUPPLIER' : 'CLIENT'; opBalDrCr = type === 'SUPPLIER' ? 'CR' : 'DR'; } }
             if(!termName) return;
 
-            let partnerTxs = finances.filter(f => cleanKey(f.client) === partnerKey).sort((a,b) => { if (a.date === b.date) return a.id - b.id; return a.date.localeCompare(b.date); });
-            
-            const headSt = "background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px; font-family: 'Poppins', sans-serif; font-size: 14px; text-align:center; vertical-align: middle;"; const cellSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle;"; const descSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:right; vertical-align: middle;"; const numSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle; font-weight: 600; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';"; const balNumSt = "border: 1px solid #cbd5e1; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; text-align:center; vertical-align: middle; font-weight: bold; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
-            
-            let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap'); * { font-family: 'Poppins', sans-serif !important; }</style></head><body dir="ltr"><table style="border-collapse:collapse; table-layout: fixed;"><colgroup><col style="width: 110px;"><col style="width: 140px;"><col style="width: 350px;"><col style="width: 160px;"><col style="width: 130px;"><col style="width: 130px;"><col style="width: 140px;"></colgroup><tr><th style="${headSt}">Date</th><th style="${headSt}">Reference</th><th style="${headSt}">Description</th><th style="${headSt}">Transaction Type</th><th style="${headSt}">Debit</th><th style="${headSt}">Credit</th><th style="${headSt}">Balance</th></tr><tbody>`;
+            let partnerTxs = finances.filter(f => cleanKey(f.client) === partnerKey).sort((a,b) => { 
+                let dA = new Date(a.date).getTime() || 0; 
+                let dB = new Date(b.date).getTime() || 0; 
+                if(dA === dB) return a.id - b.id; 
+                return dA - dB; 
+            });
             
             let runDr = opBalDrCr === 'DR' ? opBalAbs : 0;
             let runCr = opBalDrCr === 'CR' ? opBalAbs : 0;
             let runBal = runDr - runCr;
+
+            let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+            <meta charset="utf-8">
+            <style>
+                table.styled-table { border-collapse: collapse; font-family: 'Segoe UI', Arial, sans-serif; direction: ltr; }
+                table.styled-table th { background-color: #0f172a; color: #ffffff; font-weight: bold; padding: 15px; border: 1px solid #334155; text-align: center; font-size: 14px; text-transform: uppercase; }
+                table.styled-table td { padding: 12px; border: 1px solid #cbd5e1; text-align: center; font-size: 13px; vertical-align: middle; color: #1e293b; }
+                table.styled-table .desc { text-align: left; color: #334155; }
+                table.styled-table .num { mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; font-weight: 700; color: #0f172a; }
+                table.styled-table .date { mso-number-format:'dd\\/mm\\/yyyy'; font-weight: 700; color: #1e293b; }
+                table.styled-table .balance { font-weight: 800; background-color: #e2e8f0; color: #0f172a; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; }
+                table.styled-table .debit { color: #dc2626; font-weight: 800;}
+                table.styled-table .credit { color: #059669; font-weight: 800;}
+                table.styled-table tr:hover td { filter: brightness(0.95); }
+            </style>
+            </head>
+            <body dir="ltr">
+            <h2 style="font-family: 'Segoe UI', Arial, sans-serif; color: #0f172a; margin-bottom: 20px;">Statement of Account: ${termName}</h2>
+            <table class="styled-table">
+            <tr>
+                <th>Date</th>
+                <th>Reference</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Debit</th>
+                <th>Credit</th>
+                <th>Balance</th>
+            </tr>
+            <tbody>`;
+
+            h += `<tr style="background-color: #f8fafc;">
+                <td class="date">01/01/2025</td>
+                <td style="mso-number-format:'\\@'">-</td>
+                <td class="desc" style="font-weight:bold;">Opening Balance 2025</td>
+                <td style="font-weight:bold; color:#475569;">Opening Balance</td>
+                <td class="num debit">${opBalDrCr === 'DR' && opBalAbs > 0 ? opBalAbs : 0}</td>
+                <td class="num credit">${opBalDrCr === 'CR' && opBalAbs > 0 ? opBalAbs : 0}</td>
+                <td class="balance">${runBal}</td>
+            </tr>`;
             
-            h += `<tr><td style="${cellSt}">01/01/2025</td><td style="${cellSt}">-</td><td style="${descSt} font-weight:bold; color:#475569;">Opening Balance (2025)</td><td style="${cellSt} color:#475569;">Opening Balance</td><td style="${numSt} color:#ef4444;">${opBalDrCr === 'DR' && opBalAbs > 0 ? opBalAbs : '-'}</td><td style="${numSt} color:#10b981;">${opBalDrCr === 'CR' && opBalAbs > 0 ? opBalAbs : '-'}</td><td style="${balNumSt} background-color:#f0f9ff; color:${runBal < 0 ? '#ef4444' : '#0369a1'};">${runBal}</td></tr>`;
-            
-            let idx = 1;
             partnerTxs.forEach(f => {
                 let isDebit = false; let isCredit = false;
                 if(f.type === 'SALE' || f.type === 'INVOICE') { isDebit = true; } else if(f.type === 'SALE_RET' || f.type === 'RETURN') { isCredit = true; } else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { isCredit = true; } else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { isCredit = true; } else if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') { isCredit = true; } else if(f.type === 'PAY_OUT') { isDebit = true; } 
@@ -1081,40 +1199,81 @@
                 runDr += debVal; runCr += credVal;
                 runBal = runDr - runCr;
 
-                let typeText = f.type; if(f.type === 'SALE' || f.type === 'INVOICE') typeText = 'Sales Invoice'; else if(f.type === 'SALE_RET' || f.type === 'RETURN') typeText = 'Sales Return'; else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') typeText = 'Discount'; else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') typeText = 'Payment Received'; else if(f.type === 'PURC_VAT') typeText = 'Purchase Invoice (VAT)'; else if(f.type === 'PURC_NO_VAT') typeText = 'Purchase Invoice'; else if(f.type === 'PAY_OUT') typeText = 'Payment Sent';
+                let typeText = f.type; 
+                let rowBgColor = "#ffffff";
                 
-                let bg = (idx % 2 === 0) ? "#f8fafc" : "#ffffff"; idx++;
-                h += `<tr style="background-color:${bg}"><td style="${cellSt} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellSt} mso-number-format:'\@'">${f.ref}</td><td style="${descSt}">${f.desc || '-'}</td><td style="${cellSt}">${typeText}</td><td style="${numSt} color:#ef4444;">${debVal > 0 ? debVal : '-'}</td><td style="${numSt} color:#10b981;">${credVal > 0 ? credVal : '-'}</td><td style="${balNumSt} background-color:#f0f9ff; color:${runBal < 0 ? '#ef4444' : '#0369a1'};">${runBal}</td></tr>`;
+                if(f.type === 'SALE' || f.type === 'INVOICE') { typeText = 'Sales Invoice'; rowBgColor = "#eff6ff"; } 
+                else if(f.type === 'SALE_RET' || f.type === 'RETURN') { typeText = 'Sales Return'; rowBgColor = "#fef2f2"; } 
+                else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { typeText = 'Discount'; rowBgColor = "#fffbeb"; } 
+                else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { typeText = 'Payment Received'; rowBgColor = "#f0fdf4"; } 
+                else if(f.type === 'PURC_VAT') { typeText = 'Purchase Invoice (VAT)'; rowBgColor = "#fdf4ff"; } 
+                else if(f.type === 'PURC_NO_VAT') { typeText = 'Purchase Invoice'; rowBgColor = "#f8fafc"; } 
+                else if(f.type === 'PAY_OUT') { typeText = 'Payment Sent'; rowBgColor = "#fff7ed"; }
+                
+                let formattedDate = f.date;
+                if (f.date && f.date.includes('-')) { let p = f.date.split('-'); formattedDate = `${p[2]}/${p[1]}/${p[0]}`; }
+
+                h += `<tr style="background-color: ${rowBgColor};">
+                    <td class="date">${formattedDate}</td>
+                    <td style="mso-number-format:'\\@'; font-weight:bold;">${f.ref}</td>
+                    <td class="desc">${f.desc || '-'}</td>
+                    <td style="font-weight:600;">${typeText}</td>
+                    <td class="num debit">${debVal}</td>
+                    <td class="num credit">${credVal}</td>
+                    <td class="balance">${runBal}</td>
+                </tr>`;
             });
-            h += `<tr><td colspan="7" style="border:none; height:15px;"></td></tr><tr><td colspan="6" style="${descSt} font-weight:bold; background-color:#0f172a; color:#ffffff; text-align:right;">Final Net Balance:</td><td style="${balNumSt} background-color:#1e40af; color:#ffffff; font-size:15px;">${runBal}</td></tr></tbody></table></body></html>`;
-            window.downloadExcel(h, `${termName} SOA ${new Date().toISOString().split('T')[0]}.xls`);
+            h += `</tbody></table></body></html>`;
+            window.downloadExcel(h, `${termName}_SOA.xls`);
         }
 
         window.exportCurrentLedger = function() {
-            const headerStyle = "background-color: #f1f5f9; font-weight: bold; border: 1px solid #000000; padding: 5px; text-align: center;"; const cellStyle = "border: 1px solid #000000; padding: 5px; text-align: center;"; const numStyle = "border: 1px solid #000000; padding: 5px; text-align: center; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* \\\"-\\\"??_);_(\\@_)';";
             const filteredData = filterFinancesArray().sort((a,b) => b.id - a.id);
+            let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8">
+            <style>
+                table.styled-table { border-collapse: collapse; font-family: 'Segoe UI', Tahoma, sans-serif; direction: rtl; }
+                table.styled-table th { background-color: #f1f5f9; color: #0f172a; font-weight: bold; border-bottom: 2px solid #94a3b8; padding: 15px; text-align: center; font-size: 13px; }
+                table.styled-table td { border-bottom: 1px solid #e2e8f0; padding: 10px; text-align: center; vertical-align: middle; font-size: 12px; }
+                table.styled-table .num { mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; font-weight: 600; }
+                table.styled-table .date { mso-number-format:'dd\\/mm\\/yyyy'; font-weight: 600; }
+                table.styled-table tr:hover td { background-color: #f8fafc; }
+            </style></head><body dir="rtl"><table class="styled-table">`;
+            
+            let fileName = '';
+
             if (activeFinTab === 'SALES') {
-                let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل المبيعات والمقبوضات</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">النوع</th><th style="${headerStyle}">العميل</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">المرجع</th><th style="${headerStyle}">المبلغ الأساسي</th><th style="${headerStyle}">الضريبة (VAT)</th><th style="${headerStyle}">الإجمالي</th></tr></thead><tbody>`;
+                fileName = 'Sales_Ledger.xls';
+                h += `<tr><th>التاريخ</th><th>النوع</th><th>العميل</th><th>الوصف</th><th>المرجع</th><th>المبلغ الأساسي</th><th>الضريبة (VAT)</th><th>الإجمالي</th></tr>`;
                 const salesTypes = ['SALE', 'SALE_RET', 'SALE_DISC', 'PAY_IN', 'INVOICE', 'RETURN', 'DISCOUNT', 'PAYMENT'];
-                filteredData.filter(f => salesTypes.includes(f.type)).forEach(f => { let sign = (f.type === 'SALE' || f.type === 'INVOICE') ? 1 : -1; h += `<tr><td style="${cellStyle} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle} mso-number-format:'\@'">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td></tr>`; });
-                h += `</tbody></table></body></html>`; window.downloadExcel(h, 'Sales_Ledger.xls');
+                filteredData.filter(f => salesTypes.includes(f.type)).forEach(f => {
+                    let sign = (f.type === 'SALE' || f.type === 'INVOICE') ? 1 : -1;
+                    let formattedDate = f.date && f.date.includes('-') ? `${f.date.split('-')[2]}/${f.date.split('-')[1]}/${f.date.split('-')[0]}` : f.date;
+                    h += `<tr><td class="date">${formattedDate}</td><td>${f.type}</td><td>${f.client}</td><td>${f.desc||''}</td><td style="mso-number-format:'\\@'">${f.ref}</td><td class="num">${f.amount*sign}</td><td class="num">${(f.vat||0)*sign}</td><td class="num">${f.total*sign}</td></tr>`;
+                });
             } else if (activeFinTab === 'PURCHASES') {
-                let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل المشتريات والمدفوعات</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">النوع</th><th style="${headerStyle}">المورد</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">المرجع</th><th style="${headerStyle}">المبلغ الأساسي</th><th style="${headerStyle}">الضريبة (VAT)</th><th style="${headerStyle}">الإجمالي</th></tr></thead><tbody>`;
+                fileName = 'Purchases_Ledger.xls';
+                h += `<tr><th>التاريخ</th><th>النوع</th><th>المورد</th><th>الوصف</th><th>المرجع</th><th>المبلغ الأساسي</th><th>الضريبة (VAT)</th><th>الإجمالي</th></tr>`;
                 const purcTypes = ['PURC_VAT', 'PURC_NO_VAT', 'PAY_OUT'];
-                filteredData.filter(f => purcTypes.includes(f.type)).forEach(f => { let sign = (f.type === 'PAY_OUT') ? -1 : 1; h += `<tr><td style="${cellStyle} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellStyle}">${f.type}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle} mso-number-format:'\@'">${f.ref}</td><td style="${numStyle}">${f.amount * sign}</td><td style="${numStyle}">${(f.vat || 0) * sign}</td><td style="${numStyle}">${f.total * sign}</td></tr>`; });
-                h += `</tbody></table></body></html>`; window.downloadExcel(h, 'Purchases_Ledger.xls');
+                filteredData.filter(f => purcTypes.includes(f.type)).forEach(f => {
+                    let sign = (f.type === 'PAY_OUT') ? -1 : 1;
+                    let formattedDate = f.date && f.date.includes('-') ? `${f.date.split('-')[2]}/${f.date.split('-')[1]}/${f.date.split('-')[0]}` : f.date;
+                    h += `<tr><td class="date">${formattedDate}</td><td>${f.type}</td><td>${f.client}</td><td>${f.desc||''}</td><td style="mso-number-format:'\\@'">${f.ref}</td><td class="num">${f.amount*sign}</td><td class="num">${(f.vat||0)*sign}</td><td class="num">${f.total*sign}</td></tr>`;
+                });
             } else if (activeFinTab === 'VAT') {
-                const sDate = document.getElementById('vatStartDate').value; const eDate = document.getElementById('vatEndDate').value;
-                let titleDate = "الكل"; if(sDate || eDate) titleDate = `من ${sDate || '-'} إلى ${eDate || '-'}`;
-                
-                let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body dir="rtl"><h3>سجل ضريبة القيمة المضافة (${titleDate})</h3><table border="1"><thead><tr><th style="${headerStyle}">التاريخ</th><th style="${headerStyle}">رقم المرجع</th><th style="${headerStyle}">الاسم</th><th style="${headerStyle}">الوصف</th><th style="${headerStyle}">نوع الحركة</th><th style="${headerStyle}">المبلغ الأساسي الخاضع</th><th style="${headerStyle}">قيمة الضريبة (VAT)</th></tr></thead><tbody>`;
+                fileName = `VAT_Ledger_${new Date().toISOString().split('T')[0]}.xls`;
+                h += `<tr><th>التاريخ</th><th>رقم المرجع</th><th>الاسم</th><th>الوصف</th><th>نوع الحركة</th><th>المبلغ الأساسي الخاضع</th><th>قيمة الضريبة (VAT)</th></tr>`;
+                const sDate = document.getElementById('vatStartDate').value;
+                const eDate = document.getElementById('vatEndDate').value;
                 filteredData.filter(f => f.vat > 0).forEach(f => {
                     if(sDate && f.date < sDate) return; if(eDate && f.date > eDate) return;
-                    let vatSign = (f.type === 'SALE' || f.type === 'INVOICE') ? -1 : 1; 
-                    h += `<tr><td style="${cellStyle} mso-number-format:'\@'">${window.parseISOToDisplayDate(f.date)}</td><td style="${cellStyle} mso-number-format:'\@'">${f.ref}</td><td style="${cellStyle}">${f.client}</td><td style="${cellStyle}">${f.desc || ''}</td><td style="${cellStyle}">${f.type}</td><td style="${numStyle}">${f.amount * vatSign}</td><td style="${numStyle}">${f.vat * vatSign}</td></tr>`; 
+                    let vatSign = (f.type === 'SALE' || f.type === 'INVOICE') ? -1 : 1;
+                    let formattedDate = f.date && f.date.includes('-') ? `${f.date.split('-')[2]}/${f.date.split('-')[1]}/${f.date.split('-')[0]}` : f.date;
+                    h += `<tr><td class="date">${formattedDate}</td><td style="mso-number-format:'\\@'">${f.ref}</td><td>${f.client}</td><td>${f.desc||''}</td><td>${f.type}</td><td class="num">${f.amount*vatSign}</td><td class="num">${f.vat*vatSign}</td></tr>`;
                 });
-                h += `</tbody></table></body></html>`; window.downloadExcel(h, `VAT_Ledger_${new Date().toISOString().split('T')[0]}.xls`);
             }
+
+            h += `</table></body></html>`;
+            window.downloadExcel(h, fileName);
         }
 
         window.addFinanceRow('sales'); window.addFinanceRow('purc');
