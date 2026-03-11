@@ -97,8 +97,13 @@
 
         .order-card.status-done { background: linear-gradient(145deg, #ffffff 50%, #ecfdf5 100%); border: 2px solid #a7f3d0; box-shadow: 0 6px 15px rgba(16, 185, 129, 0.05); }
         .order-card.status-done:hover { transform: translateY(-8px) scale(1.02); border-color: #10b981; box-shadow: 0 15px 30px rgba(16, 185, 129, 0.2); }
-        .order-card.status-closed { background: linear-gradient(145deg, #f8fafc 50%, #f1f5f9 100%); border: 2px solid #cbd5e1; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05); }
-        .order-card.status-closed:hover { transform: translateY(-8px) scale(1.02); border-color: #94a3b8; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); }
+        
+        /* تنسيقات الجدول الجديد للطلبات المغلقة */
+        .closed-orders-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .closed-orders-table thead { background: #f8fafc; border-bottom: 2px solid #e2e8f0; }
+        .closed-orders-table th { padding: 15px 10px; color: #475569; font-weight: 800; font-size: 14px; }
+        .closed-orders-table td { padding: 15px 10px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #1e293b; transition: 0.2s; }
+        .closed-orders-table tr:hover td { background-color: #f8fafc; cursor: pointer; }
 
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         .po-badge { background: white; color: #db2777; padding: 6px 12px; border-radius: 8px; font-size: 14px; font-weight: 800; border: 1px solid #fbcfe8; box-shadow: 0 2px 5px rgba(219, 39, 119, 0.1); }
@@ -193,7 +198,6 @@
         .pc-total span { font-size: 20px; font-weight: 800; color: #15803d; font-family: 'Poppins', monospace; }
         .partner-card.supplier .pc-total span { color: #b91c1c; }
 
-        /* تنسيقات طباعة المخازن - Portrait وجذابة جداً ومتناسقة */
         @page { margin: 10mm; size: A4 portrait; }
         @media print {
             body { background: white !important; margin: 0; padding: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -280,7 +284,6 @@
             <div class="action-buttons" style="display:flex; gap:8px; flex-wrap:wrap; justify-content: flex-end;">
                 <button class="btn btn-cyan" onclick="togglePartnersView()"><i class="fas fa-users"></i> العملاء والموردين</button>
                 <button class="btn btn-purple" onclick="openProductsModal()"><i class="fas fa-tags"></i> إدارة المنتجات</button>
-                <button class="btn btn-warning" onclick="exportShortagesToExcel()"><i class="fas fa-exclamation-triangle"></i> تقرير النواقص</button>
                 <button class="btn btn-excel" onclick="exportMainListToExcel()"><i class="fas fa-file-excel"></i> تقرير الطلبات</button>
                 <button class="btn btn-gradient" onclick="openCreateModal()"><i class="fas fa-plus"></i> طلب جديد</button>
             </div>
@@ -649,16 +652,55 @@
         function getStatusInfo(status, isClosed) { if(isClosed) return { text: 'مغلق ومسدد', pct: '100%' }; if (status === 'NEW') return { text: 'مراجعة وتأكيد الكميات', pct: '50%' }; return { text: 'مكتمل (بانتظار الفاتورة)', pct: '100%' }; }
 
         window.renderList = function() {
-            const grid = document.getElementById('ordersList'); grid.innerHTML = ''; const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            let displayOrders = orders.filter(o => { let isClosed = (o.files && o.files.stamped && o.files.stamped.length > 0); if(currentOrderView === 'ACTIVE' && isClosed) return false; if(currentOrderView === 'CLOSED' && !isClosed) return false; return true; });
-            displayOrders.filter(o => (o.client || '').toLowerCase().includes(searchTerm) || (o.poNumber || '').toLowerCase().includes(searchTerm)).slice().reverse().forEach(o => {
-                const t = calculateOrderTotals(o.items); let isClosed = (o.files && o.files.stamped && o.files.stamped.length > 0);
-                const d = isClosed ? { days: 'مغلق', class: 'st-closed', icon: 'fa-lock' } : getDaysRemaining(o.deliveryDate); const st = getStatusInfo(o.status, isClosed);
-                let quickActions = ''; let hasQuote = o.files && o.files.quote && o.files.quote.length > 0; let hasInvoice = o.files && o.files.invoice && o.files.invoice.length > 0;
-                if(hasQuote || hasInvoice) { quickActions += `<div style="display:flex; gap:10px; margin-top:15px; padding-top:15px; border-top:1px dashed rgba(0,0,0,0.05);">`; if(hasQuote) { const qFile = o.files.quote[0]; quickActions += `<a href="${qFile.data}" download="${qFile.name}" onclick="event.stopPropagation()" style="background:#fffbeb; color:#d97706; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid #fde68a; flex:1; justify-content:center;"><i class="fas fa-file-invoice"></i> العرض</a>`; } if(hasInvoice) { const iFile = o.files.invoice[0]; quickActions += `<a href="${iFile.data}" download="${iFile.name}" onclick="event.stopPropagation()" style="background:#eff6ff; color:#2563eb; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid #bfdbfe; flex:1; justify-content:center;"><i class="fas fa-file-invoice-dollar"></i> الفاتورة</a>`; } quickActions += `</div>`; }
-                let cardClass = o.status === 'NEW' ? 'status-new' : 'status-done'; if(isClosed) cardClass = 'status-closed'; let progressColor = o.status === 'NEW' ? '#f59e0b' : '#10b981'; if(isClosed) progressColor = '#94a3b8'; let displayDate = isClosed && o.closedDate ? new Date(o.closedDate).toLocaleDateString('en-GB') : o.deliveryDate;
-                grid.innerHTML += `<div class="order-card ${cardClass}" onclick="openDetails(${o.id})"><div class="card-header"><span class="po-badge">${o.poNumber}</span><span class="badge-status ${d.class}"><i class="fas ${d.icon}"></i> ${d.days}</span></div><h3 class="client-name">${o.client}</h3><div class="location-text"><i class="fas fa-map-marker-alt" style="color:#ec4899"></i> ${o.location || 'غير محدد'}</div><div class="progress-container"><div class="progress-fill" style="width: ${st.pct}; background: ${progressColor}"></div></div><div style="font-size:12px; margin-top:5px; color:#6b7280; font-weight:700">${st.text}</div><div class="card-stats"><div class="stat-box"><label>القيمة</label><div style="height:2px"></div><val>${formatMoney(t.reqTotal)}</val></div><div class="stat-box"><label>${isClosed ? 'التسليم الفعلي' : 'تاريخ التسليم'}</label><div style="height:2px"></div><val>${displayDate}</val></div></div>${quickActions}</div>`;
+            const grid = document.getElementById('ordersList');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let displayOrders = orders.filter(o => { 
+                let isClosed = (o.files && o.files.stamped && o.files.stamped.length > 0); 
+                if(currentOrderView === 'ACTIVE' && isClosed) return false; 
+                if(currentOrderView === 'CLOSED' && !isClosed) return false; 
+                return true; 
             });
+
+            let filteredList = displayOrders.filter(o => (o.client || '').toLowerCase().includes(searchTerm) || (o.poNumber || '').toLowerCase().includes(searchTerm)).slice().reverse();
+
+            if (currentOrderView === 'CLOSED') {
+                // عرض الجدول الخفيف والسريع للطلبات المغلقة
+                grid.style.display = 'block'; 
+                let tableHtml = `<div class="sheet-table-container"><table class="closed-orders-table">
+                    <thead><tr><th>رقم PO</th><th>العميل</th><th>الموقع</th><th>تاريخ الإغلاق</th><th>القيمة المعتمدة</th><th>حالة الطلب</th></tr></thead><tbody>`;
+                
+                if(filteredList.length === 0) {
+                    tableHtml += `<tr><td colspan="6" style="padding:40px; color:#94a3b8; font-size:16px;">لا توجد طلبات مغلقة مطابقة للبحث</td></tr>`;
+                } else {
+                    filteredList.forEach(o => {
+                        const t = calculateOrderTotals(o.items);
+                        let displayDate = o.closedDate ? new Date(o.closedDate).toLocaleDateString('en-GB') : o.deliveryDate;
+                        tableHtml += `<tr onclick="openDetails(${o.id})">
+                            <td style="font-family:monospace; font-weight:bold; color:#be185d;">${o.poNumber}</td>
+                            <td style="font-weight:800; color:#1e293b;">${o.client}</td>
+                            <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:6px; font-size:12px; color:#64748b;">${o.location || '-'}</span></td>
+                            <td style="font-family:monospace; font-weight:bold;">${displayDate}</td>
+                            <td class="accounting-num" style="color:#1d4ed8; font-weight:bold;">${formatMoney(t.delTotal)}</td>
+                            <td><span class="badge-status st-closed"><i class="fas fa-lock"></i> مغلق ومسدد</span></td>
+                        </tr>`;
+                    });
+                }
+                tableHtml += `</tbody></table></div>`;
+                grid.innerHTML = tableHtml;
+            } else {
+                // عرض الكروت للطلبات النشطة
+                grid.style.display = 'grid';
+                grid.innerHTML = '';
+                filteredList.forEach(o => {
+                    const t = calculateOrderTotals(o.items); let isClosed = false;
+                    const d = getDaysRemaining(o.deliveryDate); const st = getStatusInfo(o.status, isClosed);
+                    let quickActions = ''; let hasQuote = o.files && o.files.quote && o.files.quote.length > 0; let hasInvoice = o.files && o.files.invoice && o.files.invoice.length > 0;
+                    if(hasQuote || hasInvoice) { quickActions += `<div style="display:flex; gap:10px; margin-top:15px; padding-top:15px; border-top:1px dashed rgba(0,0,0,0.05);">`; if(hasQuote) { const qFile = o.files.quote[0]; quickActions += `<a href="${qFile.data}" download="${qFile.name}" onclick="event.stopPropagation()" style="background:#fffbeb; color:#d97706; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid #fde68a; flex:1; justify-content:center;"><i class="fas fa-file-invoice"></i> العرض</a>`; } if(hasInvoice) { const iFile = o.files.invoice[0]; quickActions += `<a href="${iFile.data}" download="${iFile.name}" onclick="event.stopPropagation()" style="background:#eff6ff; color:#2563eb; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid #bfdbfe; flex:1; justify-content:center;"><i class="fas fa-file-invoice-dollar"></i> الفاتورة</a>`; } quickActions += `</div>`; }
+                    let cardClass = o.status === 'NEW' ? 'status-new' : 'status-done'; let progressColor = o.status === 'NEW' ? '#f59e0b' : '#10b981'; 
+                    grid.innerHTML += `<div class="order-card ${cardClass}" onclick="openDetails(${o.id})"><div class="card-header"><span class="po-badge">${o.poNumber}</span><span class="badge-status ${d.class}"><i class="fas ${d.icon}"></i> ${d.days}</span></div><h3 class="client-name">${o.client}</h3><div class="location-text"><i class="fas fa-map-marker-alt" style="color:#ec4899"></i> ${o.location || 'غير محدد'}</div><div class="progress-container"><div class="progress-fill" style="width: ${st.pct}; background: ${progressColor}"></div></div><div style="font-size:12px; margin-top:5px; color:#6b7280; font-weight:700">${st.text}</div><div class="card-stats"><div class="stat-box"><label>القيمة</label><div style="height:2px"></div><val>${formatMoney(t.reqTotal)}</val></div><div class="stat-box"><label>تاريخ التسليم</label><div style="height:2px"></div><val>${o.deliveryDate}</val></div></div>${quickActions}</div>`;
+                });
+            }
         }
         
         window.openDetails = function(id) { 
@@ -768,25 +810,6 @@
             });
             h += `</table></body></html>`;
             window.downloadExcel(h, 'All_Orders.xls');
-        }
-
-        window.exportShortagesToExcel = function() { 
-            let h = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8">
-            <style>
-                table.styled-table { border-collapse: collapse; font-family: 'Segoe UI', Tahoma, sans-serif; direction: rtl; }
-                table.styled-table th { background-color: #ef4444; color: #ffffff; font-weight: bold; border-bottom: 3px solid #b91c1c; padding: 15px; text-align: center; }
-                table.styled-table td { border-bottom: 1px solid #e2e8f0; padding: 12px; text-align: center; vertical-align: middle; color: #1e293b; }
-                table.styled-table tr:hover td { background-color: #fef2f2; }
-            </style></head><body dir="rtl">
-            <table class="styled-table">
-            <tr><th>PO</th><th>العميل</th><th>المنتج</th><th>مطلوب</th><th>متوفر</th></tr>`;
-            orders.forEach(o => {
-                if(o.items) o.items.forEach(i => {
-                    if(i.reqQty > i.availQty) h += `<tr><td style="mso-number-format:'\\@'">${o.poNumber}</td><td>${o.client}</td><td>${i.name}</td><td style="font-weight:bold;">${i.reqQty}</td><td style="font-weight:bold; color:#ef4444;">${i.availQty}</td></tr>`;
-                });
-            });
-            h += `</table></body></html>`;
-            window.downloadExcel(h, 'Shortages.xls');
         }
 
         window.handleNameInput = function(input) { if(input.value.trim().length > 0) { input.setAttribute('list', 'finNamesList'); } else { input.removeAttribute('list'); } }
@@ -1151,24 +1174,24 @@
             let runCr = opBalDrCr === 'CR' ? opBalAbs : 0;
             let runBal = runDr - runCr;
 
+            // تم إزالة H2 وتعديل الألوان للستايل الاحترافي
             let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
             <head>
             <meta charset="utf-8">
             <style>
                 table.styled-table { border-collapse: collapse; font-family: 'Segoe UI', Arial, sans-serif; direction: ltr; }
-                table.styled-table th { background-color: #0f172a; color: #ffffff; font-weight: bold; padding: 15px; border: 1px solid #334155; text-align: center; font-size: 14px; text-transform: uppercase; }
-                table.styled-table td { padding: 12px; border: 1px solid #cbd5e1; text-align: center; font-size: 13px; vertical-align: middle; color: #1e293b; }
+                table.styled-table th { background-color: #1e293b; color: #ffffff; font-weight: bold; padding: 15px; border: 1px solid #cbd5e1; text-align: center; font-size: 14px; text-transform: uppercase; }
+                table.styled-table td { padding: 12px; border: 1px solid #e2e8f0; text-align: center; font-size: 13px; vertical-align: middle; color: #334155; }
                 table.styled-table .desc { text-align: left; color: #334155; }
                 table.styled-table .num { mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; font-weight: 700; color: #0f172a; }
-                table.styled-table .date { mso-number-format:'dd\\/mm\\/yyyy'; font-weight: 700; color: #1e293b; }
-                table.styled-table .balance { font-weight: 800; background-color: #e2e8f0; color: #0f172a; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; }
-                table.styled-table .debit { color: #dc2626; font-weight: 800;}
-                table.styled-table .credit { color: #059669; font-weight: 800;}
-                table.styled-table tr:hover td { filter: brightness(0.95); }
+                /* إجبار عمود التاريخ على قراءته كنص نقي للحفاظ على DD/MM/YYYY */
+                table.styled-table .date { mso-number-format:'\\@'; font-weight: 700; color: #1e293b; }
+                table.styled-table .balance { font-weight: 800; background-color: #f1f5f9; color: #0f172a; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; }
+                table.styled-table .debit { color: #991b1b; font-weight: 800;}
+                table.styled-table .credit { color: #166534; font-weight: 800;}
             </style>
             </head>
             <body dir="ltr">
-            <h2 style="font-family: 'Segoe UI', Arial, sans-serif; color: #0f172a; margin-bottom: 20px;">Statement of Account: ${termName}</h2>
             <table class="styled-table">
             <tr>
                 <th>Date</th>
@@ -1191,7 +1214,7 @@
                 <td class="balance">${runBal}</td>
             </tr>`;
             
-            partnerTxs.forEach(f => {
+            partnerTxs.forEach((f, index) => {
                 let isDebit = false; let isCredit = false;
                 if(f.type === 'SALE' || f.type === 'INVOICE') { isDebit = true; } else if(f.type === 'SALE_RET' || f.type === 'RETURN') { isCredit = true; } else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { isCredit = true; } else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { isCredit = true; } else if(f.type === 'PURC_VAT' || f.type === 'PURC_NO_VAT') { isCredit = true; } else if(f.type === 'PAY_OUT') { isDebit = true; } 
                 
@@ -1200,15 +1223,16 @@
                 runBal = runDr - runCr;
 
                 let typeText = f.type; 
-                let rowBgColor = "#ffffff";
+                // Zebra striping احترافي
+                let rowBgColor = (index % 2 === 0) ? "#ffffff" : "#f8fafc";
                 
-                if(f.type === 'SALE' || f.type === 'INVOICE') { typeText = 'Sales Invoice'; rowBgColor = "#eff6ff"; } 
-                else if(f.type === 'SALE_RET' || f.type === 'RETURN') { typeText = 'Sales Return'; rowBgColor = "#fef2f2"; } 
-                else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { typeText = 'Discount'; rowBgColor = "#fffbeb"; } 
-                else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { typeText = 'Payment Received'; rowBgColor = "#f0fdf4"; } 
-                else if(f.type === 'PURC_VAT') { typeText = 'Purchase Invoice (VAT)'; rowBgColor = "#fdf4ff"; } 
-                else if(f.type === 'PURC_NO_VAT') { typeText = 'Purchase Invoice'; rowBgColor = "#f8fafc"; } 
-                else if(f.type === 'PAY_OUT') { typeText = 'Payment Sent'; rowBgColor = "#fff7ed"; }
+                if(f.type === 'SALE' || f.type === 'INVOICE') { typeText = 'Sales Invoice'; } 
+                else if(f.type === 'SALE_RET' || f.type === 'RETURN') { typeText = 'Sales Return'; } 
+                else if(f.type === 'SALE_DISC' || f.type === 'DISCOUNT') { typeText = 'Discount'; } 
+                else if(f.type === 'PAY_IN' || f.type === 'PAYMENT') { typeText = 'Payment Received'; } 
+                else if(f.type === 'PURC_VAT') { typeText = 'Purchase Invoice (VAT)'; } 
+                else if(f.type === 'PURC_NO_VAT') { typeText = 'Purchase Invoice'; } 
+                else if(f.type === 'PAY_OUT') { typeText = 'Payment Sent'; }
                 
                 let formattedDate = f.date;
                 if (f.date && f.date.includes('-')) { let p = f.date.split('-'); formattedDate = `${p[2]}/${p[1]}/${p[0]}`; }
@@ -1235,7 +1259,7 @@
                 table.styled-table th { background-color: #f1f5f9; color: #0f172a; font-weight: bold; border-bottom: 2px solid #94a3b8; padding: 15px; text-align: center; font-size: 13px; }
                 table.styled-table td { border-bottom: 1px solid #e2e8f0; padding: 10px; text-align: center; vertical-align: middle; font-size: 12px; }
                 table.styled-table .num { mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; font-weight: 600; }
-                table.styled-table .date { mso-number-format:'dd\\/mm\\/yyyy'; font-weight: 600; }
+                table.styled-table .date { mso-number-format:'\\@'; font-weight: 600; }
                 table.styled-table tr:hover td { background-color: #f8fafc; }
             </style></head><body dir="rtl"><table class="styled-table">`;
             
