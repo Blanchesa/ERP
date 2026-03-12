@@ -200,56 +200,45 @@
 
         @page { margin: 10mm; size: A4 portrait; }
         @media print {
-            body { background: white !important; margin: 0; padding: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: white !important; margin: 0; padding: 0; color: black !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; font-family: Arial, Tahoma, sans-serif !important; }
             body > * { display: none !important; }
-            #printArea { display: block !important; position: absolute; top: 0; left: 0; width: 100%; max-width: 100%; direction: rtl; background: white; padding: 0; font-family: 'Cairo', sans-serif; box-sizing: border-box; }
+            #printArea { display: block !important; position: absolute; top: 0; left: 0; width: 100%; max-width: 100%; direction: rtl; background: white; padding: 0; font-family: Arial, Tahoma, sans-serif; box-sizing: border-box; }
             
             #printArea .info-box { 
-                background: linear-gradient(135deg, #334155 0%, #0f172a 100%) !important; 
-                color: white !important; 
-                padding: 20px !important; 
-                border-radius: 12px !important; 
+                background: white !important; 
+                color: black !important; 
+                padding: 10px !important; 
+                border-radius: 0 !important; 
                 display: flex !important; 
                 justify-content: space-between !important; 
                 align-items: center !important;
-                margin-bottom: 20px !important;
-                border: 2px solid #cbd5e1 !important;
-                box-shadow: none !important;
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
+                margin-bottom: 10px !important;
+                border: 1px solid black !important;
             }
-            #printArea .info-box div { font-size: 16px !important; font-weight: 700 !important; }
-            #printArea .info-box span { font-weight: 800 !important; font-size: 16px !important; margin-right: 8px !important; background: rgba(255,255,255,0.2) !important; padding: 6px 12px !important; border-radius: 8px !important; font-family: monospace !important; }
+            #printArea .info-box div { font-size: 14px !important; font-weight: bold !important; }
+            #printArea .info-box span { font-weight: normal !important; margin-right: 5px !important; }
             
-            #printArea table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed !important; border: 1px solid #cbd5e1 !important; }
+            #printArea table { width: 100% !important; border-collapse: collapse !important; border: 1px solid black !important; }
             #printArea th { 
-                background-color: #f8fafc !important; 
-                color: #0f172a !important; 
-                padding: 12px 8px !important; 
-                font-size: 13px !important; 
-                border: 1px solid #cbd5e1 !important;
-                border-bottom: 2px solid #94a3b8 !important;
+                background-color: #f2f2f2 !important; 
+                color: black !important; 
+                padding: 6px !important; 
+                font-size: 12px !important; 
+                border: 1px solid black !important;
                 text-align: center !important;
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
             }
             #printArea td { 
-                padding: 10px 8px !important; 
+                padding: 6px !important; 
                 font-size: 12px !important; 
-                border: 1px solid #cbd5e1 !important; 
-                color: #1e293b !important;
-                word-wrap: break-word !important; 
-                overflow-wrap: break-word !important;
-                vertical-align: middle !important;
+                border: 1px solid black !important; 
+                color: black !important;
+                text-align: center !important;
             }
-            #printArea tr:nth-child(even) td { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            #printArea tr { page-break-inside: avoid !important; }
             
-            #printArea th:nth-child(1), #printArea td:nth-child(1) { width: 18% !important; font-family: monospace !important; text-align: center !important; }
-            #printArea th:nth-child(2), #printArea td:nth-child(2) { width: 40% !important; text-align: right !important; padding-right: 10px !important; font-weight: 700 !important; }
-            #printArea th:nth-child(3), #printArea td:nth-child(3) { width: 12% !important; font-weight: bold !important; color: #2563eb !important; text-align: center !important; }
-            #printArea th:nth-child(4), #printArea td:nth-child(4) { width: 12% !important; font-weight: bold !important; color: #10b981 !important; text-align: center !important; }
-            #printArea th:nth-child(5), #printArea td:nth-child(5) { width: 18% !important; text-align: center !important; }
+            #printArea th:nth-child(1), #printArea td:nth-child(1) { width: 25% !important; } /* الباركود */
+            #printArea th:nth-child(2), #printArea td:nth-child(2) { width: 45% !important; text-align: right !important; padding-right: 5px !important; } /* اسم الصنف */
+            #printArea th:nth-child(3), #printArea td:nth-child(3) { width: 15% !important; } /* الكمية المطلوبة */
+            #printArea th:nth-child(4), #printArea td:nth-child(4) { width: 15% !important; } /* الكمية المتوفرة */
         }
     </style>
 </head>
@@ -665,7 +654,6 @@
             let filteredList = displayOrders.filter(o => (o.client || '').toLowerCase().includes(searchTerm) || (o.poNumber || '').toLowerCase().includes(searchTerm)).slice().reverse();
 
             if (currentOrderView === 'CLOSED') {
-                // عرض الجدول الخفيف والسريع للطلبات المغلقة
                 grid.style.display = 'block'; 
                 let tableHtml = `<div class="sheet-table-container"><table class="closed-orders-table">
                     <thead><tr><th>رقم PO</th><th>العميل</th><th>الموقع</th><th>تاريخ الإغلاق</th><th>القيمة المعتمدة</th><th>حالة الطلب</th></tr></thead><tbody>`;
@@ -689,7 +677,6 @@
                 tableHtml += `</tbody></table></div>`;
                 grid.innerHTML = tableHtml;
             } else {
-                // عرض الكروت للطلبات النشطة
                 grid.style.display = 'grid';
                 grid.innerHTML = '';
                 filteredList.forEach(o => {
@@ -715,9 +702,9 @@
         window.printWarehouseSlip = function() { 
             const o = orders.find(x => x.id === currentId); if(!o) return; 
             let html = `
-            <div style="text-align:center; margin-bottom: 20px;">
-                <h2 style="margin:0; color:#0f172a; font-size:24px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; display: inline-block;">إذن تحضير مخزني</h2>
-                <div style="margin-top:5px; color:#64748b; font-size:13px; font-weight: 700;">تاريخ الطباعة: ${new Date().toLocaleDateString('en-GB')}</div>
+            <div style="text-align:center; margin-bottom: 10px;">
+                <h2 style="margin:0; font-size:20px; font-weight:bold;">إذن تحضير مخزني</h2>
+                <div style="margin-top:5px; font-size:12px;">تاريخ الطباعة: ${new Date().toLocaleDateString('en-GB')}</div>
             </div>
             <div class="info-box">
                 <div>العميل: <span>${o.client}</span></div>
@@ -725,16 +712,15 @@
             </div>
             <table>
                 <thead>
-                    <tr><th>الباركود</th><th>اسم الصنف</th><th>المطلوب</th><th>المتوفر</th><th>الملاحظات</th></tr>
+                    <tr><th>الباركود</th><th>اسم الصنف</th><th>الكمية المطلوبة</th><th>الكمية المتوفرة</th></tr>
                 </thead>
                 <tbody>`; 
             if(o.items) { 
                 o.items.forEach((item) => { 
                     html += `<tr>
                         <td>${item.barcode}</td>
-                        <td>${item.name}</td>
+                        <td style="text-align: right;">${item.name}</td>
                         <td>${item.reqQty}</td>
-                        <td></td>
                         <td></td>
                     </tr>`; 
                 }); 
@@ -766,15 +752,24 @@
             const t = calculateOrderTotals(o.items);
             let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
             <head><meta charset="utf-8"><style>
-                table.styled-table { border-collapse: collapse; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; direction: rtl; }
-                table.styled-table th { background-color: #be185d; color: white; font-weight: bold; border-bottom: 3px solid #9d174d; padding: 15px; text-align: center; font-size: 14px; text-transform: uppercase; }
-                table.styled-table td { border-bottom: 1px solid #e2e8f0; padding: 12px; text-align: center; font-size: 13px; vertical-align: middle; color: #1e293b; }
-                table.styled-table .num { mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; font-weight: 700; color: #0f172a; }
-                table.styled-table .bg-red { background-color: #fef2f2; color: #ef4444; font-weight: 800; }
-                table.styled-table .bg-yellow { background-color: #fffbeb; color: #d97706; font-weight: 800; }
-                table.styled-table tr:hover td { background-color: #f8fafc; }
+                table.styled-table { border-collapse: collapse; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; direction: rtl; }
+                table.styled-table th, table.styled-table td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 14px; vertical-align: middle; }
+                table.styled-table th { background-color: #f2f2f2; font-weight: bold; }
+                .header-info { font-weight: bold; font-size: 16px; background-color: #e6e6e6; }
+                .num { mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; }
             </style></head><body dir="rtl">
             <table class="styled-table">
+            <tr><td colspan="7" class="header-info" style="text-align:center; font-size:18px;">تفاصيل الطلب المعتمد</td></tr>
+            <tr>
+                <td colspan="2" class="header-info">اسم العميل:</td><td colspan="5">${o.client}</td>
+            </tr>
+            <tr>
+                <td colspan="2" class="header-info">رقم الطلب (PO):</td><td colspan="5" style="mso-number-format:'\\@'">${o.poNumber}</td>
+            </tr>
+            <tr>
+                <td colspan="2" class="header-info">تاريخ التسليم:</td><td colspan="5">${o.deliveryDate || ''}</td>
+            </tr>
+            <tr><td colspan="7"></td></tr>
             <tr><th>الباركود</th><th>اسم المنتج</th><th>الكمية المطلوبة</th><th>الكمية المتوفرة</th><th>السعر</th><th>الإجمالي</th><th>الملاحظات</th></tr>`;
             if(o.items) {
                 o.items.forEach(i => {
@@ -782,13 +777,11 @@
                     let avail = parseFloat(i.availQty) || 0;
                     let price = parseFloat(i.price) || 0;
                     let total = avail * price;
-                    let rowColor = "";
-                    if (avail === 0) { rowColor = "bg-red"; } else if (avail !== req) { rowColor = "bg-yellow"; }
-                    h += `<tr><td class="${rowColor}" style="mso-number-format:'\\@'">${i.barcode}</td><td class="${rowColor}">${i.name}</td><td class="${rowColor}">${req}</td><td class="${rowColor}">${avail}</td><td class="${rowColor} num">${price}</td><td class="${rowColor} num">${total}</td><td class="${rowColor}">${i.notes || ''}</td></tr>`;
+                    h += `<tr><td style="mso-number-format:'\\@'">${i.barcode}</td><td>${i.name}</td><td>${req}</td><td>${avail}</td><td class="num">${price}</td><td class="num">${total}</td><td>${i.notes || ''}</td></tr>`;
                 });
             }
-            h += `<tr><td colspan="7" style="border:none; height:15px;"></td></tr>
-            <tr><td colspan="5" style="font-weight:900; background-color:#1e293b; color:#ffffff; font-size: 15px; text-align: left; padding: 15px;">إجمالي القيمة المعتمدة:</td><td colspan="2" class="num" style="background-color:#be185d; color:#ffffff; font-size:18px; padding: 15px;">${t.delTotal}</td></tr>
+            h += `<tr><td colspan="7"></td></tr>
+            <tr><td colspan="5" style="font-weight:bold; text-align: left;">إجمالي القيمة المعتمدة:</td><td colspan="2" class="num" style="font-weight:bold; font-size:16px;">${t.delTotal}</td></tr>
             </table></body></html>`;
             window.downloadExcel(h, `${o.poNumber}_Confirmed.xls`);
         }
@@ -1174,7 +1167,6 @@
             let runCr = opBalDrCr === 'CR' ? opBalAbs : 0;
             let runBal = runDr - runCr;
 
-            // تم إزالة H2 وتعديل الألوان للستايل الاحترافي
             let h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
             <head>
             <meta charset="utf-8">
@@ -1184,7 +1176,6 @@
                 table.styled-table td { padding: 12px; border: 1px solid #e2e8f0; text-align: center; font-size: 13px; vertical-align: middle; color: #334155; }
                 table.styled-table .desc { text-align: left; color: #334155; }
                 table.styled-table .num { mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; font-weight: 700; color: #0f172a; }
-                /* إجبار عمود التاريخ على قراءته كنص نقي للحفاظ على DD/MM/YYYY */
                 table.styled-table .date { mso-number-format:'\\@'; font-weight: 700; color: #1e293b; }
                 table.styled-table .balance { font-weight: 800; background-color: #f1f5f9; color: #0f172a; mso-number-format:'_(* \\#\\,\\#\\#0\\.00_);_(* \\(\\#\\,\\#\\#0\\.00\\);_(* "-"??_);_(\\@_)'; }
                 table.styled-table .debit { color: #991b1b; font-weight: 800;}
@@ -1223,7 +1214,6 @@
                 runBal = runDr - runCr;
 
                 let typeText = f.type; 
-                // Zebra striping احترافي
                 let rowBgColor = (index % 2 === 0) ? "#ffffff" : "#f8fafc";
                 
                 if(f.type === 'SALE' || f.type === 'INVOICE') { typeText = 'Sales Invoice'; } 
